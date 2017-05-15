@@ -1,0 +1,405 @@
+#!/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+# Absolute path to this script, e.g. /home/user/bin/foo.sh
+SCRIPT=$(readlink -f "$0")
+# Absolute path this script is in, thus /home/user/bin
+SCRIPTPATH=$(dirname "$SCRIPT")
+#http://stackoverflow.com/questions/242538/unix-shell-script-find-out-which-directory-the-script-file-resides
+
+# Get the config variables
+source ${SCRIPTPATH}/manager-config.sh
+# Just incase, I already made the mistake of creating the file in windows....
+MAX_PLAYERS=`echo ${MAX_PLAYERS} | sed -e 's/\r//g'`
+GALAXY=`echo ${GALAXY} | sed -e 's/\r//g'`
+PARAMS=`echo ${PARAMS} | sed -e 's/\r//g'`
+PORT=`echo ${PORT} | sed -e 's/\r//g'`
+LOG_ROTATION=`echo ${LOG_ROTATION} | sed -e 's/\r//g'`
+AutoRestart=`echo ${AutoRestart} | sed -e 's/\r//g'`
+DAILYRESTART=`echo ${DailyRestart} | sed -e 's/\r//g'`
+BETA=`echo ${BETA} | sed -e 's/\r//g'`
+PHPPORT=`echo ${PHPPORT} | sed -e 's/\r//g'`
+
+# Standard Config - Dont touch
+TMUX_SESSION=avoriontmux
+INSTALL_DIR=$SCRIPTPATHSCRIPTPATH/serverfiles
+STEAM_DIR=$SCRIPTPATH/steamcmd
+# Colors
+WHITE='\033[1;37m'
+RED='\033[1;31m'
+GREEN='\033[1;32m'
+YELLOW='\033[1;33m'
+PURPLE='\033[1;35m'
+NOCOLOR='\033[0m'
+# Static - Dont change these
+APPID=565060
+SERVER=AvorionServer
+T='tmux send-keys -t '${TMUX_SESSION}':0.0'
+# Auto Restart
+CRONJOB='0,5,10,15,20,25,30,35,40,45,50,55 * * * * '${SCRIPTPATH}'/manager status CRON >> '${SCRIPTPATH}'/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_status.log'
+CRONDAILYRESTART_15='41 11,23 * * * '${SCRIPTPATH}'/manager send CRON "/say Restarting server in 15 Minutes!"'
+CRONDAILYRESTART_10='46 11,23 * * * '${SCRIPTPATH}'/manager send CRON "/say Restarting server in 10 Minutes!"'
+CRONDAILYRESTART_5='51 11,23 * * * '${SCRIPTPATH}'/manager send CRON "/say Restarting server in 5 Minutes!"'
+CRONDAILYRESTART_1='55 11,23 * * * '${SCRIPTPATH}'/manager send CRON "/say Restarting server in 1 Minute!"'
+CRONDAILYRESTART_NOW='56 11,23 * * * '${SCRIPTPATH}'/manager restart CRON >> '${SCRIPTPATH}'/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_status.log'
+CRONSECTORDATA='0 12,0 * * * nice -n 10 '${SCRIPTPATH}'/avorion-manager/GetSectorData.sh '${SCRIPTPATH}'/.avorion/galaxies'
+CRONPLAYERATA='0,30 * * * * nice -n 15 '${SCRIPTPATH}'/avorion-manager/GetPlayerData.sh '${SCRIPTPATH}'/.avorion/galaxies'
+RUN_BY=$2
+
+DynamicEcho() {
+  # Second Argument used to detect who were echoing too.
+  if [ "$2" = "CRON" ]; then
+      if [ -z ${3+x} ]; then
+          echo -e -n $(date +"%F %H-%M-00| "); echo -e '[Manager]: '$1 | sed -r 's/'$(echo -e "\033")'\[[0-9]{1,2}(;([0-9]{1,2})?)?[mK]//g'
+      fi
+  elif [ "$2" = "PHP" ]; then
+      echo -e $1'\n' | sed -r 's/'$(echo -e "\033")'\[[0-9]{1,2}(;([0-9]{1,2})?)?[mK]//g'
+  else
+      if [ "$3" = "DONTLOG" ]; then
+        echo -en "$1"
+      else
+        echo -e "${WHITE}[Manager]${NOCOLOR}: $1"
+      fi
+  fi
+}
+GenerateBrowser(){
+  IPADDRESS=$(hostname -I | awk '{print $1}')
+  OnlineCount=$(netstat -tlunp 2>/dev/null | grep -iv ':270'|grep -i avorion|wc -l)
+  OnlinePlayers="$OnlineCount/$MAX_PLAYERS"
+  php -f ${SCRIPTPATH}/avorion-manager/BannerGenerator.php "$1" "${IPADDRESS}" "${GALAXY}" "${OnlinePlayers}"
+}
+DeleteCronJobs(){
+  crontab -l | grep -v "${SCRIPTPATH}/manager"  | crontab -
+  crontab -l | grep -v "${SCRIPTPATH}/avorion-manager"  | crontab -
+}
+CreateCronJobs(){
+  if [ "${DAILYRESTART}" = true ]; then
+    (crontab -l ; echo "${CRONDAILYRESTART_15}") | crontab -
+    (crontab -l ; echo "${CRONDAILYRESTART_10}") | crontab -
+    (crontab -l ; echo "${CRONDAILYRESTART_5}") | crontab -
+    (crontab -l ; echo "${CRONDAILYRESTART_1}") | crontab -
+    (crontab -l ; echo "${CRONDAILYRESTART_NOW}") | crontab -
+  fi
+  (crontab -l ; echo "${CRONSECTORDATA}") | crontab -
+  (crontab -l ; echo "${CRONPLAYERATA}") | crontab -
+  (crontab -l ; echo "${CRONJOB}") | crontab -
+}
+LogToManagerLog(){
+  echo -e -n $(date +"%F %H-%M-%S| ") >> ${SCRIPTPATH}/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_manager.log
+  echo -e "[Manager]: $1" >> ${SCRIPTPATH}/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_manager.log
+
+  #Status.log rotation
+  find ${SCRIPTPATH}/avorion-manager/logs/*_manager.log -mtime +${LOG_ROTATION} -type f -delete 2> /dev/null
+  find ${SCRIPTPATH}/avorion-manager/logs/*_status.log -mtime +${LOG_ROTATION} -type f -delete 2> /dev/null
+  find ${SCRIPTPATH}/avorion-manager/logs/*_playerchat.log -mtime +${LOG_ROTATION} -type f -delete 2> /dev/null
+}
+# Main: start, stop, kill, restart, status, steam, attach, help*
+case $1 in
+	"start")
+    LogToManagerLog "Ran Start command.";
+    # remove the cron job just incase
+    DeleteCronJobs;
+		if tmux new -d -c ${INSTALL_DIR} -s ${TMUX_SESSION} bin/${SERVER} --port ${PORT} --galaxy-name ${GALAXY} --max-players ${MAX_PLAYERS}  ${PARAMS} 2> /dev/null
+		then
+      cat ${SCRIPTPATH}'/console.log' | grep '^<.*>' | grep -v '^<Rusty>' >> ${SCRIPTPATH}/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_playerchat.log
+      #Start loging console into console.log.
+      tmux pipe-pane -o -t ${TMUX_SESSION} "cat > ${SCRIPTPATH}/console.log"
+      DynamicEcho "starting ${PURPLE}${SERVER}${NOCOLOR} on ${YELLOW}${PORT}${NOCOLOR}" "${RUN_BY}"
+			if pidof ${SERVER} > /dev/null;
+			then
+        DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} has started with pid ${YELLOW}$(pidof ${SERVER})${NOCOLOR}" "${RUN_BY}"
+        #Generate jpg
+        GenerateBrowser 'Online';
+        CreateCronJobs;
+      else
+        DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} could not be started!" "${RUN_BY}"
+			fi
+		else
+			DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} is already running!" "${RUN_BY}"
+		fi
+	;;
+	"stop")
+    LogToManagerLog "Ran Stop command.";
+    # remove the cron job just incase
+    DeleteCronJobs;
+    #Generate Offline jpg
+    GenerateBrowser 'Offline';
+
+		if pidof ${SERVER} > /dev/null
+		then
+			DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Saving..." "${RUN_BY}"
+
+      D='Server Time is: '"$(date +"%F %H-%M-%S")"
+      #Send commands to the console
+      $T '/echo '"${D}" C-m
+      $T /save C-m
+      time=0
+      while [ $time -lt 60 ]; do
+        PlayerMemory=$(cat ${SCRIPTPATH}'/console.log' | awk "/${D}/,/All sectors saved successfully/" | grep 'All sectors saved successfully')
+        if [ "${PlayerMemory}" ]; then
+          break;
+        fi
+        let time++
+        sleep 1
+        DynamicEcho "\rSaving... ${time}" "${RUN_BY}" "DONTLOG"
+      done
+
+      DynamicEcho "\r" "${RUN_BY}" "DONTLOG"
+      DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Has been saved." "${RUN_BY}"
+      DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Stopping...." "${RUN_BY}"
+			$T /stop C-m
+      time=0
+      while [ $time -lt 120 ]; do
+        SHUTDOWN=$(cat ${SCRIPTPATH}'/console.log' | awk "/${D}/,/Server shutdown successful/" | grep 'Server shutdown successful')
+        if [ "${SHUTDOWN}" ] || [ "$( ps ax | grep AvorionServer | grep -v grep | grep tmux | wc -l)" ]; then
+          DynamicEcho "\r" "${RUN_BY}" "DONTLOG"
+          DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} has been stopped." "${RUN_BY}"
+          break;
+        fi
+        let time++
+        sleep 1
+        DynamicEcho "\rStopping... ${time}" "${RUN_BY}" "DONTLOG"
+      done
+      DynamicEcho "\r" "${RUN_BY}" "DONTLOG"
+      DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} is being forcibly closed! Just incase." "${RUN_BY}"
+      kill $(pidof ${SERVER})
+    else
+      DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} is not running currently!" "${RUN_BY}"
+		fi
+	;;
+  "send")
+    LogToManagerLog "Ran Send command.";
+		if pidof ${SERVER} > /dev/null
+		then
+      if [ -z ${3+x} ]; then
+        echo $2
+        $T "$2" C-m
+      else
+        echo $3
+        $T "$3" C-m
+      fi
+		else
+			DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} is not running!" "${RUN_BY}"
+		fi
+	;;
+	"attach")
+    LogToManagerLog "Ran Attach command.";
+		if pidof ${SERVER} > /dev/null
+		then
+			DynamicEcho "press ${RED}Ctrl+B${NOCOLOR} then ${RED}D${NOCOLOR} to detach. Confirm to continue..." "${RUN_BY}"
+			read -n 1 -s
+			tmux a -t ${TMUX_SESSION}
+		else
+			DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} is not running!" "${RUN_BY}"
+		fi
+	;;
+	"restart")
+    LogToManagerLog "Ran Restart command.";
+		DynamicEcho "restarting ${PURPLE}${SERVER}${NOCOLOR}..." "${RUN_BY}"
+		$0 stop "${RUN_BY}"
+    sleep 60
+		$0 start "${RUN_BY}"
+    time=0
+    #First Try
+    while [ $time -lt 30 ]; do
+      if pidof ${SERVER} > /dev/null
+  		then
+        DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} has successfully restarted!" "${RUN_BY}"
+        exit 1
+      else
+        DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} attempting restart of the server." "${RUN_BY}"
+        $0 start "${RUN_BY}"
+      fi
+      let time++
+      sleep 10
+    done
+    DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} has failed to restart the server." "${RUN_BY}"
+	;;
+	"status")
+
+    LogToManagerLog "Ran Status command.";
+		if pidof ${SERVER} > /dev/null
+		then
+            # Generate date for a unique grep search
+            D='Server Time is: '"$(date +"%F %H-%M-%S")"
+            #Send commands to the console
+            $T '/echo '"${D}" C-m
+            $T /players C-m
+            $T /status C-m
+            time=0
+            success=false
+
+            #First Try
+            while [ $time -lt 20 ]; do
+              PlayerMemory=$(awk "/${D}/,/min. update/" /proc/`pidof AvorionServer`/fd/3 | grep 'players in memory')
+              if [ "${PlayerMemory}" ]; then
+                success=true
+                break;
+              fi
+              let time++
+              sleep 1
+              DynamicEcho "\rTrying... ${time}" "${RUN_BY}" "DONTLOG"
+            done
+
+            #Second Try
+            if [ "${success}" = false ]; then
+              DynamicEcho "\r" "${RUN_BY}" "DONTLOG"
+              DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Unable to retrieve a status update from the server. Trying again..." "${RUN_BY}"
+              D='Server Time is: '"$(date +"%F %H-%M-%S")"
+              #Send commands to the console
+              $T '/echo '"${D}" C-m
+              $T /players C-m
+              $T /status C-m
+              time=0
+              while [ $time -lt 20 ]; do
+                PlayerMemory=$(cat /proc/`pidof AvorionServer`/fd/3 | awk "/${D}/,/min. update/" | grep 'players in memory')
+                if [ "${PlayerMemory}" ]; then
+                  success=true
+                  break;
+                fi
+                let time++
+                sleep 1
+                DynamicEcho "\rTrying... ${time}" "${RUN_BY}" "DONTLOG"
+              done
+            fi
+
+            #Failure = Saving
+            if [ "${success}" = false ]; then
+              DynamicEcho "\r" "${RUN_BY}" "DONTLOG"
+              DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Unable to retrieve a status update from the server. Saving..." "${RUN_BY}"
+              D='Server Time is: '"$(date +"%F %H-%M-%S")"
+              #Send commands to the console
+              $T '/echo '"${D}" C-m
+              $T /save C-m
+              time=0
+              while [ $time -lt 60 ]; do
+                PlayerMemory=$(cat ${SCRIPTPATH}'/console.log' | awk "/${D}/,/Triggered saving of all server data/" | grep 'Triggered saving of all server data')
+                if [ "${PlayerMemory}" ]; then
+                  DynamicEcho "\r" "${RUN_BY}" "DONTLOG"
+                  DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Saved, Recieved server response." "${RUN_BY}"
+                  exit 1
+                  break;
+                fi
+                let time++
+                sleep 1
+                DynamicEcho "\rSaving... ${time}" "${RUN_BY}" "DONTLOG"
+              done
+            fi
+
+            #Complete Failure Restart
+            if [ "${success}" = false ]; then
+              DynamicEcho "\r" "${RUN_BY}" "DONTLOG"
+              DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Unable to retrieve a status or save response from the server." "${RUN_BY}"
+              if [ "$AutoRestart" = true ]; then
+                DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} will restart the server." "${RUN_BY}"
+                $0 restart "${RUN_BY}"
+                exit 1
+              fi
+
+            else
+              DynamicEcho "\r" "${RUN_BY}" "DONTLOG"
+            fi
+
+
+            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} is running with pid ${YELLOW}$(pidof ${SERVER})${NOCOLOR}." "${RUN_BY}"
+            #Get and display players online info
+            ServerTime=$(grep "${D}" ${SCRIPTPATH}'/console.log' | sed -e 's/\/echo//g' | tail -n 1)
+            PlayerMemory=$(awk "/${D}/,/min. update/" /proc/`pidof AvorionServer`/fd/3 | grep 'players in memory' | sed -e 's/.*| //g')
+            FactionsMemory=$(awk "/${D}/,/min. update/" /proc/`pidof AvorionServer`/fd/3 | grep 'factions in memory' | sed -e 's/.*| //g')
+            SectorsMemory=$(awk "/${D}/,/min. update/" /proc/`pidof AvorionServer`/fd/3 | grep 'sectors in memory' | sed -e 's/.*| //g')
+            ScriptsMemory=$(awk "/${D}/,/min. update/" /proc/`pidof AvorionServer`/fd/3 | grep 'Memory used by scripts' | sed -e 's/.*| //g')
+            ServerLoad=$(awk "/${D}/,/min. update/" /proc/`pidof AvorionServer`/fd/3 | grep 'server load' | sed -e 's/ 0%/ 0.01%/g' -e 's/.*| //g')
+            SectorsUpdate=$(grep -A 15 "${D}" ${SCRIPTPATH}'/console.log' | grep 'Sectors Updated' | tail -n 1 | sed -e 's/.*| //g')
+            AvgUpdate=$(awk "/${D}/,/min. update/" /proc/`pidof AvorionServer`/fd/3 | grep 'avg. update' | sed -e 's/.*| //g')
+            MaxUpdate=$(awk "/${D}/,/min. update/" /proc/`pidof AvorionServer`/fd/3 | grep 'max. update' | sed -e 's/.*| //g')
+            MinUpdate=$(awk "/${D}/,/min. update/" /proc/`pidof AvorionServer`/fd/3 | grep 'min. update' | sed -e 's/.*| //g')
+            Players=$(awk "/${D}/,/online players/" /proc/`pidof AvorionServer`/fd/3 | grep 'online players (' | sed -e 's/online players (//' -e 's/).*//' -e 's/.*| //g' | tr -d '[:blank:]')
+            PlayersNames=$(awk "/${D}/,/online players/" /proc/`pidof AvorionServer`/fd/3 | grep 'online players ('| sed -e 's/.*://' | tr -d '[:blank:]')
+            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} is hosting galaxy: ${GALAXY}" "${RUN_BY}"
+            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} ${ServerTime}" "${RUN_BY}"
+            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} ${PlayerMemory}" "${RUN_BY}"
+            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} ${FactionsMemory}" "${RUN_BY}"
+            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} ${SectorsMemory}" "${RUN_BY}"
+            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} ${ScriptsMemory}" "${RUN_BY}"
+            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} ${ServerLoad}" "${RUN_BY}"
+            if [ -z ${SectorsUpdate+x} ]; then
+              DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} ${SectorsUpdate}" "${RUN_BY}"
+            fi
+            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} ${AvgUpdate}" "${RUN_BY}"
+            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} ${MaxUpdate}" "${RUN_BY}"
+            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} ${MinUpdate}" "${RUN_BY}"
+            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Players Online: ${Players}/${MAX_PLAYERS}" "${RUN_BY}"
+            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Players: ${PlayersNames}" "${RUN_BY}"
+            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} CPU Usage: `top -bn 2 -d 1 | grep '^%Cpu' | tail -n 1 | awk '{print $2+$4+$6}'`" "${RUN_BY}"
+
+            #Status.log rotation
+            find ./*_status.log -mtime +${LOG_ROTATION} -type f -delete 2> /dev/null
+
+            #Generate data for the browser
+            GenerateBrowser 'Online';
+    else
+      GenerateBrowser 'Offline';
+      if [ "${RUN_BY}" = "CRON" ]; then
+        DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} has detected a crash." "${RUN_BY}"
+        if [ "$AutoRestart" = true ]; then
+          DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} will restart the server." "${RUN_BY}"
+          $0 start "${RUN_BY}"
+        fi
+      else
+        DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} is not running." "${RUN_BY}"
+      fi
+    fi
+	;;
+	"update")
+    LogToManagerLog "Ran Update command.";
+		if pidof ${SERVER} > /dev/null
+		then
+			DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} should not be running while updating." "${RUN_BY}"
+		else
+			DynamicEcho "steamcmd will now perform an update." "${RUN_BY}"
+      if [ ${BETA} = true ]; then
+			     $STEAM_DIR/steamcmd.sh +login anonymous +force_install_dir ${INSTALL_DIR} +app_update ${APPID} -beta beta validate +quit
+      else
+           $STEAM_DIR/steamcmd.sh +login anonymous +force_install_dir ${INSTALL_DIR} +app_update ${APPID} validate +quit
+      fi
+		fi
+	;;
+  "start-web")
+    LogToManagerLog "Ran Start-web command.";
+    IPADDRESS=$(hostname -I | awk '{print $1}')
+    if tmux new-session -d -s php 'php -S '"${IPADDRESS}"':'"${PHPPORT}"' -t '${SCRIPTPATH}'/avorion-manager/webroot '${SCRIPTPATH}'/avorion-manager/webroot/Router.php' 2> /dev/null
+    then
+      DynamicEcho "starting PHP Server"
+
+      #Z='tmux send-keys -t 'php':0.0'
+      #$Z 'php -S '"${IPADDRESS}"':'"${PHPPORT}"' -t '${SCRIPTPATH}'/avorion-manager/webroot' C-m
+      if pidof php > /dev/null;
+      then
+        DynamicEcho "PHP Server started on server: http://${IPADDRESS}"':'"${PHPPORT}"
+      else
+        DynamicEcho "PHP Server Failed"
+      fi
+    else
+      DynamicEcho "PHP Server Already started"
+
+    fi
+	;;
+  "stop-web")
+    LogToManagerLog "Ran Stop-web command.";
+    tmux kill-session -t php
+    DynamicEcho "PHP Server Stoped" "${RUN_BY}"
+    if pidof php > /dev/null;
+    then
+      kill $(pidof php)
+    fi
+	;;
+	"install")
+    LogToManagerLog "Ran Install command.";
+    mkdir -p $STEAM_DIR
+    wget https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz
+    tar -zxvf steamcmd_linux.tar.gz -C $STEAM_DIR
+    $0 update
+	;;
+    *)
+		DynamicEcho "available commands:\n           ${GREEN}start${NOCOLOR} server,\n           ${GREEN}stop${NOCOLOR} server,\n           ${GREEN}restart${NOCOLOR} server,\n           check server's ${GREEN}status${NOCOLOR},\n           check for ${GREEN}update${NOCOLOR}s,\n           ${GREEN}attach${NOCOLOR} to console,\n           show this ${GREEN}help${NOCOLOR},\n           ${GREEN}install${NOCOLOR} steamcmd,\n           ${GREEN}start-web${NOCOLOR} starts php server\n           ${GREEN}stop-web${NOCOLOR} Stops PHP server"  "${RUN_BY}"
+	;;
+esac
