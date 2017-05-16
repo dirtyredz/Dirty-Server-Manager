@@ -1,1 +1,1 @@
-echo Welcome to Dirty Server Manager Installtion.
+echo Welcome to Dirty Server Manager Installation.
