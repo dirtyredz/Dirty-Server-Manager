@@ -32,11 +32,9 @@ if (preg_match('/\.(?:png|jpg|jpeg|gif|css)$/', $uri_parts['path'])) {
       $ViewController->RSS();
     }
     if($uri_parts['path'] == '/'){
-
       include __DIR__ .'/../ViewController.php';
       $ViewController = new ViewController;
       $ViewController->Index();
-      //include __DIR__ .'/../views/index.php';
       return true;
     }
     include __DIR__.'/404.php';

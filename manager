@@ -21,7 +21,7 @@ PHPPORT=`echo ${PHPPORT} | sed -e 's/\r//g'`
 
 # Standard Config - Dont touch
 TMUX_SESSION=avoriontmux
-INSTALL_DIR=$SCRIPTPATHSCRIPTPATH/serverfiles
+INSTALL_DIR=$SCRIPTPATH/serverfiles
 STEAM_DIR=$SCRIPTPATH/steamcmd
 # Colors
 WHITE='\033[1;37m'

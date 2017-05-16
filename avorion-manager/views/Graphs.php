@@ -26,7 +26,7 @@
 
 
 <script type="text/javascript">
-  $('.OptionsWrapper > input[name="range"]').on('change', function () {
+  $('.OptionsWrapper > input[name="range"]').on('input', function () {
     var Range = '1 Hour';
     switch ($('.OptionsWrapper > input[name="range"]').val()) {
         case '1':
@@ -70,6 +70,8 @@
             break;
     }
       $("#HoursRange").html(Range);
+  });
+  $('.OptionsWrapper > input[name="range"]').on('change', function () {
       LoadServerLoadGraph();
       LoadPlayersGraph();
       <?php
