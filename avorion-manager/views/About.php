@@ -8,7 +8,7 @@
 <img src="/resources/DSM_Logo.png" alt="DSM"/>
 <h1>Dirty Server Manager</h1>
 <h2>The Unofficial Avorion Linux Server Manager.</h2>
-<div class="Version"><h3>Version: 0.1.0</h3><span>Your up to date.</span></div>
+<div class="Version"><h3>Version: <?php echo $Data['Version']; ?></h3><span><?php echo $Data['UpToDate']; ?></span></div>
 <br/>
 <a target="_blank" href="https://docs.google.com/document/d/1RuysyToh9CTSn7mMwL6VJ0k76VbaGuXLyV74pm0J4ug/edit#">TODO</a>
 <br/>
@@ -22,7 +22,7 @@
 <br/>
 <br/>
 <h3>CHANGE LOG:</h3>
-<h4>0.1.0</h4>
+<h4>0.0.0</h4>
 <ul class="ChangeLog">
   <li>Added About Page.</li>
   <li>Hide player data from public view.</li>

@@ -1,6 +1,6 @@
 <div id="Top"><span class="Title"><svg class="icon"><use xlink:href="#icon-untitled2"></use></svg>GRAPHS</span><span class="Time"></span></div>
 <div class="OptionsWrapper">
-<input type="range" name="range" min="1" max="24" value="6"><span>Hours Range: </span><span id="HoursRange"></span><span> Hours.</span>
+<input type="range" name="range" min="1" max="13" value="2"><span>Hours/Date Range: </span><span id="HoursRange">6 Hours</span>
 </div>
 <br/>
 <div id="ServerLoad" style="width: 100%; height: 250px;"><!-- Plotly chart will be drawn inside this DIV --></div>
@@ -26,9 +26,50 @@
 
 
 <script type="text/javascript">
-  $("#HoursRange").html($('.OptionsWrapper > input[name="range"]').val());
-  $('.OptionsWrapper > input[name="range"]').on('input', function () {
-      $("#HoursRange").html($('.OptionsWrapper > input[name="range"]').val());
+  $('.OptionsWrapper > input[name="range"]').on('change', function () {
+    var Range = '1 Hour';
+    switch ($('.OptionsWrapper > input[name="range"]').val()) {
+        case '1':
+            Range = '1 Hour';// 1 hour
+            break;
+        case '2':
+            Range = '6 Hours';// 6 hours
+            break;
+        case '3':
+            Range = '12 Hours';// 12 hours
+            break;
+        case '4':
+            Range = '24 Hours';// 24 hours
+            break;
+        case '5':
+            Range = '2 Days';// 2 days
+            break;
+        case '6':
+            Range = '3 Days';// 3 days
+            break;
+        case '7':
+            Range = '4 Days';// 4 days
+            break;
+        case '8':
+            Range = '5 Days';// 5 days
+            break;
+        case '9':
+            Range = '6 Days';// 6 days
+            break;
+        case '10':
+            Range = '7 Days';// 7 days
+            break;
+        case '11':
+            Range = '8 Days';// 8 days
+            break;
+        case '12':
+            Range = '9 Days';// 9 days
+            break;
+        case '13':
+            Range = '10 Days';// 10 days
+            break;
+    }
+      $("#HoursRange").html(Range);
       LoadServerLoadGraph();
       LoadPlayersGraph();
       <?php

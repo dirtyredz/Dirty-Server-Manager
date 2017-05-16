@@ -12,7 +12,50 @@ class RefreshModel {
         $this->Config = $Config;
 
         if(isset($Range)){
-          $this->Range = $Range * 12;
+          if($Range == 1){
+            $this->Range = $Range * 12;
+          }
+          switch ($Range) {
+              case 1:
+                  $this->Range = 12;// 1 hour
+                  break;
+              case 2:
+                  $this->Range = 72;// 6 hours
+                  break;
+              case 3:
+                  $this->Range = 144;// 12 hours
+                  break;
+              case 4:
+                  $this->Range = 288;// 24 hours
+                  break;
+              case 5:
+                  $this->Range = 576;// 2 days
+                  break;
+              case 6:
+                  $this->Range = 864;// 3 days
+                  break;
+              case 7:
+                  $this->Range = 1152;// 4 days
+                  break;
+              case 8:
+                  $this->Range = 1440;// 5 days
+                  break;
+              case 9:
+                  $this->Range = 1728;// 6 days
+                  break;
+              case 10:
+                  $this->Range = 2016;// 7 days
+                  break;
+              case 11:
+                  $this->Range = 2304;// 8 days
+                  break;
+              case 12:
+                  $this->Range = 2592;// 9 days
+                  break;
+              case 13:
+                  $this->Range = 2880;// 10 days
+                  break;
+          }
           $this->TimeArray = $this->BuildTimeArray();
         }
 

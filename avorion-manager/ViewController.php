@@ -116,6 +116,14 @@ class ViewController {
     $this->LoadView('index');
   }
   public function About(){
+    $AvailableVersion = `wget -O - -o /dev/null https://raw.githubusercontent.com/dirtyredz/Dirty-Server-Manager/master/VERSION`;
+    $InstalledVersion = `grep VERSION {$this->Config['Manager']} | head -n1 | sed -e 's/.*=//g'`;
+    $this->Data['Version'] = $InstalledVersion;
+    if($InstalledVersion != $AvailableVersion){
+      $this->Data['UpToDate'] = 'Dirty Server Manager is not up to date!';
+    }else{
+      $this->Data['UpToDate'] = 'Dirty Server Manager up to date!';
+    }
     $this->LoadView('About');
   }
   public function Account(){

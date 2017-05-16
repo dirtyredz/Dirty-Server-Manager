@@ -31,6 +31,7 @@ YELLOW='\033[1;33m'
 PURPLE='\033[1;35m'
 NOCOLOR='\033[0m'
 # Static - Dont change these
+VERSION=1.0.0
 APPID=565060
 SERVER=AvorionServer
 T='tmux send-keys -t '${TMUX_SESSION}':0.0'
@@ -107,6 +108,12 @@ case $1 in
 			if pidof ${SERVER} > /dev/null;
 			then
         DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} has started with pid ${YELLOW}$(pidof ${SERVER})${NOCOLOR}" "${RUN_BY}"
+        VER=`wget -O - -o /dev/null https://raw.githubusercontent.com/dirtyredz/Dirty-Server-Manager/master/VERSION`
+        if [ "${VER}" != "${VERSION}" ]; then
+          DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Dirty Server Manager is NOT Up To Date!" "${RUN_BY}"
+        else
+          DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Dirty Server Manager is Up To Date!" "${RUN_BY}"
+        fi
         #Generate jpg
         GenerateBrowser 'Online';
         CreateCronJobs;
@@ -332,7 +339,9 @@ case $1 in
             DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} CPU Usage: `top -bn 2 -d 1 | grep '^%Cpu' | tail -n 1 | awk '{print $2+$4+$6}'`" "${RUN_BY}"
 
             #Status.log rotation
-            find ./*_status.log -mtime +${LOG_ROTATION} -type f -delete 2> /dev/null
+            find ${SCRIPTPATH}/avorion-manager/logs/*_manager.log -mtime +${LOG_ROTATION} -type f -delete 2> /dev/null
+            find ${SCRIPTPATH}/avorion-manager/logs/*_status.log -mtime +${LOG_ROTATION} -type f -delete 2> /dev/null
+            find ${SCRIPTPATH}/avorion-manager/logs/*_playerchat.log -mtime +${LOG_ROTATION} -type f -delete 2> /dev/null
 
             #Generate data for the browser
             GenerateBrowser 'Online';
