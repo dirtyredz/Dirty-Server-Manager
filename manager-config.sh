@@ -2,7 +2,7 @@
 # Config
 MAX_PLAYERS=10
 GALAXY=GalaxyName
-PARAMS='--public true --listed true --trace threading io error warning debug --use-steam-networking false --same-start-sector false' # http://wiki.avorion.net/index.php?title=Server
+PARAMS='--public true --listed true --same-start-sector false' # http://wiki.avorion.net/index.php?title=Server
 # Standard Config
 PORT=27000
 # Auto Restart

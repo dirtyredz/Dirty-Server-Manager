@@ -23,25 +23,11 @@ Step 2: Create a new user for avorion to run on. (Do not use root)
 
 Step 3: Download the manager
 
-        wget http://avorion.dirtyredz.com/avorion-server-manager.tar
+        wget https://github.com/dirtyredz/Dirty-Server-Manager/files/1004405/DirtyServerManager.tar.gz
 
 Step 4: Unpack the tar file
 
-        tar -xvf avorion-server-manager.tar
-
-Step 5: Open the manager script via your favorite text editor, I like to use 'nano'
-
-        nano manager-config.sh
-
-        change these:
-        MAX_PLAYERS=
-        GALAXY=
-        PARAMS=
-
-Here you will need to make some adjustments to the options available to customize the server, ie admin, galaxy-name, and maxplayers
-Unless you have more then 1 server running on the same machine everything should be left on its default options.
-the only meaningful option you want to change is the 'PARAMS' this is the server parameter applied to the server on startup
-Visit: http://wiki.avorion.net/index.php?title=Server  For a full list of server parameters
+        tar -xvf DirtyServerManager.tar.gz
 
 Step 6: Steamcmd and avvorion serve Installation
 

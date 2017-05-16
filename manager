@@ -403,6 +403,99 @@ case $1 in
 	;;
 	"install")
     LogToManagerLog "Ran Install command.";
+    echo Welcome to Dirty Server Manager
+    echo Begining installation process...
+    echo The folowing prompts can be changed in the future in ./manager-config.sh
+
+    read -p "please enter the Galaxy Name for the server: [GalaxyName]"  GalaxyNameInput
+    GalaxyNameInput=${GalaxyNameInput:-GalaxyName}
+    echo Galaxy Name: $GalaxyNameInput
+
+    read -p "please enter the Maximum Players for the server: [10]"  MaxPlayersInput
+    MaxPlayersInput=${MaxPlayersInput:-10}
+    echo Max Players: $MaxPlayersInput
+
+    read -p "Would you like to run the server on the BETA version: [y/N]"  BetaInput
+    BetaInput=${BetaInput:-n}
+    if [[ $BetaInput =~ ^[Yy]$ ]]; then
+      BetaInput=true
+    else
+      BetaInput=false
+    fi
+    echo Beta: $BetaInput
+
+    read -p "Would you like the server to be public?: [Y/n]"  PublicServerInput
+    PublicServerInput=${PublicServerInput:-y}
+    if [[ $PublicServerInput =~ ^[Yy]$ ]]; then
+      PublicServerInput=true
+    else
+      PublicServerInput=false
+    fi
+    echo Public: $PublicServerInput
+
+    read -p "Would you like the server to be listed?: [Y/n]"  ListedServerInput
+    ListedServerInput=${ListedServerInput:-y}
+    if [[ $ListedServerInput =~ ^[Yy]$ ]]; then
+      ListedServerInput=true
+    else
+      ListedServerInput=false
+    fi
+    echo Listed: $ListedServerInput
+
+    read -p "Would you like everyone to start in the same start sector?: [Y/n]"  SameStartInput
+    SameStartInput=${SameStartInput:-y}
+    if [[ $SameStartInput =~ ^[Yy]$ ]]; then
+      SameStartInput=true
+    else
+      SameStartInput=false
+    fi
+    echo Same Start Sector: $SameStartInput
+
+    read -p "Port number for the server: [2700]"  PortInput
+    PortInput=${PortInput:-2700}
+    echo Max Players: $PortInput
+
+    read -p "Would you like the server to automatically restart if the server crashes?: [Y/n]"  AutoCrashRestartInput
+    AutoCrashRestartInput=${AutoCrashRestartInput:-y}
+    if [[ $AutoCrashRestartInput =~ ^[Yy]$ ]]; then
+      AutoCrashRestartInput=true
+    else
+      AutoCrashRestartInput=false
+    fi
+    echo Auto Crash Restart: $AutoCrashRestartInput
+
+    read -p "Would you like the server to automatically restart twice a day? (Noon and Midnight server time): [Y/n]"  DailyRestartInput
+    DailyRestartInput=${DailyRestartInput:-y}
+    if [[ $DailyRestartInput =~ ^[Yy]$ ]]; then
+      DailyRestartInput=true
+    else
+      DailyRestartInput=false
+    fi
+    echo Auto Daily Restart: $DailyRestartInput
+
+    read -p "Admin steam id: [Y/n]"  AdminInput
+    AdminInput=${AdminInput}
+    echo Admin Steam ID: $AdminInput
+    AdminInput=" --admin ${AdminInput}"
+
+    echo "Completed manager configuration, to make changes to these settings in the future edit file manager-config.sh"
+    read -p "Press enter to continue with steam/avorion installation"
+    echo "#!/bin/bash" > manager-config.sh
+    echo "# Config" >> manager-config.sh
+    echo "MAX_PLAYERS=${MaxPlayersInput}" >> manager-config.sh
+    echo "GALAXY=${GalaxyNameInput}" >> manager-config.sh
+    echo "PARAMS='--public ${PublicServerInput} --listed ${ListedServerInput} --same-start-sector ${SameStartInput}${AdminInput}' # http://wiki.avorion.net/index.php?title=Server" >> manager-config.sh
+    echo "# Standard Config" >> manager-config.sh
+    echo "PORT=${PortInput}" >> manager-config.sh
+    echo "# Auto Restart" >> manager-config.sh
+    echo "LOG_ROTATION=10 #Days to keep status.logs" >> manager-config.sh
+    echo "AutoRestart=${AutoCrashRestartInput} #If the status check that runs every 5 minutes fails to get a response from the server it will automatically issue a restart command" >> manager-config.sh
+    echo "DailyRestart=${DailyRestartInput} #Will restart the server at the MIDNIGHT and NOON SERVER time." >> manager-config.sh
+    echo "# Installation" >> manager-config.sh
+    echo "BETA=${BetaInput}" >> manager-config.sh
+    echo "# PHP" >> manager-config.sh
+    echo "PHPPORT=8080" >> manager-config.sh
+
     mkdir -p $STEAM_DIR
     wget https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz
     tar -zxvf steamcmd_linux.tar.gz -C $STEAM_DIR
