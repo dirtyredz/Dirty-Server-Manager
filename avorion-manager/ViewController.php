@@ -181,11 +181,11 @@ class ViewController {
     $this->Data['CustomMessageThree'] = $this->Config['HomeCustomMessageThree'];
     $this->Data['CustomMessageFour'] = $this->Config['HomeCustomMessageFour'];
     $this->Data['GalaxyName'] = `grep GALAXY {$this->Config['ManagerConfig']} | sed -e 's/.*=//g'`;
-    $this->Data['OnlineStatus'] = `if [ $(pidof $(grep SERVER= {$this->Config['Manager']} | sed -e 's/.*=//g')) > /dev/null ]; then echo 'Online'; else echo 'Offline'; fi`;
+    $this->Data['OnlineStatus'] = `if [ $(pidof $(grep SERVER= {$this->Config['Manager']} | sed -e 's/.*=//g')) > /dev/null ]; then echo 'Online'; else echo 'Offline'; fi  | tr -d '[:space:]'`;
     if($this->Config['ShowDiskUsage']){
       $this->Data['DiskUsage'] = `df -h --total | awk '{print $5}' | tail -n 1 | sed -e 's/%//g'`;
     }
-    if($this->Config['ShowOnlinePlayers']){
+    if($this->Config['ShowOnlinePlayers'] && $this->Data['OnlineStatus'] == "Online"){
       $OnlinePlayers = explode(", ",`tac {$this->Config['ConsoleLog']} | grep 'online players (' | head -n 1 | sed -e 's/.*://g' -e 's/^.//g' -e 's/.$//g'`);
       $NewOnlinePlayers = array();
       $PID = `pidof AvorionServer | tr -d '\n'`;
