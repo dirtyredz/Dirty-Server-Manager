@@ -124,6 +124,7 @@ class ViewController {
     }else{
       $this->Data['UpToDate'] = 'Dirty Server Manager up to date!';
     }
+
     $this->LoadView('About');
   }
   public function Account(){
