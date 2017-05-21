@@ -76,9 +76,11 @@
     }
     .tabgroup div .ConfigOption span{
       font-size: 20px;
+      color: white;
     }
     .tabgroup div .ConfigOption .Definition{
       font-size: 15px;
+      color: #555;
     }
 </style>
 <div id="Top"><span class="Title"><svg class="icon"><use xlink:href="#icon-cogs"></use></svg>SERVER CONFIG</span><span class="Time"></span></div>
@@ -92,7 +94,7 @@
 <section id="first-tab-group" class="tabgroup">
   <div id="tab1">
     <h2>Server INI</h2>
-
+    NOTE: Changes to this can only be done while the server is OFFLINE.</br></br>
     <?php
       $Count = 0;
       foreach ($Data['ServerINI'] as $key => $value) {
@@ -118,7 +120,7 @@
                   }
                 echo '</select>';
               }
-              echo '&nbsp;&nbsp;&nbsp;'.$value; 
+              echo '&nbsp;&nbsp;&nbsp;'.$value;
              ?>
 
           </div>

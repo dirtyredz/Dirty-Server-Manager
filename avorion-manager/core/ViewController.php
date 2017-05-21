@@ -38,6 +38,26 @@ class ViewController extends CommonController{
     $this->Data['AccessGraphsPage'] = 'Disabled';
     $this->Data['AccessDiscoveredMapPage'] = 'Disabled';
     $this->Data['AccessFactionsMapPage'] = 'Disabled';
+
+
+    $this->Data['Username'] = '';
+    $this->Data['LoggedIn'] = false;
+    $this->Data['LoggedInClass'] = 'Disabled';
+    $cookie = isset($_COOKIE['rememberme']) ? $_COOKIE['rememberme'] : '';
+    if($this->SessionLoggedIn()) {
+      $this->Data['LoggedInClass'] = '';
+      $this->Data['LoggedIn'] = true;
+      $this->LogMessage('Accessed Web Interface with valid session.');
+      $this->Data['Username'] = 'Logged in as: <span>'.$_SESSION['username'].'</span>';
+    }elseif ($cookie) {
+      require_once __DIR__ . '/AccountModel.php';
+      $AccountModel = new AccountModel;
+      if($AccountModel->CheckCookie($cookie)){
+        $this->Data['Username'] = 'Logged in as: <span>'.$_SESSION['username'].'</span>';
+        $this->Data['LoggedInClass'] = '';
+        $this->Data['LoggedIn'] = true;
+      }
+    }
     if($this->RoleAccess($this->Config['AccessConsolePage'])){//Role required for specific feature
       $this->Data['ConsoleAccess'] = '';
     }
@@ -61,25 +81,6 @@ class ViewController extends CommonController{
     }
     if($this->RoleAccess($this->Config['AccessFactionsMapPage'])){//Role required for specific feature
       $this->Data['AccessFactionsMapPage'] = '';
-    }
-
-    $this->Data['Username'] = '';
-    $this->Data['LoggedIn'] = false;
-    $this->Data['LoggedInClass'] = 'Disabled';
-    $cookie = isset($_COOKIE['rememberme']) ? $_COOKIE['rememberme'] : '';
-    if($this->SessionLoggedIn()) {
-      $this->Data['LoggedInClass'] = '';
-      $this->Data['LoggedIn'] = true;
-      $this->LogMessage('Accessed Web Interface with valid session.');
-      $this->Data['Username'] = 'Logged in as: <span>'.$_SESSION['username'].'</span>';
-    }elseif ($cookie) {
-      require_once __DIR__ . '/AccountModel.php';
-      $AccountModel = new AccountModel;
-      if($AccountModel->CheckCookie($cookie)){
-        $this->Data['Username'] = 'Logged in as: <span>'.$_SESSION['username'].'</span>';
-        $this->Data['LoggedInClass'] = '';
-        $this->Data['LoggedIn'] = true;
-      }
     }
     $this->Data['IPAddress'] = exec("hostname -I | awk '{print $1}'");
 
@@ -126,13 +127,13 @@ class ViewController extends CommonController{
             'Definition' => 'amount of damage done to an object on collision, from 0 to 1. 0: no damage, 1: full damage. default: 1',
             'Type' => 'input'),
       array('name' => 'BigWreckageDespawnTime',
-            'Definition' => 'Effect unknown.',
+            'Definition' => 'Time for wrecks with 10 or more blocks to despawn.',
             'Type' => 'input'),
       array('name' => 'SmallWreckageDespawnTime',
-            'Definition' => 'Effect unknown.',
+            'Definition' => 'Time for wrecks with less then 10 blocks to despawn.',
             'Type' => 'input'),
       array('name' => 'LootDiminishingFactor',
-            'Definition' => 'Effect unknown.',
+            'Definition' => 'Amount of loot dropped from mining/salvaging, higher equals less material.',
             'Type' => 'input'),
       array('name' => 'ResourceDropChance',
             'Definition' => 'Effect unknown (chance of resources dropping from destroyed wreckage pieces?)',
@@ -172,27 +173,27 @@ class ViewController extends CommonController{
             'Definition' => 'The time between server saves, in seconds.',
             'Type' => 'input'),
       array('name' => 'sectorUpdateTimeLimit',
-            'Definition' => 'Effect unknown.',
+            'Definition' => 'This is the time in seconds (by default 300, ie. 5 minutes) that the server will update a sector once it detects that no players are present. (including connected players through gates/wormholes)',
             'Type' => 'input'),
       array('name' => 'emptySectorUpdateInterval',
-            'Definition' => 'Effect unknown.',
+            'Definition' => 'Update interval in seconds that will be used for sectors without players. (lower value equals faster simulation/lower performance)',
             'Type' => 'input'),
       array('name' => 'workerThreads',
-            'Definition' => 'Effect unknown.',
+            'Definition' => 'Number of threads handling normal updates accross all active sectors.',
             'Type' => 'input'),
       array('name' => 'generatorThreads',
-            'Definition' => 'Effect unknown.',
+            'Definition' => 'Number of threads handling sector generation. ie When calculating a jump or in a sector with wormholes/gates. (These are temporary/unlimited and run at full load to perform computations quickly.)',
             'Type' => 'input'),
       array('name' => 'weakUpdate',
-            'Definition' => 'Effect unknown.',
+            'Definition' => 'When enabled sectors that have no players are updated in a more lightweight and simplified way, without huge physics calculations, which saves performance.',
             'Type' => 'select',
             'Values' => array('True'=>'true','False'=>'false')),
       array('name' => 'immediateWriteout',
-            'Definition' => 'Effect unknown. (Presumably changes behaviour of writing to the log file.)',
+            'Definition' => 'immediately writes data to the players .dat file, disabling will save on performance. (Unkown interval when disabled)',
             'Type' => 'select',
             'Values' => array('True'=>'true','False'=>'false')),
       array('name' => 'profiling',
-            'Definition' => 'Effect unknown.',
+            'Definition' => 'Analysis of last 20 frames is printed out when profiling is enabled and /status command is used. (Profiling measures time for actions to complete.)',
             'Type' => 'select',
             'Values' => array('True'=>'true','False'=>'false')),
       array('name' => 'port',

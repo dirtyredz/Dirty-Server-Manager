@@ -27,8 +27,8 @@ class ServerConfigController extends CommonController{
 
   public function GetManagerConfig(){
     $this->ConfigParser = new ConfigParser();
-    if($this->ParseBASH($this->Config['ManagerConfig'])){
-      return $this->ConfigParser->GetBASH();
+    if($this->ParseINI($this->Config['ManagerConfig'])){
+      return $this->ConfigParser->GetINI();
     }
   }
   private function ParseBASH($File){

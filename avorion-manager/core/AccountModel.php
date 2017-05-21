@@ -65,7 +65,6 @@ class AccountModel extends CommonController{
       $this->LogMessage($Username.' Generated Token.');
 
       if(array_key_exists('Token',$this->Login[$Username])){
-
         if(count($this->Login[$Username]['Token']) >= 5){
           $newArr = array($key => $Token);
           $this->Login[$Username]['Token'] = array_merge($newArr,$this->Login[$Username]['Token']);
@@ -157,6 +156,6 @@ class AccountModel extends CommonController{
     }
     private function StoreDatabase(){
       $file = "<?php\n\n\$Login=".var_export($this->Login, TRUE).";";
-      file_put_contents(__DIR__ .'/Database.php', $file);
+      file_put_contents(__DIR__ .'/../Database.php', $file);
     }
 }

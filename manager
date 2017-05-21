@@ -7,15 +7,18 @@ SCRIPTPATH=$(dirname "$SCRIPT")
 #http://stackoverflow.com/questions/242538/unix-shell-script-find-out-which-directory-the-script-file-resides
 
 #Pull values from config INI
-MAX_PLAYERS=$(awk -F "=" '/MAX_PLAYERS/ {print $2}' manager-config.ini)
-GALAXY=$(awk -F "=" '/GALAXY/ {print $2}' manager-config.ini)
-PARAMS=$(awk -F "=" '/PARAMS/ {print $2}' manager-config.ini)
-PORT=$(awk -F "=" '/PORT/ {print $2}' manager-config.ini)
-LOG_ROTATION=$(awk -F "=" '/LOG_ROTATION/ {print $2}' manager-config.ini)
-AutoRestart=$(awk -F "=" '/AutoRestart/ {print $2}' manager-config.ini)
-DAILYRESTART=$(awk -F "=" '/DAILYRESTART/ {print $2}' manager-config.ini)
-BETA=$(awk -F "=" '/BETA/ {print $2}' manager-config.ini)
-PHPPORT=$(awk -F "=" '/PHPPORT/ {print $2}' manager-config.ini)
+source <(grep = manager-config.ini)
+#sed "s/;/#/g" manager-config.ini | source /dev/stdin
+MAX_PLAYERS=`echo ${MAX_PLAYERS} | sed -e 's/\r//g'`
+GALAXY=`echo ${GALAXY} | sed -e 's/\r//g'`
+PARAMS=`echo ${PARAMS} | sed -e 's/\r//g'`
+PORT=`echo ${PORT} | sed -e 's/\r//g'`
+LOG_ROTATION=`echo ${LOG_ROTATION} | sed -e 's/\r//g'`
+AutoRestart=`echo ${AutoRestart} | sed -e 's/\r//g'`
+DAILYRESTART=`echo ${DailyRestart} | sed -e 's/\r//g'`
+BETA=`echo ${BETA} | sed -e 's/\r//g'`
+PHPPORT=`echo ${PHPPORT} | sed -e 's/\r//g'`
+
 # Standard Config - Dont touch
 TMUX_SESSION=avoriontmux
 INSTALL_DIR=$SCRIPTPATH/serverfiles
@@ -169,8 +172,10 @@ case $1 in
       DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} is being forcibly closed! Just incase." "${RUN_BY}"
       if ! kill $(pidof ${SERVER}) > /dev/null 2>&1; then
         DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Could not send SIGTERM to Server Process." "${RUN_BY}"
+        sleep 1
+        tmux kill-session -t ${TMUX_SESSION}
       fi
-      tmux kill-session -t ${TMUX_SESSION}
+
     else
       DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} is not running currently!" "${RUN_BY}"
 		fi
@@ -206,27 +211,14 @@ case $1 in
 		DynamicEcho "restarting ${PURPLE}${SERVER}${NOCOLOR}..." "${RUN_BY}"
     OLDPID=$(pidof ${SERVER})
 		$0 stop "${RUN_BY}"
-    sleep 60
+    sleep 90
 		$0 start "${RUN_BY}"
     NEWPID=$(pidof ${SERVER})
-    time=0
-    #First Try
-    while [ $time -lt 30 ]; do
-      if [ pidof ${SERVER} > /dev/null ] && [ OLDPID != NEWPID ]; then
-        DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} has successfully restarted!" "${RUN_BY}"
-        exit 1
-      else
-        DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} attempting restart of the server." "${RUN_BY}"
-        if ! kill $(pidof ${SERVER}) > /dev/null 2>&1; then
-          DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Could not send SIGTERM to Server Process." "${RUN_BY}"
-        fi
-        tmux kill-session -t ${TMUX_SESSION}
-        $0 start "${RUN_BY}"
-      fi
-      let time++
-      sleep 10
-    done
-    DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} has failed to restart the server." "${RUN_BY}"
+    if [ pidof ${SERVER} > /dev/null ] && [ OLDPID != NEWPID ]; then
+      DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} has successfully restarted!" "${RUN_BY}"
+    else
+      DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} attempting restart of the server." "${RUN_BY}"
+    fi
 	;;
 	"status")
 
