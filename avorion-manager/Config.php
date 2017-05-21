@@ -10,15 +10,13 @@ $Config = array();
     $Config['HomeCustomMessageFour'] = '';
 
     //true or false
-    $Config['ShowOnlinePlayers'] = true;//Shows online players list on home screen
     $Config['ShowOnlinePlayerCount'] = true;//shows online players count ie(0/10) on home screen
-    $Config['ShowDiskUsage'] = true;//shows disk space usage on home screen
-    $Config['ShowChatLog'] = true;//shows chat log on home screen
 
 //ROLE SETTINGS
     //Page Access
     //Setting to 0 will make the page public
     $Config['AccessConsolePage'] = 30;//User must have a role of 30 or higher to access the page
+    $Config['AccessServerConfigPage'] = 50;//User must have a role of 30 or higher to access the page
     $Config['AccessFactionsPage'] = 0;//User must have a role of 0 or higher to view the Factions page
     $Config['AccessGraphsPage'] = 0;//User must have a role of 0 or higher to view the Graphs page
     $Config['AccessDiscoveredMapPage'] = 0;//User must have a role of 0 or higher to view the DiscoveredMap page
@@ -27,6 +25,10 @@ $Config = array();
     $Config['AccessUserManagmentPage'] = 30;//User must have a role of 30 or higher to access the page
 
     //Page Extra details/functions
+    //Setting to 0 will make the feature public
+    $Config['HomeChatLog'] = 0;//User must have a role of 0 or higher to vew chat log on home page
+    $Config['HomePlayerList'] = 0;//User must have a role of 0 or higher to vew Player List on home page
+    $Config['HomeDiskUsage'] = 10;//User must have a role of 10 or higher to vew Disk Usage on home page
     $Config['ExtraGraphs'] = 10;//User must have a role of 10 or higher to vew additional graphs
     $Config['ConsoleCommandsAccess'] = 40;//User must have a role of 40 or higher to run commands in the console
     $Config['ConsoleStopCommand'] = 50;//User must have a role of 40 or higher to use the /stop command in the console
@@ -38,6 +40,7 @@ $Config = array();
 
 
 //Critical many features of the web inteface depend on these variables.
+$Config['GalaxiesDir'] = dirname(__FILE__).'/../.avorion/galaxies';
 $Config['ConsoleLog'] = dirname(__FILE__).'/../console.log';
 $Config['Manager'] = dirname(__FILE__).'/../manager';
 $Config['ManagerConfig'] = dirname(__FILE__).'/../manager-config.sh';

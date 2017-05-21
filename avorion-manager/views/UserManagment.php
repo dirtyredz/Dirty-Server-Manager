@@ -159,7 +159,7 @@
   $('input[name="NewUser"]').focus();
 
   //Get Users
-  $.get( "AccountController.php", {function:"ListUsers"},function(data) {
+  $.get( "Account", {function:"ListUsers"},function(data) {
     Obj = $.parseJSON(data);
     console.log(Obj);
     //Put Users List into UL
@@ -171,7 +171,7 @@
 
   //Register click event with the users list buttons.
   $('#ListUser').on('click','button[name="DeleteUser"]',function(){
-    $.post("AccountController.php", {DeleteUser:$(this).val()}, function(data) {
+    $.post("Account", {DeleteUser:$(this).val()}, function(data) {
         console.log(data);
         $('button[value='+data['username']+']').parent().remove();
         AddNotification(data['message']);
@@ -180,14 +180,14 @@
 
   //Register click event with the users list buttons.
   $('#ListUser').on('click','button[name="ChangeRole"]',function(){
-    $.post("AccountController.php", {ChangeRole:$(this).val(),Role:$('input[name="'+$(this).val()+'Role"]').val()}, function(data) {
+    $.post("Account", {ChangeRole:$(this).val(),Role:$('input[name="'+$(this).val()+'Role"]').val()}, function(data) {
         AddNotification(data['message']);
     },'json');
   });
 
   //Register click event with the users list buttons.
   $('#ListUser').on('click','button[name="ResetPass"]',function(){
-    $.post("AccountController.php", {ResetPass:$(this).val()}, function(data) {
+    $.post("Account", {ResetPass:$(this).val()}, function(data) {
         AddNotification(data['message']);
     },'json');
   });
@@ -196,7 +196,7 @@
   $("#AddUser").submit(function(event){
     event.preventDefault();
     $.ajax({
-      'url': 'AccountController.php',
+      'url': 'Account',
       'type': 'POST',
       'dataType': 'json',
       'data': {

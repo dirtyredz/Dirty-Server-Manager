@@ -23,7 +23,7 @@ Step 2: Create a new user for avorion to run on. (Do not use root)
 
 Step 3: Download the manager
 
-        wget https://github.com/dirtyredz/Dirty-Server-Manager/files/1004405/DirtyServerManager.tar.gz
+        wget -O DirtyServerManager.tar.gz avorion.dirtyredz.com
 
 Step 4: Unpack the tar file
 

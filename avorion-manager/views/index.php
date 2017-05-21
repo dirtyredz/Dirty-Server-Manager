@@ -326,6 +326,10 @@
             <title>about</title>
             <path d="M12.571 22.429v4.286q0 0.286-0.214 0.5t-0.5 0.214h-4.286q-0.286 0-0.5-0.214t-0.214-0.5v-4.286q0-0.286 0.214-0.5t0.5-0.214h4.286q0.286 0 0.5 0.214t0.214 0.5zM18.214 11.714q0 0.964-0.277 1.804t-0.625 1.366-0.982 1.063-1.027 0.777-1.089 0.634q-0.732 0.411-1.223 1.161t-0.491 1.196q0 0.304-0.214 0.58t-0.5 0.277h-4.286q-0.268 0-0.455-0.33t-0.188-0.67v-0.804q0-1.482 1.161-2.795t2.554-1.938q1.054-0.482 1.5-1t0.446-1.357q0-0.75-0.83-1.321t-1.92-0.571q-1.161 0-1.929 0.518-0.625 0.446-1.911 2.054-0.232 0.286-0.554 0.286-0.214 0-0.446-0.143l-2.929-2.232q-0.232-0.179-0.277-0.446t0.098-0.5q2.857-4.75 8.286-4.75 1.429 0 2.875 0.554t2.607 1.482 1.893 2.277 0.732 2.83z"></path>
             </symbol>
+            <symbol id="icon-cogs" viewBox="0 0 32 32">
+            <title>cogs</title>
+            <path d="M11.366 22.564l1.291-1.807-1.414-1.414-1.807 1.291c-0.335-0.187-0.694-0.337-1.071-0.444l-0.365-2.19h-2l-0.365 2.19c-0.377 0.107-0.736 0.256-1.071 0.444l-1.807-1.291-1.414 1.414 1.291 1.807c-0.187 0.335-0.337 0.694-0.443 1.071l-2.19 0.365v2l2.19 0.365c0.107 0.377 0.256 0.736 0.444 1.071l-1.291 1.807 1.414 1.414 1.807-1.291c0.335 0.187 0.694 0.337 1.071 0.444l0.365 2.19h2l0.365-2.19c0.377-0.107 0.736-0.256 1.071-0.444l1.807 1.291 1.414-1.414-1.291-1.807c0.187-0.335 0.337-0.694 0.444-1.071l2.19-0.365v-2l-2.19-0.365c-0.107-0.377-0.256-0.736-0.444-1.071zM7 27c-1.105 0-2-0.895-2-2s0.895-2 2-2 2 0.895 2 2-0.895 2-2 2zM32 12v-2l-2.106-0.383c-0.039-0.251-0.088-0.499-0.148-0.743l1.799-1.159-0.765-1.848-2.092 0.452c-0.132-0.216-0.273-0.426-0.422-0.629l1.219-1.761-1.414-1.414-1.761 1.219c-0.203-0.149-0.413-0.29-0.629-0.422l0.452-2.092-1.848-0.765-1.159 1.799c-0.244-0.059-0.492-0.109-0.743-0.148l-0.383-2.106h-2l-0.383 2.106c-0.251 0.039-0.499 0.088-0.743 0.148l-1.159-1.799-1.848 0.765 0.452 2.092c-0.216 0.132-0.426 0.273-0.629 0.422l-1.761-1.219-1.414 1.414 1.219 1.761c-0.149 0.203-0.29 0.413-0.422 0.629l-2.092-0.452-0.765 1.848 1.799 1.159c-0.059 0.244-0.109 0.492-0.148 0.743l-2.106 0.383v2l2.106 0.383c0.039 0.251 0.088 0.499 0.148 0.743l-1.799 1.159 0.765 1.848 2.092-0.452c0.132 0.216 0.273 0.426 0.422 0.629l-1.219 1.761 1.414 1.414 1.761-1.219c0.203 0.149 0.413 0.29 0.629 0.422l-0.452 2.092 1.848 0.765 1.159-1.799c0.244 0.059 0.492 0.109 0.743 0.148l0.383 2.106h2l0.383-2.106c0.251-0.039 0.499-0.088 0.743-0.148l1.159 1.799 1.848-0.765-0.452-2.092c0.216-0.132 0.426-0.273 0.629-0.422l1.761 1.219 1.414-1.414-1.219-1.761c0.149-0.203 0.29-0.413 0.422-0.629l2.092 0.452 0.765-1.848-1.799-1.159c0.059-0.244 0.109-0.492 0.148-0.743l2.106-0.383zM21 15.35c-2.402 0-4.35-1.948-4.35-4.35s1.948-4.35 4.35-4.35 4.35 1.948 4.35 4.35c0 2.402-1.948 4.35-4.35 4.35z"></path>
+            </symbol>
           </defs>
         </svg>
         <div id="Wrapper">
@@ -348,6 +352,7 @@
               <ul>
                 <li id="HomeBtn" class="Active"><svg class="icon icon-untitled5"><use xlink:href="#icon-untitled5"></use></svg>HOME</li>
                 <li id="ConsoleBtn" class="NotActive <?php echo $Data['ConsoleAccess']; ?>"><svg class="icon"><use xlink:href="#icon-untitled3"></use></svg>CONSOLE</li>
+                <li id="ServerConfigBtn" class="NotActive <?php echo $Data['AccessServerConfigPage']; ?>"><svg class="icon"><use xlink:href="#icon-cogs"></use></svg>CONFIG</li>
                 <li id="FactionsBtn" class="NotActive <?php echo $Data['AccessFactionsPage']; ?>"><svg class="icon"><use xlink:href="#icon-earth"></use></svg>FACTIONS</li>
                 <li id="PlayersBtn" class="NotActive <?php echo $Data['AccessPlayerPage']; ?>"><svg class="icon"><use xlink:href="#icon-players"></use></svg>PLAYERS</li>
                 <li id="MapsBtn" class="NotActive"><svg class="icon"><use xlink:href="#icon-map"></use></svg>MAPS</li>
@@ -376,9 +381,7 @@
             </div>
             <div id="Main">
               <?php
-                //require_once __DIR__.'/../ViewController.php';
-                //$ViewController = new ViewController;
-                //$ViewController->Home();
+
                 $this->Home();
               ?>
             </div>
@@ -397,13 +400,13 @@
           GetTime();
         },100);
         function GetTime(){
-          $.get( "RefreshController.php", {function:"GetTime"},function(data) {
+          $.get( "GetData", {function:"GetTime"},function(data) {
             $('.Time').html('Server Time: '+data['Date']);
           },'json');
         }
         var TimeRefresh = setInterval(function () {
           GetTime();
-        }, 10000);
+        }, 60000);
 
         function Load(File){
           $Main = $("#Main");
@@ -411,7 +414,7 @@
           clearInterval(window.HomeRefresh);
           clearInterval(window.PageRefresh);
           $Main.animate({opacity: 0},250,function(){
-            $Main.load('ViewController.php',{view:File},function(){
+            $Main.load('View',{view:File},function(){
               $Main.animate({opacity: 1},250);
               $("#Loading").hide();
               GetTime();
@@ -431,7 +434,7 @@
                 });
                 $("li#SignOutBtn").click(function() {
                   var ipaddress = "http://<?php echo $Data['IPAddress']; ?>:8080"
-                  $.get("AccountController.php", {'function':'LogOut'}, function(data) {
+                  $.get("Account", {'function':'LogOut'}, function(data) {
                     window.location.href=ipaddress;
                   });
                 });
@@ -459,6 +462,12 @@
              $(this).toggleClass('Active').toggleClass('NotActive');
              Load("Console");
              console.log("Console Link Clicked!");
+         });
+         $("li#ServerConfigBtn").click(function() {
+             $('li.Active').toggleClass('Active').toggleClass('NotActive');
+             $(this).toggleClass('Active').toggleClass('NotActive');
+             Load("ServerConfig");
+             console.log("Server Config Link Clicked!");
          });
         $("li#HomeBtn").click(function() {
             $('li.Active').toggleClass('Active').toggleClass('NotActive');

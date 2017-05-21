@@ -1,15 +1,13 @@
 <?php
-class RefreshModel {
+class RefreshModel extends CommonController {
     public $TimeArray = array();
     public $Range = 12;
-    private $Config = array();
-    function __construct($Range = null)
-    {
+
+    function __construct($Range = null){
+        parent::__construct();
+
         $Timezone = `timedatectl status | grep "Time zone"`;
         date_default_timezone_set(trim(preg_replace('/Time zone: | \(.*/','',$Timezone)));
-        include_once __DIR__ .'/Common.php';
-        include __DIR__ .'/Config.php';
-        $this->Config = $Config;
 
         if(isset($Range)){
           if($Range == 1){
@@ -105,7 +103,7 @@ class RefreshModel {
       return array($Time, $Data1, $Data2, $Data3);
     }
     public function GetPlayersOnlineGraph(){
-      if(!is_file(dirname(__FILE__).'/logs/'.date('d-m-Y').'_status.log')){
+      if(!is_file(dirname(__FILE__).'/../logs/'.date('d-m-Y').'_status.log')){
         return array();
       }
       $Time = `grep -h "Players Online" $(find {$this->Config['LogsDir']}/*_status.log -printf '%T+ %p\n' | sort -n | sed -e 's/.* //g') | tail -n {$this->Range} | sed -e 's/|.*//g' -e 's/-/:/g3' | tr ' ' 'T' | sed -e 's/..$/00/' | awk '{print q $0 q}' ORS=','`;
@@ -127,7 +125,7 @@ class RefreshModel {
         return $PlotlyData;
     }
     public function GetCurrentServerLoad(){
-      if(!is_file(dirname(__FILE__).'/logs/'.date('d-m-Y').'_status.log')){
+      if(!is_file(dirname(__FILE__).'/../logs/'.date('d-m-Y').'_status.log')){
         return array();
       }
       $Date = date('d-m-Y');
@@ -135,7 +133,7 @@ class RefreshModel {
       return $Data;
     }
     public function GetServerLoadGraph(){
-        if(!is_file(dirname(__FILE__).'/logs/'.date('d-m-Y').'_status.log')){
+        if(!is_file(dirname(__FILE__).'/../logs/'.date('d-m-Y').'_status.log')){
           return array();
         }
         $Time = `grep -h "avg. server load" $(find {$this->Config['LogsDir']}/*_status.log -printf '%T+ %p\n' | sort -n | sed -e 's/.* //g') | tail -n {$this->Range} | sed -e 's/|.*//g' -e 's/-/:/g3' | tr ' ' 'T' | sed -e 's/..$/00/' | awk '{print q $0 q}' ORS=','`;
@@ -157,7 +155,7 @@ class RefreshModel {
         return $PlotlyData;
     }
     public function GetServerUpdateGraph(){
-        if(!is_file(dirname(__FILE__).'/logs/'.date('d-m-Y').'_status.log')){
+        if(!is_file(dirname(__FILE__).'/../logs/'.date('d-m-Y').'_status.log')){
           return array();
         }
         $Time = `grep -h "avg. update" $(find {$this->Config['LogsDir']}/*_status.log -printf '%T+ %p\n' | sort -n | sed -e 's/.* //g') | tail -n {$this->Range} | sed -e 's/|.*//g' -e 's/-/:/g3' | tr ' ' 'T' | sed -e 's/..$/00/' | awk '{print q $0 q}' ORS=','`;
@@ -206,7 +204,7 @@ class RefreshModel {
         return $PlotlyData;
     }
     public function GetServerMemoryGraph(){
-        if(!is_file(dirname(__FILE__).'/logs/'.date('d-m-Y').'_status.log')){
+        if(!is_file(dirname(__FILE__).'/../logs/'.date('d-m-Y').'_status.log')){
           return array();
         }
         $Time = `grep -h "Players Online" $(find {$this->Config['LogsDir']}/*_status.log -printf '%T+ %p\n' | sort -n | sed -e 's/.* //g') | tail -n {$this->Range} | sed -e 's/|.*//g' -e 's/-/:/g3' | tr ' ' 'T' | sed -e 's/..$/00/' | awk '{print q $0 q}' ORS=','`;
@@ -255,7 +253,7 @@ class RefreshModel {
         return $PlotlyData;
     }
     public function GetCpuUsageGraph(){
-      if(!is_file(dirname(__FILE__).'/logs/'.date('d-m-Y').'_manager.log') || !is_file(dirname(__FILE__).'/logs/'.date('d-m-Y').'_status.log')){
+      if(!is_file(dirname(__FILE__).'/../logs/'.date('d-m-Y').'_manager.log') || !is_file(dirname(__FILE__).'/../logs/'.date('d-m-Y').'_status.log')){
         return array();
       }
       $SectorDataTime = `grep -h "GetSectorData" $(find {$this->Config['LogsDir']}/*_manager.log -printf '%T+ %p\n' | sort -n | sed -e 's/.* //g') | tail -n {$this->Range} | sed -e 's/|.*//g' -e 's/-/:/g3' | tr ' ' 'T' | sed -e 's/..$/00/' | awk '{print q $0 q}' ORS=','`;
@@ -365,7 +363,7 @@ class RefreshModel {
         return $PlotlyData;
     }
     public function GetDiscoveredMap(){
-      include __DIR__ ."/SectorData.php";
+      include __DIR__ ."/../SectorData.php";
       $X = array();
       $Y = array();
       foreach ($SectorData as $key => $value) {
@@ -384,7 +382,7 @@ class RefreshModel {
         return $PlotlyData;
     }
     public function GetFactionsMap(){
-        include __DIR__ ."/SectorData.php";
+        include __DIR__ ."/../SectorData.php";
         $Faction = array();
         foreach ($SectorData as $key => $value) {
           if(isset($value['FactionName'])){
@@ -411,7 +409,7 @@ class RefreshModel {
     }
     public function SendKeys($Message){
       shell_exec($this->Config['Manager'].' send PHP "'.$Message.'"');
-      LogMessage('Console command entered: '.$Message);
+      $this->LogMessage('Console command entered: '.$Message);
     }
     private function stringToColorCode($str) {
       $code = dechex(crc32($str));

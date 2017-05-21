@@ -130,7 +130,7 @@
           ?>
           $("#Post").submit(function(event){
             event.preventDefault();
-            $.post("RefreshController.php", {function:'SendKeys',Message:$("#Input").val()}, function(data) {
+            $.post("GetData", {function:'SendKeys',Message:$("#Input").val()}, function(data) {
                 $("#Input").val("");
             });
           });
@@ -139,7 +139,7 @@
    ?>
 
   function LoadnScroll(){
-    $.get( "RefreshController.php", {function:"GetConsoleData"},function(data) {
+    $.get( "GetData", {function:"GetConsoleData"},function(data) {
       $("#Main #Console").html(data);
     });
     if($("#ScrollLock").prop('checked')){

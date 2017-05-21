@@ -144,7 +144,7 @@
     }
 
     $.ajax({
-      'url': 'AccountController.php',
+      'url': 'Account',
       'type': 'POST',
       'dataType': 'json',
       'data': Data,

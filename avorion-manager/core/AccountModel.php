@@ -1,12 +1,11 @@
 <?php
-class AccountModel {
+class AccountModel extends CommonController{
     public $Login = array();
     public $Secret = 'fnsdkjfnslfmsalkhiuadasas;aifc35498343543598v/.)U(*U)';
-    function __construct()
-    {
-        include __DIR__ .'/Database.php';
+    function __construct(){
+        parent::__construct();
+        include __DIR__ .'/../Database.php';
         $this->Login = $Login;
-        include_once __DIR__ .'/Common.php';
     }
     public function GetUserRole($Username){
       return $this->Login[$Username]['Role'];
@@ -21,21 +20,21 @@ class AccountModel {
             if(array_key_exists('Token',$UserArray) && array_key_exists($Key,$UserArray['Token'])){
               //if a user with a token is found check if the token matches whats inside the key
               if($UserArray['Token'][$Key] == $token){
-                LogMessage($Username.' Cookie data validated!');
+                $this->LogMessage($Username.' Cookie data validated!');
                 $this->LogIn($Username,false);
                 return true;
               }
             }
           }
         }
-        LogMessage('Cookie used to attempt login but was not validated, Destroying cookie.');
+        $this->LogMessage('Cookie used to attempt login but was not validated, Destroying cookie.');
         unset($_COOKIE['rememberme']);
         setcookie('rememberme', null, -1, '/');
         return false;
     }
     public function LogIn($Username,$forever){
-        LogMessage($Username.' Signed In.');
-        session_start();
+        $this->LogMessage($Username.' Signed In.');
+        if(!isset($_SESSION)) { session_start(); };
         $Username = strtoupper($Username);
         if(isset($forever) && ($forever == true)) {
           if (isset($_COOKIE['rememberme'])) {
@@ -63,7 +62,7 @@ class AccountModel {
         return false;
     }
     public function _SetToken($Username,$Key,$Token){
-      LogMessage($Username.' Generated Token.');
+      $this->LogMessage($Username.' Generated Token.');
 
       if(array_key_exists('Token',$this->Login[$Username])){
 
@@ -81,7 +80,7 @@ class AccountModel {
       $this->StoreDatabase();
     }
     public function LogOut($Username,$AllLocations = false){
-        session_start();
+        if(!isset($_SESSION)) { session_start(); };
         if ($AllLocations || isset($_COOKIE['rememberme'])) {
           unset($this->Login[$Username]['Token']);
           $this->StoreDatabase();
@@ -101,7 +100,7 @@ class AccountModel {
     public function ResetPassword($Username){
       $return = array();
       $Username = strtoupper($Username);
-      LogMessage('Password Reset for: '.$Username);
+      $this->LogMessage('Password Reset for: '.$Username);
       $this->Login[$Username]['Hash'] = password_hash('123456789', PASSWORD_DEFAULT);
       $this->StoreDatabase();
       return true;
@@ -109,7 +108,7 @@ class AccountModel {
     public function ChangePassword($Username,$OldPass,$NewPass){
       $return = array();
       $Username = strtoupper($Username);
-      LogMessage('Password Reset for: '.$Username);
+      $this->LogMessage('Password Reset for: '.$Username);
       if(password_verify($OldPass,$this->Login[$Username]['Hash'])) {
           $this->Login[$Username]['Hash'] = password_hash($NewPass, PASSWORD_DEFAULT);
           $this->StoreDatabase();
@@ -119,20 +118,20 @@ class AccountModel {
       }
     }
     public function DeleteUser($Username){
-      LogMessage('Account Deleted for user: '.$Username);
+      $this->LogMessage('Account Deleted for user: '.$Username);
       $Username = strtoupper($Username);
       unset($this->Login[$Username]);
       $this->StoreDatabase();
       return true;
     }
     public function ChangeRole($Username,$Role){
-      LogMessage('Role changed for user: '.$Username);
+      $this->LogMessage('Role changed for user: '.$Username);
       $this->Login[$Username]['Role'] = $Role;
       $this->StoreDatabase();
       return true;
     }
     public function AddUser($Username,$Role = '10'){
-      LogMessage('Account Created for user: '.$Username.', With role level: '.$Role);
+      $this->LogMessage('Account Created for user: '.$Username.', With role level: '.$Role);
       $Username = strtoupper($Username);
       $this->Login[$Username]['Hash'] = password_hash('123456789', PASSWORD_DEFAULT);
       $this->Login[$Username]['Role'] = $Role;
@@ -147,7 +146,7 @@ class AccountModel {
       return false;
     }
     public function ListUsers($Exclude){
-        LogMessage('Listing users!');
+        $this->LogMessage('Listing users!');
         $returnArray = array();
         foreach ($this->Login as $Username => $value) {
           if(!in_array($Username,$Exclude)){

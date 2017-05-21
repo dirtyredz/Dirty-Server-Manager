@@ -3,22 +3,60 @@
 <input type="range" name="range" min="1" max="13" value="2"><span>Hours/Date Range: </span><span id="HoursRange">6 Hours</span>
 </div>
 <br/>
-<div id="ServerLoad" style="width: 100%; height: 250px;"><!-- Plotly chart will be drawn inside this DIV --></div>
-<br/>
-<div id="PlayersOnline" style="width: 100%; height: 250px;"><!-- Plotly chart will be drawn inside this DIV --></div>
-<br/>
 <?php
-    if($Data['AccessGranted']) {
+    if($Data['ServerLoadGraph']) {
         ?>
-        <div id="InMemory" style="width: 100%; height: 250px;"><!-- Plotly chart will be drawn inside this DIV --></div>
+        <div id="ServerLoad" style="width: 100%; height: 250px;"><!-- Plotly chart will be drawn inside this DIV --></div>
         <br/>
-        <div id="Updates" style="width: 100%; height: 250px;"><!-- Plotly chart will be drawn inside this DIV --></div>
-        <br/>
-        <div id="CPU" style="width: 100%; height: 250px;"><!-- Plotly chart will be drawn inside this DIV --></div>
         <?php
     }else{
       ?>
-      More Graphs are available when logged in.
+      Server Load Graph available when logged in.
+      <br/>
+      <?php
+    }
+    if($Data['OnlinePlayersGraph']) {
+        ?>
+        <div id="PlayersOnline" style="width: 100%; height: 250px;"><!-- Plotly chart will be drawn inside this DIV --></div>
+        <br/>
+        <?php
+    }else{
+      ?>
+      Players Online Graph available when logged in.
+      <br/>
+      <?php
+    }
+    if($Data['InMemoryGraph']) {
+        ?>
+        <div id="InMemory" style="width: 100%; height: 250px;"><!-- Plotly chart will be drawn inside this DIV --></div>
+        <br/>
+        <?php
+    }else{
+      ?>
+      In Memory Graph available when logged in.
+      <br/>
+      <?php
+    }
+    if($Data['UpdatesGraph']) {
+        ?>
+        <div id="Updates" style="width: 100%; height: 250px;"><!-- Plotly chart will be drawn inside this DIV --></div>
+        <br/>
+        <?php
+    }else{
+      ?>
+      Updates Graph available when logged in.
+      <br/>
+      <?php
+    }
+    if($Data['CpuUsageGraph']) {
+        ?>
+        <div id="CPU" style="width: 100%; height: 250px;"><!-- Plotly chart will be drawn inside this DIV --></div>
+        <br/>
+        <?php
+    }else{
+      ?>
+      Cpu Usage Graph available when logged in.
+      <br/>
       <?php
     }
  ?>
@@ -72,97 +110,109 @@
       $("#HoursRange").html(Range);
   });
   $('.OptionsWrapper > input[name="range"]').on('change', function () {
-      LoadServerLoadGraph();
-      LoadPlayersGraph();
       <?php
-          if($Data['AccessGranted']) {
-              ?>
-              LoadInMemoryGraph();
-              LoadUpdatesGraph();
-              LoadCpuLoadGraph();
-              <?php
-          }
-       ?>
+        if($Data['ServerLoadGraph']) { ?>LoadServerLoadGraph();<?php }
+      ?>
+      <?php
+        if($Data['OnlinePlayersGraph']) { ?>LoadPlayersGraph();<?php }
+      ?>
+      <?php
+        if($Data['InMemoryGraph']) { ?>LoadInMemoryGraph();<?php }
+      ?>
+      <?php
+        if($Data['UpdatesGraph']) { ?>LoadUpdatesGraph();<?php }
+      ?>
+      <?php
+        if($Data['CpuUsageGraph']) { ?>LoadCpuLoadGraph();<?php }
+      ?>
   });
 
-  LoadServerLoadGraph();
-  LoadPlayersGraph();
+
   <?php
-      if($Data['AccessGranted']) {
-          ?>
-          LoadInMemoryGraph();
-          LoadUpdatesGraph();
-          LoadCpuLoadGraph();
-          <?php
-      }
-   ?>
+    if($Data['ServerLoadGraph']) { ?>LoadServerLoadGraph();<?php }
+  ?>
+  <?php
+    if($Data['OnlinePlayersGraph']) { ?>LoadPlayersGraph();<?php }
+  ?>
+  <?php
+    if($Data['InMemoryGraph']) { ?>LoadInMemoryGraph();<?php }
+  ?>
+  <?php
+    if($Data['UpdatesGraph']) { ?>LoadUpdatesGraph();<?php }
+  ?>
+  <?php
+    if($Data['CpuUsageGraph']) { ?>LoadCpuLoadGraph();<?php }
+  ?>
+
 
   window.PageRefresh = setInterval(function(){
     if((new Date().getMinutes() % 5) == 0){
-      LoadServerLoadGraph();
-      LoadPlayersGraph();
       <?php
-          if($Data['AccessGranted']) {
-              ?>
-              LoadInMemoryGraph();
-              LoadUpdatesGraph();
-              LoadCpuLoadGraph();
-              <?php
-          }
-       ?>
+        if($Data['ServerLoadGraph']) { ?>LoadServerLoadGraph();<?php }
+      ?>
+      <?php
+        if($Data['OnlinePlayersGraph']) { ?>LoadPlayersGraph();<?php }
+      ?>
+      <?php
+        if($Data['InMemoryGraph']) { ?>LoadInMemoryGraph();<?php }
+      ?>
+      <?php
+        if($Data['UpdatesGraph']) { ?>LoadUpdatesGraph();<?php }
+      ?>
+      <?php
+        if($Data['CpuUsageGraph']) { ?>LoadCpuLoadGraph();<?php }
+      ?>
     }
   },60000)
-  <?php
-    if($Data['AccessGranted']) {
-  ?>
-    function LoadCpuLoadGraph(){
-      var layout = {
-          title: 'Server CPU Usage',
-          showlegend: false,
-          paper_bgcolor:'rgba(0,0,0,0)',
-          plot_bgcolor:'rgba(0,0,0,0)',
-          yaxis: {
-            gridcolor: 'rgba(0,0,0,0)',
-            range: [0,100]
-          },
-          xaxis: {
-            gridcolor: 'rgba(0,0,0,0)'
-          },
-          margin: {
-              l: 30,
-              r: 30,
-              t: 30,
-              b: 30
-          },
-      };
-      $.get( "RefreshController.php", {function:"GetCpuUsage",Range:$('.OptionsWrapper > input[name="range"]').val()},function(RecievedData) {
-        Plotly.newPlot('CPU', RecievedData,layout,{displaylogo: false});
-      },"json");
-    }
-    function LoadUpdatesGraph(){
-      var layout = {
-          title: 'Avg/Min/Max Updates',
-          showlegend: false,
-          paper_bgcolor:'rgba(0,0,0,0)',
-          plot_bgcolor:'rgba(0,0,0,0)',
-          yaxis: {
-            gridcolor: 'rgba(0,0,0,0)'
-          },
-          xaxis: {
-            gridcolor: 'rgba(0,0,0,0)'
-          },
-          margin: {
-              l: 30,
-              r: 30,
-              t: 30,
-              b: 30
-          },
-      };
-      $.get( "RefreshController.php", {function:"GetServerUpdates",Range:$('.OptionsWrapper > input[name="range"]').val()},function(RecievedData) {
-        Plotly.newPlot('Updates', RecievedData,layout,{displaylogo: false});
-      },"json");
-    }
-    function LoadInMemoryGraph(){
+
+  function LoadCpuLoadGraph(){
+    var layout = {
+        title: 'Server CPU Usage',
+        showlegend: false,
+        paper_bgcolor:'rgba(0,0,0,0)',
+        plot_bgcolor:'rgba(0,0,0,0)',
+        yaxis: {
+          gridcolor: 'rgba(0,0,0,0)',
+          range: [0,100]
+        },
+        xaxis: {
+          gridcolor: 'rgba(0,0,0,0)'
+        },
+        margin: {
+            l: 30,
+            r: 30,
+            t: 30,
+            b: 30
+        },
+    };
+    $.get( "GetData", {function:"GetCpuUsage",Range:$('.OptionsWrapper > input[name="range"]').val()},function(RecievedData) {
+      Plotly.newPlot('CPU', RecievedData,layout,{displaylogo: false});
+    },"json");
+  }
+  function LoadUpdatesGraph(){
+    var layout = {
+        title: 'Avg/Min/Max Updates',
+        showlegend: false,
+        paper_bgcolor:'rgba(0,0,0,0)',
+        plot_bgcolor:'rgba(0,0,0,0)',
+        yaxis: {
+          gridcolor: 'rgba(0,0,0,0)'
+        },
+        xaxis: {
+          gridcolor: 'rgba(0,0,0,0)'
+        },
+        margin: {
+            l: 30,
+            r: 30,
+            t: 30,
+            b: 30
+        },
+    };
+    $.get( "GetData", {function:"GetServerUpdates",Range:$('.OptionsWrapper > input[name="range"]').val()},function(RecievedData) {
+      Plotly.newPlot('Updates', RecievedData,layout,{displaylogo: false});
+    },"json");
+  }
+  function LoadInMemoryGraph(){
     var layout = {
         title: 'Players/Factions/Sectors In Memory',
         showlegend: false,
@@ -181,13 +231,11 @@
             b: 30
         },
     };
-    $.get( "RefreshController.php", {function:"GetInMemory",Range:$('.OptionsWrapper > input[name="range"]').val()},function(RecievedData) {
+    $.get( "GetData", {function:"GetInMemory",Range:$('.OptionsWrapper > input[name="range"]').val()},function(RecievedData) {
       Plotly.newPlot('InMemory', RecievedData,layout,{displaylogo: false});
     },"json");
   }
-  <?php
-  }
-  ?>
+
 
   function LoadServerLoadGraph(){
     var layout = {
@@ -209,7 +257,7 @@
             b: 30
         },
     };
-    $.get( "RefreshController.php", {function:"GetServerLoad",Range:$('.OptionsWrapper > input[name="range"]').val()},function(RecievedData) {
+    $.get( "GetData", {function:"GetServerLoad",Range:$('.OptionsWrapper > input[name="range"]').val()},function(RecievedData) {
       Plotly.newPlot('ServerLoad', RecievedData,layout,{displaylogo: false});
     },"json");
   }
@@ -233,7 +281,7 @@
             b: 30
         },
     };
-    $.get( "RefreshController.php", {function:"GetPlayersOnline",Range:$('.OptionsWrapper > input[name="range"]').val()},function(RecievedData) {
+    $.get( "GetData", {function:"GetPlayersOnline",Range:$('.OptionsWrapper > input[name="range"]').val()},function(RecievedData) {
       Plotly.newPlot('PlayersOnline', RecievedData,layout,{displaylogo: false});
     },"json");
   }

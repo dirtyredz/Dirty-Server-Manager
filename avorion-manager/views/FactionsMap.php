@@ -1,6 +1,6 @@
 <style type="text/css">
   #GalaxyMapImage2{
-    background-image: url('/recources/EmptyGalaxy.jpg');
+    background-image: url('/resources/EmptyGalaxy.jpg');
     background-position: 30px 30px;
     background-size: 740px 740px;
     background-repeat: no-repeat;
@@ -10,7 +10,7 @@
     display: none;
   }
   #GalaxyMapImage{
-    background-image: url('/recources/Galaxy740.png');
+    background-image: url('/resources/Galaxy740.png');
     background-position: 30px 30px;
     background-size: 740px 740px;
     background-repeat: no-repeat;
@@ -70,7 +70,7 @@ This map is loading alot of data, Please be patient.
     var ZoomFirst = false;
     var disableDragging = false;
     FactionsMap.addEventListener('contextmenu', event => event.preventDefault());
-    $.get( "RefreshController.php", {function:"GetFactionsMap"},function(RecievedData) {
+    $.get( "GetData", {function:"GetFactionsMap"},function(RecievedData) {
         Plotly.plot(FactionsMap, RecievedData , layout,{displaylogo: false,scrollZoom: false,
           modeBarButtonsToRemove: ['toImage','sendDataToCloud','zoomOut2d','zoomIn2d','autoScale2d','pan2d','hoverClosestCartesian'],
           modeBarButtonsToAdd:[{name:'Download Image (Does not include background)',icon:Plotly.Icons.camera,click:function(gd){

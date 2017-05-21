@@ -150,11 +150,11 @@
 
 
 <script type="text/javascript">
-    $.get( "RefreshController.php", {function:"GetChatLog"},function(data) {
+    $.get( "GetData", {function:"GetChatLog"},function(data) {
       $("#ChatLog").html(data);
     });
     window.PageRefresh = setInterval(function () {
-      $.get( "RefreshController.php", {function:"GetChatLog"},function(data) {
+      $.get( "GetData", {function:"GetChatLog"},function(data) {
         $("#ChatLog").html(data);
       });
     }, 60000);

@@ -86,7 +86,7 @@
 
 $("#SignOutAll").click(function() {
   var ipaddress = "http://<?php echo $Data['IPAddress']; ?>:8080"
-  $.get("AccountController.php", {'function':'LogOut','AllLocations': true}, function(data) {
+  $.get("Account", {'function':'LogOut','AllLocations': true}, function(data) {
     window.location.href=ipaddress;
   });
 });
@@ -94,7 +94,7 @@ $("#SignOutAll").click(function() {
 $("#ChangePassword").submit(function(event){
   event.preventDefault();
   $.ajax({
-    'url': 'AccountController.php',
+    'url': 'Account',
     'type': 'POST',
     'dataType': 'json',
     'data': {
