@@ -31,9 +31,11 @@ class ServerConfigController extends CommonController{
       return $this->ConfigParser->GetINI();
     }
   }
-  private function ParseBASH($File){
-    $this->ConfigParser->ParseBASH($File);
-    return $this->ConfigParser->Success;
+  public function GetPHPConfig(){
+    $this->ConfigParser = new ConfigParser();
+    if($this->ParseINI(__DIR__ . '/../PHPConfig.ini')){
+      return $this->ConfigParser->GetINI();
+    }
   }
 
   public function Update(){

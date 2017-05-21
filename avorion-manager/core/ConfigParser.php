@@ -29,52 +29,13 @@ class ConfigParser{
       }
     }
 
-    public function ParseBash($File){
-      $this->FilePath = $File;
-
-      if(file_exists($File) === true){
-
-          $handle = fopen($File, "r");
-          $contents = fread($handle, filesize($File));
-          $lines = explode("\n", $contents); // assuming unix style
-          // since we're only interested in declarations, filter accordingly.
-          $Content = array_filter($lines, array($this, 'isDeclaration'));
-          // Now you can iterator over $decls exploding on "=" to see param/value
-          fclose($handle);
-
-          $NewArray = array();
-          foreach ($Content as $key => $value) {
-            $T = explode('=',$value);
-            if(strpos($T[1], "#")){
-              $NewArray[$T[0]] = trim(substr($T[1], 0, strpos($T[1], "#")));
-            }else{
-              $NewArray[$T[0]] = trim($T[1]);
-            }
-          }
-          $this->ParsedData = $NewArray;
-      }else{
-          $this->ParsedData = [];
-      }
-      $this->Success = true;
-      if(false === $this->ParsedData){
-          $this->Success = false;
-          throw new \Exception(sprintf('Unable to parse file bash : %s', $this->FilePath));
-      }
-
-    }
-
-    private function isDeclaration($line) {
-        return $line != '#' && strpos($line, "=");
-    }
     /**
      * method to return ParsedData as array.
      */
     public function GetINI(){
       return $this->ParsedData;
     }
-    public function GetBASH(){
-      return $this->ParsedData;
-    }
+
 
     /**
      * method for change value in the ini file.

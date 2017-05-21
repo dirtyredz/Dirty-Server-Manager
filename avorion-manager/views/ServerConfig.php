@@ -133,19 +133,79 @@
   <div id="tab2">
     <h2>Manager Config</h2>
     <?php
+      $Count = 0;
       foreach ($Data['ManagerConfig'] as $key => $value) {
-        echo $key.' => '.$value.'</br>';
+        $value = trim($value,"'");
+        ?>
+        <div class="ConfigContainer">
+          <div class="ConfigOption">
+            <span><?php echo $key; ?></span>
+            <br/>
+            <span class="Definition"><?php echo $Data['ManagerConfigDetails'][$Count]['Definition']; ?></span>
+          </div>
+          <div class="ConfigInput">
+            <?php
+              if($Data['ManagerConfigDetails'][$Count]['Type'] == 'input'){
+                echo '<input class="" type="text" name="'.$key.'" value="'.$value.'"></input>';
+              }elseif($Data['ManagerConfigDetails'][$Count]['Type'] == 'select'){
+                echo '<select>';
+                  foreach ($Data['ManagerConfigDetails'][$Count]['Values'] as $SelectKey => $SelectValue) {
+                    if($value == $SelectValue){
+                      echo '<option value="'.$SelectValue.'" selected>'.$SelectKey.'</option>';
+                    }else{
+                      echo '<option value="'.$SelectValue.'">'.$SelectKey.'</option>';
+                    }
+                  }
+                echo '</select>';
+              }
+              echo '&nbsp;&nbsp;&nbsp;'.$value;
+             ?>
+
+          </div>
+        </div>
+        <?php
+        $Count +=1;
       }
      ?>
   </div>
   <div id="tab3">
     <h2>PHP Config</h2>
     <?php
+      $Count = 0;
       foreach ($Data['PHPConfig'] as $key => $value) {
+        $value = trim($value,"'");
         if($value != strip_tags($value)) {
             $value = htmlentities($value);
         }
-        echo $key.' => '.$value.'</br>';
+        ?>
+        <div class="ConfigContainer">
+          <div class="ConfigOption">
+            <span><?php echo $key; ?></span>
+            <br/>
+            <span class="Definition"><?php echo $Data['PHPConfigDetails'][$Count]['Definition']; ?></span>
+          </div>
+          <div class="ConfigInput">
+            <?php
+              if($Data['PHPConfigDetails'][$Count]['Type'] == 'input'){
+                echo '<input class="" type="text" name="'.$key.'" value="'.$value.'"></input>';
+              }elseif($Data['PHPConfigDetails'][$Count]['Type'] == 'select'){
+                echo '<select>';
+                  foreach ($Data['PHPConfigDetails'][$Count]['Values'] as $SelectKey => $SelectValue) {
+                    if($value == $SelectValue){
+                      echo '<option value="'.$SelectValue.'" selected>'.$SelectKey.'</option>';
+                    }else{
+                      echo '<option value="'.$SelectValue.'">'.$SelectKey.'</option>';
+                    }
+                  }
+                echo '</select>';
+              }
+              echo '&nbsp;&nbsp;&nbsp;'.$value;
+             ?>
+
+          </div>
+        </div>
+        <?php
+        $Count +=1;
       }
      ?>
    </div>

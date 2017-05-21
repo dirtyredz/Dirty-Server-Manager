@@ -350,29 +350,29 @@
               </div>
               <div id="MyUserName"><?php echo $Data['Username']; ?></div>
               <ul>
-                <li id="HomeBtn" class="Active"><svg class="icon icon-untitled5"><use xlink:href="#icon-untitled5"></use></svg>HOME</li>
-                <li id="ConsoleBtn" class="NotActive <?php echo $Data['ConsoleAccess']; ?>"><svg class="icon"><use xlink:href="#icon-untitled3"></use></svg>CONSOLE</li>
-                <li id="ServerConfigBtn" class="NotActive <?php echo $Data['AccessServerConfigPage']; ?>"><svg class="icon"><use xlink:href="#icon-cogs"></use></svg>CONFIG</li>
-                <li id="FactionsBtn" class="NotActive <?php echo $Data['AccessFactionsPage']; ?>"><svg class="icon"><use xlink:href="#icon-earth"></use></svg>FACTIONS</li>
-                <li id="PlayersBtn" class="NotActive <?php echo $Data['AccessPlayerPage']; ?>"><svg class="icon"><use xlink:href="#icon-players"></use></svg>PLAYERS</li>
-                <li id="MapsBtn" class="NotActive"><svg class="icon"><use xlink:href="#icon-map"></use></svg>MAPS</li>
-                <li id="DiscoveredSectorsBtn" class="SubLi AnimateLi <?php echo $Data['AccessDiscoveredMapPage']; ?>">Discovered Sectors</li>
-                <li id="FactionsMapBtn" class="SubLi AnimateLi <?php echo $Data['AccessFactionsMapPage']; ?>">Factions Map</li>
-                <li id="GraphsBtn" class="NotActive <?php echo $Data['AccessGraphsPage']; ?>"><svg class="icon"><use xlink:href="#icon-untitled2"></use></svg>GRAPHS</li>
-                <li id="AccountBtn" class="NotActive <?php echo $Data['LoggedInClass']; ?>"><svg class="icon"><use xlink:href="#icon-user"></use></svg>ACCOUNT</li>
-                <li id="UserManagmentBtn" class="NotActive <?php echo $Data['UserManagmentAccess']; ?>"><svg class="icon"><use xlink:href="#icon-users"></use></svg>USER MNGT</li>
+                <li id="HomeBtn" class="<?php echo ($Data['DefaultPage'] == 'Home' ? 'Active' : 'NotActive'); ?>"><svg class="icon icon-untitled5"><use xlink:href="#icon-untitled5"></use></svg>HOME</li>
+                <li id="ConsoleBtn" class="<?php echo ($Data['DefaultPage'] == 'Console' ? 'Active' : 'NotActive'); ?> <?php echo $Data['ConsoleAccess']; ?>"><svg class="icon"><use xlink:href="#icon-untitled3"></use></svg>CONSOLE</li>
+                <li id="ServerConfigBtn" class="<?php echo ($Data['DefaultPage'] == 'Config' ? 'Active' : 'NotActive'); ?> <?php echo $Data['AccessServerConfigPage']; ?>"><svg class="icon"><use xlink:href="#icon-cogs"></use></svg>CONFIG</li>
+                <li id="FactionsBtn" class="<?php echo ($Data['DefaultPage'] == 'Factions' ? 'Active' : 'NotActive'); ?> <?php echo $Data['AccessFactionsPage']; ?>"><svg class="icon"><use xlink:href="#icon-earth"></use></svg>FACTIONS</li>
+                <li id="PlayersBtn" class="<?php echo ($Data['DefaultPage'] == 'Players' ? 'Active' : 'NotActive'); ?> <?php echo $Data['AccessPlayerPage']; ?>"><svg class="icon"><use xlink:href="#icon-players"></use></svg>PLAYERS</li>
+                <li id="MapsBtn" class="Notactive"><svg class="icon"><use xlink:href="#icon-map"></use></svg>MAPS</li>
+                <li id="DiscoveredSectorsBtn" class="<?php echo ($Data['DefaultPage'] == 'DiscoveredMap' ? 'Active' : 'NotActive AnimateLi'); ?> SubLi <?php echo $Data['AccessDiscoveredMapPage']; ?>">Discovered Sectors</li>
+                <li id="FactionsMapBtn" class="<?php echo ($Data['DefaultPage'] == 'FactionsMap' ? 'Active' : 'NotActive AnimateLi'); ?> SubLi <?php echo $Data['AccessFactionsMapPage']; ?>">Factions Map</li>
+                <li id="GraphsBtn" class="<?php echo ($Data['DefaultPage'] == 'Graphs' ? 'Active' : 'NotActive'); ?> <?php echo $Data['AccessGraphsPage']; ?>"><svg class="icon"><use xlink:href="#icon-untitled2"></use></svg>GRAPHS</li>
+                <li id="AccountBtn" class="Notactive <?php echo $Data['LoggedInClass']; ?>"><svg class="icon"><use xlink:href="#icon-user"></use></svg>ACCOUNT</li>
+                <li id="UserManagmentBtn" class="Notactive <?php echo $Data['UserManagmentAccess']; ?>"><svg class="icon"><use xlink:href="#icon-users"></use></svg>USER MNGT</li>
                 <?php
                     if($Data['LoggedIn']) {
                         ?>
-                        <li id="SignOutBtn" class="NotActive"><svg class="icon"><use xlink:href="#icon-exit"></use></svg>SIGN OUT</li>
+                        <li id="SignOutBtn" class="Notactive"><svg class="icon"><use xlink:href="#icon-exit"></use></svg>SIGN OUT</li>
                         <?php
                     }else{
                         ?>
-                        <li id="SignInBtn" class="NotActive"><svg class="icon"><use xlink:href="#icon-enter"></use></svg>SIGN IN</li>
+                        <li id="SignInBtn" class="<?php echo ($Data['DefaultPage'] == 'SignIn' ? 'Active' : 'NotActive'); ?>"><svg class="icon"><use xlink:href="#icon-enter"></use></svg>SIGN IN</li>
                         <?php
                     }
                  ?>
-                 <li id="AboutBtn" class="NotActive"><svg class="icon"><use xlink:href="#icon-about"></use></svg>ABOUT</li>
+                 <li id="AboutBtn" class="<?php echo ($Data['DefaultPage'] == 'About' ? 'Active' : 'NotActive'); ?>"><svg class="icon"><use xlink:href="#icon-about"></use></svg>ABOUT</li>
               </ul>
               <br/>
               <br/>
@@ -381,8 +381,12 @@
             </div>
             <div id="Main">
               <?php
-
-                $this->Home();
+                $DefaultPage = $Data['DefaultPage'];
+                if(method_exists($this,$DefaultPage)){
+                  $this->$DefaultPage();
+                }else{
+                  echo '<h1>'.$DefaultPage.' Page Does Not Exist</h1>';
+                }
               ?>
             </div>
         </div>
