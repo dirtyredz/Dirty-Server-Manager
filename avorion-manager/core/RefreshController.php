@@ -73,6 +73,35 @@ class RefreshController extends CommonController{
     echo json_encode($return);
   }
 
+  public function SendMail(){
+    $return = array();
+    if($this->RoleAccess($this->Config['SendMail'])){//Role required for specific feature
+      $Title = htmlspecialchars($_POST['Title']);
+      $Name = htmlspecialchars($_POST['Name']);
+      $Subject = htmlspecialchars($_POST['Subject']);
+      $Message = htmlspecialchars($_POST['Message']);
+      $Message = str_replace("\n", "\\n", $Message);
+      $Credits = htmlspecialchars($_POST['Credits']);
+      $Iron = htmlspecialchars($_POST['Iron']);
+      $Titanium = htmlspecialchars($_POST['Titanium']);
+      $Naonite = htmlspecialchars($_POST['Naonite']);
+      $Trinium = htmlspecialchars($_POST['Trinium']);
+      $Xanion = htmlspecialchars($_POST['Xanion']);
+      $Ogonite = htmlspecialchars($_POST['Ogonite']);
+      $Avorion = htmlspecialchars($_POST['Avorion']);
+      $Command = '/sendmail "'.$Name.'" '.$Credits.' "'.$Title.'" "'.$Subject.'" '.$Iron.' '.$Titanium.' '.$Naonite.' '.$Trinium.' '.$Xanion.' '.$Ogonite.' '.$Avorion.' "'.$Message.'"';
+      $this->RefreshModel->SendKeys($Command);
+      $return['success'] = true;
+      //Not high enough role
+      $return['message'] = 'Mail Sent';
+    }else {
+      $return['success'] = false;
+      //Not high enough role
+      $return['message'] = 'Your Role level is not high enough to Send Mail.';
+    }
+    echo json_encode($return);
+  }
+
   /**
  * If User has appropriate Role access will echo json data needed to build the factions map to page.
  */

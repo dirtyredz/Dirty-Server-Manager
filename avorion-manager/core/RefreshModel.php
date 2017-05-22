@@ -408,7 +408,7 @@ class RefreshModel extends CommonController {
         return $PlotlyData;
     }
     public function SendKeys($Message){
-      shell_exec($this->Config['Manager'].' send PHP "'.$Message.'"');
+      shell_exec($this->Config['Manager'].' send PHP "'.addslashes($Message).'"');
       $this->LogMessage('Console command entered: '.$Message);
     }
     private function stringToColorCode($str) {

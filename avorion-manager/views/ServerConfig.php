@@ -132,6 +132,7 @@
   </div>
   <div id="tab2">
     <h2>Manager Config</h2>
+    <form id="ManagerConfigForm">
     <?php
       $Count = 0;
       foreach ($Data['ManagerConfig'] as $key => $value) {
@@ -167,9 +168,12 @@
         $Count +=1;
       }
      ?>
+   </form>
   </div>
   <div id="tab3">
     <h2>PHP Config</h2>
+    <form id="PHPConfigForm">
+    <input type="submit" name="submit" value="Submit" />
     <?php
       $Count = 0;
       foreach ($Data['PHPConfig'] as $key => $value) {
@@ -208,6 +212,7 @@
         $Count +=1;
       }
      ?>
+    </form>
    </div>
 </section>
 </div>

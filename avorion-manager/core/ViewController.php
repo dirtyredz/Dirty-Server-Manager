@@ -361,6 +361,9 @@ class ViewController extends CommonController{
       array('name' => 'ChangePHPConfigINI',
             'Definition' => 'The role level required to change the PHPConfig.ini file via the config page. (0=public)',
             'Type' => 'input'),
+      array('name' => 'SendMail',
+            'Definition' => 'The role level required to Send Mail via Form. (0=public)',
+            'Type' => 'input'),
       array('name' => 'EnableRSS',
             'Definition' => 'If enabled will allow access to the /rss page, which provides details in an easy format for third party software.',
             'Type' => 'select',
@@ -398,6 +401,13 @@ class ViewController extends CommonController{
     }else{
       $this->Data['AccessGranted'] = false;
     }
+    if($this->RoleAccess($this->Config['SendMail'])){//Role required for specific feature
+      $this->Data['SendMail'] = true;
+    }else{
+      $this->Data['SendMail'] = false;
+    }
+    include __DIR__ ."/../PlayerData.php";
+    $this->Data['PlayerData'] = $PlayerData;
     $this->LoadView('Console');
   }
   public function DiscoveredMap(){

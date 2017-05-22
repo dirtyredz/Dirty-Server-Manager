@@ -1,6 +1,6 @@
 <?php
 $uri_parts = parse_url($_SERVER['REQUEST_URI']);
-if (preg_match('/\.(?:png|jpg|jpeg|gif|css)$/', $uri_parts['path'])) {
+if (preg_match('/\.(?:png|jpg|jpeg|gif|css|js)$/', $uri_parts['path'])) {
     return false;
 } else {
     include __DIR__ .'/../core/CommonController.php';
@@ -17,9 +17,13 @@ if (preg_match('/\.(?:png|jpg|jpeg|gif|css)$/', $uri_parts['path'])) {
         }
       }
 
-      if(isset($_POST['function']) && $_POST['function'] == 'SendKeys'){
-        $RefreshController->SendKeys();
-        return true;
+      if(isset($_POST['function']) ){
+        $Method = $_POST['function'];
+
+        if(method_exists($RefreshController,$Method)){
+          $RefreshController->$Method();
+          return true;
+        }
       }
     }
 
