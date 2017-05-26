@@ -232,7 +232,7 @@ $(document).ready(function() {
   <select class="js-example-basic-single" name="Name">
     <?php
     foreach ($Data['PlayerData'] as $key => $value) {
-      echo '<option value="'.$value['Name'].'">'.$value['Name'].'</option>';
+      echo '<option value="'.$value['ID'].'">'.$value['Name'].'</option>';
     }
      ?>
   </select>

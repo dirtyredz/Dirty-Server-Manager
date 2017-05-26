@@ -27,6 +27,18 @@ if (preg_match('/\.(?:png|jpg|jpeg|gif|css|js)$/', $uri_parts['path'])) {
       }
     }
 
+    if($uri_parts['path'] == '/Config'){
+      include __DIR__ .'/../core/ServerConfigController.php';
+      $ServerConfigController = new ServerConfigController;
+      if(isset($_POST['function']) ){
+        $Method = $_POST['function'];
+        if(method_exists($ServerConfigController,$Method)){
+          $ServerConfigController->$Method();
+          return true;
+        }
+      }
+    }
+
     if($uri_parts['path'] == '/View'){
       include __DIR__ .'/../core/ViewController.php';
       if(isset($_POST['view'])){

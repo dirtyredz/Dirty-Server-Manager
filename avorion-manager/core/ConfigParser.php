@@ -51,20 +51,14 @@ class ConfigParser{
      *
      * @return bool true for a succes
      */
-    public function write(){
+    public function write(array $Comments = null){
         $ParsedData_array = $this->ParsedData;
         $file_content = null;
-        foreach ($ParsedData_array as $key_1 => $groupe) {
-            $file_content .= "\n[".$key_1."]\n";
-            foreach ($groupe as $key_2 => $value_2) {
-                if (is_array($value_2)) {
-                    foreach ($value_2 as $key_3 => $value_3) {
-                        $file_content .= $key_2.'['.$key_3.'] = '.self::encode($value_3)."\n";
-                    }
-                } else {
-                    $file_content .= $key_2.' = '.self::encode($value_2)."\n";
-                }
+        foreach ($ParsedData_array as $key_2 => $value_2) {
+            if($Comments){
+              $file_content .= ";".$Comments[$key_2]['Definition']."\n";
             }
+            $file_content .= $key_2.'='.self::encode($value_2)."\n";
         }
         $file_content = preg_replace('#^\n#', '', $file_content);
         $result = @file_put_contents($this->FilePath, $file_content);
@@ -89,6 +83,10 @@ class ConfigParser{
             return 0;
         } elseif ($value == '') {
             return '""';
+        } elseif ($value == 'true') {
+            return "true";
+        } elseif ($value == 'false') {
+            return "false";
         }
 
         if (is_numeric($value)) {
@@ -100,6 +98,6 @@ class ConfigParser{
             }
         }
 
-        return '"'.$value.'"';
+        return "'".$value."'";
     }
 }

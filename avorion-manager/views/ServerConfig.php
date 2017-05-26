@@ -82,6 +82,23 @@
       font-size: 15px;
       color: #555;
     }
+    input[type="submit"]{
+      background-color: #315683;
+      width: 100px;
+      margin: 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      -webkit-appearance: none;
+      border: none;
+      font-size: 150%;
+      font-weight: bold;
+      font-family: inherit;
+      color: white;
+      transition: background-color 500ms;
+    }
+    input[type="submit"]:hover{
+      transform: rotate(1deg);
+    }
 </style>
 <div id="Top"><span class="Title"><svg class="icon"><use xlink:href="#icon-cogs"></use></svg>SERVER CONFIG</span><span class="Time"></span></div>
 <br/>
@@ -173,45 +190,50 @@
   <div id="tab3">
     <h2>PHP Config</h2>
     <form id="PHPConfigForm">
-    <input type="submit" name="submit" value="Submit" />
-    <?php
-      $Count = 0;
-      foreach ($Data['PHPConfig'] as $key => $value) {
-        $value = trim($value,"'");
-        if($value != strip_tags($value)) {
-            $value = htmlentities($value);
-        }
-        ?>
-        <div class="ConfigContainer">
-          <div class="ConfigOption">
-            <span><?php echo $key; ?></span>
-            <br/>
-            <span class="Definition"><?php echo $Data['PHPConfigDetails'][$Count]['Definition']; ?></span>
-          </div>
-          <div class="ConfigInput">
-            <?php
-              if($Data['PHPConfigDetails'][$Count]['Type'] == 'input'){
-                echo '<input class="" type="text" name="'.$key.'" value="'.$value.'"></input>';
-              }elseif($Data['PHPConfigDetails'][$Count]['Type'] == 'select'){
-                echo '<select>';
-                  foreach ($Data['PHPConfigDetails'][$Count]['Values'] as $SelectKey => $SelectValue) {
-                    if($value == $SelectValue){
-                      echo '<option value="'.$SelectValue.'" selected>'.$SelectKey.'</option>';
-                    }else{
-                      echo '<option value="'.$SelectValue.'">'.$SelectKey.'</option>';
+      <input type="submit" name="submit" value="Submit" />
+      </br>
+      </br>
+      </br>
+      <?php
+        $Count = 0;
+        foreach ($Data['PHPConfig'] as $key => $value) {
+          $value = trim($value,"'");
+          if($value != strip_tags($value)) {
+              $value = htmlentities($value);
+          }
+          ?>
+          <div class="ConfigContainer">
+            <div class="ConfigOption">
+              <span><?php echo $key; ?></span>
+              <br/>
+              <span class="Definition"><?php echo $Data['PHPConfigDetails'][$key]['Definition']; ?></span>
+            </div>
+            <div class="ConfigInput">
+              <?php
+                if($Data['PHPConfigDetails'][$key]['Type'] == 'text'){
+                  echo '<input class="" type="text" name="'.$key.'" value="'.$value.'"></input>';
+                }elseif($Data['PHPConfigDetails'][$key]['Type'] == 'select'){
+                  echo '<select name="'.$key.'">';
+                    foreach ($Data['PHPConfigDetails'][$key]['Values'] as $SelectKey => $SelectValue) {
+                      if($value == $SelectValue){
+                        echo '<option value="'.$SelectValue.'" selected>'.$SelectKey.'</option>';
+                      }else{
+                        echo '<option value="'.$SelectValue.'">'.$SelectKey.'</option>';
+                      }
                     }
-                  }
-                echo '</select>';
-              }
-              echo '&nbsp;&nbsp;&nbsp;'.$value;
-             ?>
+                  echo '</select>';
+                }elseif($Data['PHPConfigDetails'][$key]['Type'] == 'number'){
+                  echo '<input type="number" name="'.$key.'" min="'.$Data['PHPConfigDetails'][$key]['Range']['min'].'" max="'.$Data['PHPConfigDetails'][$key]['Range']['max'].'" value="'.$value.'">';
+                }
+                echo '&nbsp;&nbsp;&nbsp;'.$value;
+               ?>
 
+            </div>
           </div>
-        </div>
-        <?php
-        $Count +=1;
-      }
-     ?>
+          <?php
+          $Count +=1;
+        }
+       ?>
     </form>
    </div>
 </section>
@@ -230,6 +252,35 @@
       $this.addClass('active');
       $(tabgroup).children('div').hide();
       $(target).show();
-
     })
+
+    <?php
+        if($Data['ChangePHPConfigINI']) {
+            ?>
+            console.log($('#PHPConfigForm').serializeArray());
+            $("#PHPConfigForm").submit(function(event){
+              event.preventDefault();
+              $.ajax({
+                'url': 'Config',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {
+                  'function':'UpdatePHPConfig',
+                  'FormData':$('#PHPConfigForm').serializeArray()
+                },
+                'success': function(data) {
+                  console.log(data);
+                  if(data['success']) {
+                    console.log('Success');
+                    AddNotification(data['message']);
+                    Load("ServerConfig");
+                  } else {
+                    AddNotification(data['message']);
+                  }
+                }
+              });
+            });
+            <?php
+        }
+     ?>
 </script>

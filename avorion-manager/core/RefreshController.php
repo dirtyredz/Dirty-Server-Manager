@@ -89,7 +89,7 @@ class RefreshController extends CommonController{
       $Xanion = htmlspecialchars($_POST['Xanion']);
       $Ogonite = htmlspecialchars($_POST['Ogonite']);
       $Avorion = htmlspecialchars($_POST['Avorion']);
-      $Command = '/sendmail "'.$Name.'" '.$Credits.' "'.$Title.'" "'.$Subject.'" '.$Iron.' '.$Titanium.' '.$Naonite.' '.$Trinium.' '.$Xanion.' '.$Ogonite.' '.$Avorion.' "'.$Message.'"';
+      $Command = '/sendmail '.$Name.' '.$Credits.' "'.$Title.'" "'.$Subject.'" '.$Iron.' '.$Titanium.' '.$Naonite.' '.$Trinium.' '.$Xanion.' '.$Ogonite.' '.$Avorion.' "'.$Message.'"';
       $this->RefreshModel->SendKeys($Command);
       $return['success'] = true;
       //Not high enough role
