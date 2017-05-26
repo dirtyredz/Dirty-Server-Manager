@@ -1,3 +1,6 @@
+1.0.3
+  Fixed Bug in manager install command
+
 1.0.2
   Added Custom message support for Banners
   Added more dialog to installation and update

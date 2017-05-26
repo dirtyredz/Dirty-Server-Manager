@@ -22,6 +22,9 @@
 <br/>
 <br/>
 <h3>CHANGE LOG:</h3>
+<h4>1.0.3</h4>
+  Fixed Bug in manager install command</br>
+  </br>
 <h4>1.0.2</h4>
   Added Custom message support for Banners</br>
   Added more dialog to installation and update</br>
