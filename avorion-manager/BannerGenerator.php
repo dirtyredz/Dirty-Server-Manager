@@ -29,9 +29,9 @@ $TempConfig = $ServerConfigController->GetPHPConfig();
 //Large Image
 imagettftext($LargeImage, 30, 0, 20, 40, $white, $Dir."avantgarde-bold-webfont.ttf", $argv[3]);
 imagettftext($LargeImage, 25, 0, 20, 200, $white, $Dir."avantgarde-bold-webfont.ttf", $argv[2]);
-imagettftext($LargeImage, 16, 0, 550, 125, $white, $Dir."avantgarde-bold-webfont.ttf", stripslashes($TempConfig['BannerCustomMessageOne']));
-imagettftext($LargeImage, 16, 0, 550, 150, $white, $Dir."avantgarde-bold-webfont.ttf", stripslashes($TempConfig['BannerCustomMessageTwo']));
-imagettftext($LargeImage, 16, 0, 550, 175, $white, $Dir."avantgarde-bold-webfont.ttf", stripslashes($TempConfig['BannerCustomMessageThree']));
+imagettftext($LargeImage, 16, 0, 550, 125, $white, $Dir."avantgarde-bold-webfont.ttf", str_replace("'", "", $TempConfig['BannerCustomMessageOne']));
+imagettftext($LargeImage, 16, 0, 550, 150, $white, $Dir."avantgarde-bold-webfont.ttf", str_replace("'", "", $TempConfig['BannerCustomMessageTwo']));
+imagettftext($LargeImage, 16, 0, 550, 175, $white, $Dir."avantgarde-bold-webfont.ttf", str_replace("'", "", $TempConfig['BannerCustomMessageThree']));
 imagettftext($LargeImage, 16, 0, 550, 200, $white, $Dir."avantgarde-bold-webfont.ttf", "Players: ".$argv[4]);
 $status = $argv[1];//@shell_exec('/home/avorion/avorion-manager/script.sh') or die('Offline');
 if(rtrim($status) == "Offline"){
