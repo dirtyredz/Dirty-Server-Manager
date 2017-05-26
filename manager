@@ -472,12 +472,16 @@ case $1 in
 
     read -p "Admin steam id:"  AdminInput
     AdminInput=${AdminInput}
+    if [ -z "$AdminInput" ]; then
+      AdminInput=""
+    else
+      AdminInput=" --admin ${AdminInput}"
+    fi
     echo Admin Steam ID: $AdminInput
-    AdminInput=" --admin ${AdminInput}"
 
-    echo "Completed manager configuration, to make changes to these settings in the future edit file manager-config.sh"
+    echo "Completed manager configuration, to make changes to these settings in the future edit file manager-config.ini"
     read -p "Press enter to continue with steam/avorion installation"
-    echo "MAX_PLAYERS=${MaxPlayersInput}" >> manager-config.ini
+    echo "MAX_PLAYERS=${MaxPlayersInput}" > manager-config.ini
     echo "GALAXY=${GalaxyNameInput}" >> manager-config.ini
     echo ";http://wiki.avorion.net/index.php?title=Server"
     echo "PARAMS='--public ${PublicServerInput} --listed ${ListedServerInput} --same-start-sector ${SameStartInput}${AdminInput}'" >> manager-config.ini
