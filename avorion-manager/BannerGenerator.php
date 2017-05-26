@@ -21,9 +21,11 @@ $white = imagecolorallocate($SmallImage, 255, 255, 255);
 $green = imagecolorallocate($SmallImage, 0, 255, 0);
 $red = imagecolorallocate($SmallImage, 255, 0, 0);
 
+require_once __DIR__ .'/core/CommonController.php';
 require_once  __DIR__ .'/core/ServerConfigController.php';
 $ServerConfigController = new ServerConfigController();
 $TempConfig = $ServerConfigController->GetPHPConfig();
+
 //Large Image
 imagettftext($LargeImage, 30, 0, 20, 40, $white, $Dir."avantgarde-bold-webfont.ttf", $argv[3]);
 imagettftext($LargeImage, 25, 0, 20, 200, $white, $Dir."avantgarde-bold-webfont.ttf", $argv[2]);
