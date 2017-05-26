@@ -6,10 +6,11 @@ if [ "${CurrentVersion}" != "${VERSION}" ]; then
   echo Dirty Server Manager is NOT Up To Date!
   echo downloading update for Dirty Server Manager
   wget -O UpdateDirtyServerManager.tar.gz https://github.com/dirtyredz/Dirty-Server-Manager/releases/download/${VERSION}/DirtyServerManager.tar.gz
+  echo Installing $VERSION
   tar -xvf UpdateDirtyServerManager.tar.gz --exclude='manager-config.ini' --exclude='avorion-manager/PHPConfig.ini' --exclude='avorion-manager/PlayerData.php' --exclude='avorion-manager/SectorData.php' --exclude='avorion-manager/logs'
   rm UpdateDirtyServerManager.tar.gz
-  echo Installing $VERSION
   echo Update complete.
 else
   echo "Current Version: ${CurrentVersion}, Dirty Server Manager is Up To Date!"
 fi
+

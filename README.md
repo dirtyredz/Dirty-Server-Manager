@@ -40,7 +40,13 @@ Step 7: After a succesful server installation you can start the server
 
 Check help for more commands:
 
-./manager help
+    ./manager help
+
+To update your manager and web interface use command from the directory the manager is located:
+
+    avorion-manager/UpdateManager.sh
+
+
 
 FAQ:
 Q: How do I see server's console and use commands?
@@ -50,7 +56,7 @@ Q: How do I safely detach from server's console?
 A: Press Ctrl+B and then D.
 
 Q: I have a "steamclient.so: wrong ELF class: ELFCLASS32" error!
-A: Copy steamclient.so from linux64 to server's root. For default configuration:
+A: Copy steamclient.so from serverfiles/linux64 to server's root(serverfiles/). For default configuration:
 
 cd serverfiles
 cp linux64/steamclient.so .
