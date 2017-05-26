@@ -19,13 +19,13 @@ class ServerConfigController extends CommonController{
           'Definition' => 'Custom message for home page, can accept html or plain text.',
           'Type' => 'text'),
     'BannerCustomMessageOne' => array(
-          'Definition' => 'Custom message for the banner, can accept plain text only.',
+          'Definition' => 'Custom message for the banner, can accept plain text only. 13 charectors max length.',
           'Type' => 'text'),
     'BannerCustomMessageTwo' => array(
-          'Definition' => 'Custom message for the banner, can accept plain text only.',
+          'Definition' => 'Custom message for the banner, can accept plain text only. 13 charectors max length.',
           'Type' => 'text'),
     'BannerCustomMessageThree' => array(
-          'Definition' => 'Custom message for the banner, can accept plain text only.',
+          'Definition' => 'Custom message for the banner, can accept plain text only. 13 charectors max length.',
           'Type' => 'text'),
     'ShowOnlinePlayerCount' => array(
           'Definition' => 'If enabled will show the online players count on the home page.',
