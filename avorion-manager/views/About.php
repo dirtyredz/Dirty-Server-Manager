@@ -22,6 +22,9 @@
 <br/>
 <br/>
 <h3>CHANGE LOG:</h3>
+<h4>1.0.4</h4>
+  adjusted session requirments for console  and config page.</br>
+  </br>
 <h4>1.0.3</h4>
   Fixed Bug in manager install command</br>
   </br>

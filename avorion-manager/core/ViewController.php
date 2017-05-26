@@ -110,7 +110,7 @@ class ViewController extends CommonController{
     $this->LoadView('Account');
   }
   public function ServerConfig(){
-    $this->SessionRequired();
+    //$this->SessionRequired();
     $this->RoleRequired($this->Config['AccessServerConfigPage']);//Role required to view page
 
     require_once  __DIR__ .'/ServerConfigController.php';
@@ -297,7 +297,7 @@ class ViewController extends CommonController{
     $this->LoadView('ServerConfig');
   }
   public function Console(){
-    $this->SessionRequired();
+    //$this->SessionRequired();
     $this->RoleRequired($this->Config['AccessConsolePage']);//Role required to view page
     if($this->RoleAccess($this->Config['ConsoleCommandsAccess'])){//Role required for specific feature
       $this->LogMessage('Extra Console Access Granted.');
