@@ -22,7 +22,15 @@
 <br/>
 <br/>
 <h3>CHANGE LOG:</h3>
-
+<h4>1.0.1</h4>
+  Updated README</br>
+  added Database.php to the update exclusion</br>
+  Added Notes to Config page</br>
+  Updated default custom messages in PHPConfig.ini</br>
+  Updated Database.php default</br>
+</br>
+<h4>1.0.0</h4>
+  Initial Release</br>
 <script type="text/javascript">
 
 </script>

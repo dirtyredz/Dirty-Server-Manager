@@ -37,6 +37,23 @@ Step 7: After a succesful server installation you can start the server
 
         ./manager start
 
+Step 8: [Optional] To start the web interface run this commands
+
+        ./manager start-web
+
+        use ./manager stop-web to stop the web server
+
+Step 9: After all is done and working properly be sure to secure your firewall with the appropriate commands. Remember to open ports for the game as well as the web interface
+        These are the default ports you will need to open:
+
+        tcp/27000
+        udp/27000
+        udp/27003
+        udp/27020  -Steam
+        tcp/27020  -Steam
+        udp/27021  -Steam
+        tcp/27021  -Steam
+        tcp/8080   -web interface default
 
 Check help for more commands:
 

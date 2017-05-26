@@ -1,2 +1,9 @@
+1.0.1
+  Updated README
+  added Database.php to the update exclusion
+  Added Notes to Config page
+  Updated default custom messages in PHPConfig.ini
+  Updated Database.php defaults
+
 1.0.0
   Initial Release

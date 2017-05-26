@@ -111,7 +111,7 @@
 <section id="first-tab-group" class="tabgroup">
   <div id="tab1">
     <h2>Server INI</h2>
-    NOTE: Changes to this can only be done while the server is OFFLINE.</br></br>
+    NOTE: Update via Web Interface currently unavailable.</br></br>
     <?php
       $Count = 0;
       foreach ($Data['ServerINI'] as $key => $value) {
@@ -149,6 +149,7 @@
   </div>
   <div id="tab2">
     <h2>Manager Config</h2>
+    NOTE: Update via Web Interface currently unavailable.</br></br>
     <form id="ManagerConfigForm">
     <?php
       $Count = 0;
@@ -189,6 +190,7 @@
   </div>
   <div id="tab3">
     <h2>PHP Config</h2>
+    </br></br>
     <form id="PHPConfigForm">
       <input type="submit" name="submit" value="Submit" />
       </br>
