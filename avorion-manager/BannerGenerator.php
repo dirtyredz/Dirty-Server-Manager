@@ -21,12 +21,15 @@ $white = imagecolorallocate($SmallImage, 255, 255, 255);
 $green = imagecolorallocate($SmallImage, 0, 255, 0);
 $red = imagecolorallocate($SmallImage, 255, 0, 0);
 
+require_once  __DIR__ .'/core/ServerConfigController.php';
+$ServerConfigController = new ServerConfigController();
+$TempConfig = $ServerConfigController->GetPHPConfig();
 //Large Image
 imagettftext($LargeImage, 30, 0, 20, 40, $white, $Dir."avantgarde-bold-webfont.ttf", $argv[3]);
 imagettftext($LargeImage, 25, 0, 20, 200, $white, $Dir."avantgarde-bold-webfont.ttf", $argv[2]);
-imagettftext($LargeImage, 16, 0, 550, 125, $white, $Dir."avantgarde-bold-webfont.ttf", "ModPack");
-imagettftext($LargeImage, 16, 0, 550, 150, $white, $Dir."avantgarde-bold-webfont.ttf", "Dedicated");
-imagettftext($LargeImage, 16, 0, 550, 175, $white, $Dir."avantgarde-bold-webfont.ttf", "CorePVP");
+imagettftext($LargeImage, 16, 0, 550, 125, $white, $Dir."avantgarde-bold-webfont.ttf", $TempConfig['BannerCustomMessageOne']);
+imagettftext($LargeImage, 16, 0, 550, 150, $white, $Dir."avantgarde-bold-webfont.ttf", $TempConfig['BannerCustomMessageTwo']);
+imagettftext($LargeImage, 16, 0, 550, 175, $white, $Dir."avantgarde-bold-webfont.ttf", $TempConfig['BannerCustomMessageThree']);
 imagettftext($LargeImage, 16, 0, 550, 200, $white, $Dir."avantgarde-bold-webfont.ttf", "Players: ".$argv[4]);
 $status = $argv[1];//@shell_exec('/home/avorion/avorion-manager/script.sh') or die('Offline');
 if(rtrim($status) == "Offline"){

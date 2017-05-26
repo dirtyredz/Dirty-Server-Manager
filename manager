@@ -31,7 +31,7 @@ YELLOW='\033[1;33m'
 PURPLE='\033[1;35m'
 NOCOLOR='\033[0m'
 # Static - Dont change these
-VERSION=1.0.1
+VERSION=1.0.2
 APPID=565060
 SERVER=AvorionServer
 T='tmux send-keys -t '${TMUX_SESSION}':0.0'
@@ -364,11 +364,14 @@ case $1 in
 			DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} should not be running while updating." "${RUN_BY}"
 		else
 			DynamicEcho "steamcmd will now perform an update." "${RUN_BY}"
-      if [ ${BETA} = true ]; then
-			     $STEAM_DIR/steamcmd.sh +login anonymous +force_install_dir ${INSTALL_DIR} +app_update ${APPID} -beta beta validate +quit
-      else
-           $STEAM_DIR/steamcmd.sh +login anonymous +force_install_dir ${INSTALL_DIR} +app_update ${APPID} validate +quit
-      fi
+      case $BETA in
+        (true)    DynamicEcho "Updating with Beta version..." "${RUN_BY}";;
+        (false)   DynamicEcho "Updating with Normal version..." "${RUN_BY}";;
+      esac
+      case $BETA in
+        (true)    $STEAM_DIR/steamcmd.sh +login anonymous +force_install_dir ${INSTALL_DIR} +app_update ${APPID} -beta beta validate +quit;;
+        (false)   $STEAM_DIR/steamcmd.sh +login anonymous +force_install_dir ${INSTALL_DIR} +app_update ${APPID} validate +quit;;
+      esac
 		fi
 	;;
   "start-web")
@@ -400,18 +403,22 @@ case $1 in
 	;;
 	"install")
     LogToManagerLog "Ran Install command.";
+    echo ---------------------------------------------------------------------
     echo Welcome to Dirty Server Manager
+    echo Version: $VERSION
+    echo ---------------------------------------------------------------------
     echo Begining installation process...
-    echo The folowing prompts can be changed in the future in ./manager-config.sh
-
+    echo ''
+    echo The folowing prompts can be changed in the future in ./manager-config.ini
+    echo ''
     read -p "please enter the Galaxy Name for the server: [GalaxyName]"  GalaxyNameInput
     GalaxyNameInput=${GalaxyNameInput:-GalaxyName}
     echo Galaxy Name: $GalaxyNameInput
-
+    echo ''
     read -p "please enter the Maximum Players for the server: [10]"  MaxPlayersInput
     MaxPlayersInput=${MaxPlayersInput:-10}
     echo Max Players: $MaxPlayersInput
-
+    echo ''
     read -p "Would you like to run the server on the BETA version: [y/N]"  BetaInput
     BetaInput=${BetaInput:-n}
     if [[ $BetaInput =~ ^[Yy]$ ]]; then
@@ -420,7 +427,7 @@ case $1 in
       BetaInput=false
     fi
     echo Beta: $BetaInput
-
+    echo ''
     read -p "Would you like the server to be public?: [Y/n]"  PublicServerInput
     PublicServerInput=${PublicServerInput:-y}
     if [[ $PublicServerInput =~ ^[Yy]$ ]]; then
@@ -429,7 +436,7 @@ case $1 in
       PublicServerInput=false
     fi
     echo Public: $PublicServerInput
-
+    echo ''
     read -p "Would you like the server to be listed?: [Y/n]"  ListedServerInput
     ListedServerInput=${ListedServerInput:-y}
     if [[ $ListedServerInput =~ ^[Yy]$ ]]; then
@@ -438,7 +445,7 @@ case $1 in
       ListedServerInput=false
     fi
     echo Listed: $ListedServerInput
-
+    echo ''
     read -p "Would you like everyone to start in the same start sector?: [Y/n]"  SameStartInput
     SameStartInput=${SameStartInput:-y}
     if [[ $SameStartInput =~ ^[Yy]$ ]]; then
@@ -447,11 +454,11 @@ case $1 in
       SameStartInput=false
     fi
     echo Same Start Sector: $SameStartInput
-
+    echo ''
     read -p "Port number for the server: [2700]"  PortInput
     PortInput=${PortInput:-2700}
     echo Max Players: $PortInput
-
+    echo ''
     read -p "Would you like the server to automatically restart if the server crashes?: [Y/n]"  AutoCrashRestartInput
     AutoCrashRestartInput=${AutoCrashRestartInput:-y}
     if [[ $AutoCrashRestartInput =~ ^[Yy]$ ]]; then
@@ -460,7 +467,7 @@ case $1 in
       AutoCrashRestartInput=false
     fi
     echo Auto Crash Restart: $AutoCrashRestartInput
-
+    echo ''
     read -p "Would you like the server to automatically restart twice a day? (Noon and Midnight server time): [Y/n]"  DailyRestartInput
     DailyRestartInput=${DailyRestartInput:-y}
     if [[ $DailyRestartInput =~ ^[Yy]$ ]]; then
@@ -469,18 +476,19 @@ case $1 in
       DailyRestartInput=false
     fi
     echo Auto Daily Restart: $DailyRestartInput
-
+    echo ''
     read -p "Admin steam id:"  AdminInput
     AdminInput=${AdminInput}
     if [ -z "$AdminInput" ]; then
-      AdminInput=""
+      AdminInput="No admin id given, server will start without an admin.  Edit server.ini to add an admin."
     else
       AdminInput=" --admin ${AdminInput}"
     fi
     echo Admin Steam ID: $AdminInput
-
+    echo ''
     echo "Completed manager configuration, to make changes to these settings in the future edit file manager-config.ini"
     read -p "Press enter to continue with steam/avorion installation"
+    echo ''
     echo "MAX_PLAYERS=${MaxPlayersInput}" > manager-config.ini
     echo "GALAXY=${GalaxyNameInput}" >> manager-config.ini
     echo ";http://wiki.avorion.net/index.php?title=Server"

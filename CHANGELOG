@@ -1,3 +1,7 @@
+1.0.2
+  Added Custom message support for Banners
+  Added more dialog to installation and update
+
 1.0.1
   Updated README
   added Database.php to the update exclusion
