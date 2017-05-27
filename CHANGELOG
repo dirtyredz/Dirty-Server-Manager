@@ -1,3 +1,6 @@
+1.0.6
+  Added Support for configuration updates
+
 1.0.5
   Added sendmail.lua to handle mail form.
 

@@ -22,6 +22,9 @@
 <br/>
 <br/>
 <h3>CHANGE LOG:</h3>
+<h4>1.0.6</h4>
+  Added Support for configuration updates</br>
+  </br>
 <h4>1.0.5</h4>
   Added sendmail.lua to handle mail form.</br>
   </br>
