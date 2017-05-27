@@ -38,6 +38,7 @@ class ViewController extends CommonController{
     $this->Data['AccessGraphsPage'] = 'Disabled';
     $this->Data['AccessDiscoveredMapPage'] = 'Disabled';
     $this->Data['AccessFactionsMapPage'] = 'Disabled';
+    $this->Data['AccessSpaceInvadersPage'] = 'Disabled';
 
 
     $this->Data['Username'] = '';
@@ -81,6 +82,9 @@ class ViewController extends CommonController{
     }
     if($this->RoleAccess($this->Config['AccessFactionsMapPage'])){//Role required for specific feature
       $this->Data['AccessFactionsMapPage'] = '';
+    }
+    if($this->RoleAccess($this->Config['AccessSpaceInvadersPage'])){//Role required for specific feature
+      $this->Data['AccessSpaceInvadersPage'] = '';
     }
     $this->Data['IPAddress'] = exec("hostname -I | awk '{print $1}'");
     $DefaultPage = $this->Config['DefaultPage'];
@@ -407,7 +411,7 @@ class ViewController extends CommonController{
     }
     if($this->Config['ShowOnlinePlayerCount']){
       $this->Data['MaxPlayers'] = `grep MAX {$this->Config['ManagerConfig']} | sed -e 's/.*=//g'`;
-      $this->Data['OnlinePlayerCount'] = `netstat -tlunp 2> /dev/null | grep -iv ':270'|grep -i avorion|wc -l|tr -d "[:space:]"`;
+      $this->Data['OnlinePlayerCount'] = `netstat -tlunp 2> /dev/null | grep -iv ':270' | grep -i "[0-9]/Avorion" | wc -l | tr -d "[:space:]"`;
     }
     $this->Data['IPAddress'] = exec("hostname -I | awk '{print $1}'");
     $this->LoadView('Home');
@@ -448,5 +452,10 @@ class ViewController extends CommonController{
       }
       $this->LoadView('rss');
     }
+  }
+  public function SpaceInvaders(){
+    $this->RoleRequired($this->Config['AccessSpaceInvadersPage']);//Role required to view page
+    $this->Data['IPAddress'] = $this->getUserIP();
+    $this->LoadView('SpaceInvaders');
   }
 }

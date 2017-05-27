@@ -332,6 +332,10 @@
             <title>cogs</title>
             <path d="M11.366 22.564l1.291-1.807-1.414-1.414-1.807 1.291c-0.335-0.187-0.694-0.337-1.071-0.444l-0.365-2.19h-2l-0.365 2.19c-0.377 0.107-0.736 0.256-1.071 0.444l-1.807-1.291-1.414 1.414 1.291 1.807c-0.187 0.335-0.337 0.694-0.443 1.071l-2.19 0.365v2l2.19 0.365c0.107 0.377 0.256 0.736 0.444 1.071l-1.291 1.807 1.414 1.414 1.807-1.291c0.335 0.187 0.694 0.337 1.071 0.444l0.365 2.19h2l0.365-2.19c0.377-0.107 0.736-0.256 1.071-0.444l1.807 1.291 1.414-1.414-1.291-1.807c0.187-0.335 0.337-0.694 0.444-1.071l2.19-0.365v-2l-2.19-0.365c-0.107-0.377-0.256-0.736-0.444-1.071zM7 27c-1.105 0-2-0.895-2-2s0.895-2 2-2 2 0.895 2 2-0.895 2-2 2zM32 12v-2l-2.106-0.383c-0.039-0.251-0.088-0.499-0.148-0.743l1.799-1.159-0.765-1.848-2.092 0.452c-0.132-0.216-0.273-0.426-0.422-0.629l1.219-1.761-1.414-1.414-1.761 1.219c-0.203-0.149-0.413-0.29-0.629-0.422l0.452-2.092-1.848-0.765-1.159 1.799c-0.244-0.059-0.492-0.109-0.743-0.148l-0.383-2.106h-2l-0.383 2.106c-0.251 0.039-0.499 0.088-0.743 0.148l-1.159-1.799-1.848 0.765 0.452 2.092c-0.216 0.132-0.426 0.273-0.629 0.422l-1.761-1.219-1.414 1.414 1.219 1.761c-0.149 0.203-0.29 0.413-0.422 0.629l-2.092-0.452-0.765 1.848 1.799 1.159c-0.059 0.244-0.109 0.492-0.148 0.743l-2.106 0.383v2l2.106 0.383c0.039 0.251 0.088 0.499 0.148 0.743l-1.799 1.159 0.765 1.848 2.092-0.452c0.132 0.216 0.273 0.426 0.422 0.629l-1.219 1.761 1.414 1.414 1.761-1.219c0.203 0.149 0.413 0.29 0.629 0.422l-0.452 2.092 1.848 0.765 1.159-1.799c0.244 0.059 0.492 0.109 0.743 0.148l0.383 2.106h2l0.383-2.106c0.251-0.039 0.499-0.088 0.743-0.148l1.159 1.799 1.848-0.765-0.452-2.092c0.216-0.132 0.426-0.273 0.629-0.422l1.761 1.219 1.414-1.414-1.219-1.761c0.149-0.203 0.29-0.413 0.422-0.629l2.092 0.452 0.765-1.848-1.799-1.159c0.059-0.244 0.109-0.492 0.148-0.743l2.106-0.383zM21 15.35c-2.402 0-4.35-1.948-4.35-4.35s1.948-4.35 4.35-4.35 4.35 1.948 4.35 4.35c0 2.402-1.948 4.35-4.35 4.35z"></path>
             </symbol>
+            <symbol id="icon-spaceinvaders" viewBox="0 0 33 32">
+            <title>spaceinvaders</title>
+            <path d="M29.963 24.982v-5.947h-2.91v5.969h-3.037v2.953h-7.048v-2.975h7.048v-2.972h-14.991v2.973l6.030 0.021v2.973h-6.051v-2.951h-3.036v-6.010h-2.911v5.947h-3.057v-9.004h2.995v-2.891h2.973v-3.057h3.057v-2.994h2.994v3.003l8.983 0.024v-3.027h2.994v3.036h3.057v2.974h2.953v2.973h3.014v8.982h-3.057zM12.019 13.005h-2.994v2.995h2.994v-2.995zM23.996 13.005h-2.994v2.995h2.994v-2.995zM5.968 4.023h3.057v2.994h-3.057v-2.994zM27.053 4.023v2.994h-3.057v-2.994h3.057z"></path>
+            </symbol>
           </defs>
         </svg>
         <div id="Wrapper">
@@ -363,6 +367,7 @@
                 <li id="GraphsBtn" class="<?php echo ($Data['DefaultPage'] == 'Graphs' ? 'Active' : 'NotActive'); ?> <?php echo $Data['AccessGraphsPage']; ?>"><svg class="icon"><use xlink:href="#icon-untitled2"></use></svg>GRAPHS</li>
                 <li id="AccountBtn" class="Notactive <?php echo $Data['LoggedInClass']; ?>"><svg class="icon"><use xlink:href="#icon-user"></use></svg>ACCOUNT</li>
                 <li id="UserManagmentBtn" class="Notactive <?php echo $Data['UserManagmentAccess']; ?>"><svg class="icon"><use xlink:href="#icon-users"></use></svg>USER MNGT</li>
+                <li id="SpaceInvadersBtn" style="font-size:90%;" class="NotActive <?php echo $Data['AccessSpaceInvadersPage']; ?>"><svg class="icon icon-spaceinvaders"><use xlink:href="#icon-spaceinvaders"></use></svg>SPACE INVADERS</li>
                 <?php
                     if($Data['LoggedIn']) {
                         ?>
@@ -419,6 +424,11 @@
           $("#Loading").show();
           clearInterval(window.HomeRefresh);
           clearInterval(window.PageRefresh);
+          if (typeof(game) !== 'undefined') {
+            console.log('Stopping Game');
+            game.stop();
+          }
+
           $Main.animate({opacity: 0},250,function(){
             $Main.load('View',{view:File},function(){
               $Main.animate({opacity: 1},250);
@@ -462,6 +472,12 @@
              $(this).toggleClass('Active').toggleClass('NotActive');
              Load("UserManagment");
              console.log("User Managment Link Clicked!");
+         });
+         $("li#SpaceInvadersBtn").click(function() {
+             $('li.Active').toggleClass('Active').toggleClass('NotActive');
+             $(this).toggleClass('Active').toggleClass('NotActive');
+             Load("SpaceInvaders");
+             console.log("Space Invaders Link Clicked!");
          });
          $("li#ConsoleBtn").click(function() {
              $('li.Active').toggleClass('Active').toggleClass('NotActive');

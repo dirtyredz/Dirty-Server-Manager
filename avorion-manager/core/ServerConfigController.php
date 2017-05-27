@@ -7,16 +7,16 @@ class ServerConfigController extends CommonController{
   private $ConfigParser;
   public $PHPConfigDetails = array(
     'HomeCustomMessageOne' => array(
-          'Definition' => 'Custom message for home page, can accept html or plain text.',
+          'Definition' => 'Custom message for home page, can accept html or plain text. (Does NOT support semicolens ";" use of one will break the string while displaying)',
           'Type' => 'text'),
     'HomeCustomMessageTwo' => array(
-          'Definition' => 'Custom message for home page, can accept html or plain text.',
+          'Definition' => 'Custom message for home page, can accept html or plain text. (Does NOT support semicolens ";" use of one will break the string while displaying)',
           'Type' => 'text'),
     'HomeCustomMessageThree' => array(
-          'Definition' => 'Custom message for home page, can accept html or plain text.',
+          'Definition' => 'Custom message for home page, can accept html or plain text. (Does NOT support semicolens ";" use of one will break the string while displaying)',
           'Type' => 'text'),
     'HomeCustomMessageFour' => array(
-          'Definition' => 'Custom message for home page, can accept html or plain text.',
+          'Definition' => 'Custom message for home page, can accept html or plain text. (Does NOT support semicolens ";" use of one will break the string while displaying)',
           'Type' => 'text'),
     'BannerCustomMessageOne' => array(
           'Definition' => 'Custom message for the banner, can accept plain text only. 13 charectors max length.',
@@ -61,6 +61,10 @@ class ServerConfigController extends CommonController{
           'Range' => array('min'=>0,'max'=>99)),
     'AccessUserManagmentPage' => array(
           'Definition' => 'The role level required to view the User Management page. (0=public)',
+          'Type' => 'number',
+          'Range' => array('min'=>0,'max'=>99)),
+    'AccessSpaceInvadersPage' => array(
+          'Definition' => 'The role level required to view the Space Invaders page. (0=public)',
           'Type' => 'number',
           'Range' => array('min'=>0,'max'=>99)),
     'HomeChatLog' => array(

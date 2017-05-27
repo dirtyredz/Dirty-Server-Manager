@@ -27,6 +27,20 @@ if (preg_match('/\.(?:png|jpg|jpeg|gif|css|js)$/', $uri_parts['path'])) {
       }
     }
 
+    if($uri_parts['path'] == '/SpaceInvaders'){
+      include __DIR__ .'/../core/SpaceInvadersController.php';
+      $SpaceInvadersController = new SpaceInvadersController;
+
+      if(array_key_exists('query',$uri_parts)){
+        $QueryArray = explode('&',$uri_parts['query']);
+        $Query = substr(strrchr($QueryArray[0], 'function='), 9 );
+        if(method_exists($SpaceInvadersController,$Query)){
+          $SpaceInvadersController->$Query($QueryArray);
+          return true;
+        }
+      }
+    }
+
     if($uri_parts['path'] == '/Config'){
       include __DIR__ .'/../core/ServerConfigController.php';
       $ServerConfigController = new ServerConfigController;

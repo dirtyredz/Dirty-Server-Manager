@@ -1,3 +1,8 @@
+1.0.7
+  Fixed wrong number of online players on home page.
+  Added Space Invaders page, because why not?
+  Updated Definitions for PHPConfig.ini
+
 1.0.6
   Added Support for configuration updates
 

@@ -1,6 +1,6 @@
 <style type="text/css">
   #GalaxyMapImage2{
-    background-image: url('/resources/EmptyGalaxy.jpg');
+    background-image: url('/resources/img/EmptyGalaxy.jpg');
     background-position: 30px 30px;
     background-size: 740px 740px;
     background-repeat: no-repeat;
@@ -10,7 +10,7 @@
     display: none;
   }
   #GalaxyMapImage{
-    background-image: url('/resources/Galaxy740.png');
+    background-image: url('/resources/img/Galaxy740.png');
     background-position: 30px 30px;
     background-size: 740px 740px;
     background-repeat: no-repeat;
@@ -51,7 +51,7 @@ This map is loading alot of data, Please be patient.
       },
       hovermode: 'closest',
       images: [{
-          "source": "/recources/Galaxy.png",
+          "source": "/resources/img/Galaxy740.png",
           "xref": "x",
           "yref": "y",
           "x": -500,
