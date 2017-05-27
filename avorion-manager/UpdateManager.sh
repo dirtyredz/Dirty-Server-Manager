@@ -39,7 +39,7 @@ if [ "${CurrentVersion}" != "${VERSION}" ]; then
     do
       if [ ! -z "$var" ]; then
         OldLineConfigName=$(echo $var | sed -e '0,/=.*/s///')
-        sed -i "s~${OldLineConfigName}.*~${var}~" avorion-manager/PHPConfig.ini
+        sed -i "s~${OldLineConfigName}=.*~${var}~" avorion-manager/PHPConfig.ini
       fi
     done < "$input"
     rm avorion-manager/PHPConfig.ini.old
