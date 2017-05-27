@@ -1,3 +1,4 @@
+<link rel="stylesheet" type="text/css" href="/resources/css/flags.min.css">
 <style type="text/css">
 
     #BannerAddress{
@@ -66,6 +67,7 @@
       color: gray;
     }
 </style>
+<script src="https://cdn.jsdelivr.net/clipboard.js/1.6.0/clipboard.min.js"></script>
 <script type="text/javascript">
   new Clipboard('#BannerAddress');
 </script>
@@ -110,7 +112,7 @@
       <?php
       if(isset($Data['OnlinePlayers'])){
         foreach ($Data['OnlinePlayers'] as $key => $value) {
-          echo '<span class="OnlinePlayer"><span>'.$key.'</span>&nbsp;&nbsp;&nbsp;&nbsp;<img src="/resources/blank.gif" class="flag flag-'.$value['CountryCode'].'" alt="'.$value['CountryName'].'" /></span>';
+          echo '<span class="OnlinePlayer"><span>'.$key.'</span>&nbsp;&nbsp;&nbsp;&nbsp;<img src="/resources/img/blank.gif" class="flag flag-'.$value['CountryCode'].'" alt="'.$value['CountryName'].'" /></span>';
         }
       }
       ?>

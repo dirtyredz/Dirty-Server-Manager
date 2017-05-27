@@ -1,3 +1,5 @@
+<link rel="stylesheet" type="text/css" href="/resources/css/SpriteStyle.css">
+<link rel="stylesheet" type="text/css" href="/resources/css/select2.min.css">
 <style type="text/css">
     div#ConsoleWrapper {
       padding: 20px;
@@ -195,6 +197,7 @@
       transform: rotate(1deg);
     }
 </style>
+<script src="/resources/js/select2.min.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
   $(".js-example-basic-single").select2();

@@ -42,6 +42,7 @@
     font-size: 25px;
   }
 </style>
+
 <div id="Top"><span class="Title"><svg class="icon"><use xlink:href="#icon-earth"></use></svg>FACTIONS</span><span class="Time"></span></div>
 <br/>
 <label for="Search">Search Factions</label>

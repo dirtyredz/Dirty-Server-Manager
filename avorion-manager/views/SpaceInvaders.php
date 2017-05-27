@@ -1,6 +1,6 @@
 <div id="Top"><span class="Title"><svg class="icon"><use xlink:href="#icon-spaceinvaders"></use></svg>SPACE INVADERS</span><span class="Time"></span></div>
 <br/>
-<link rel="stylesheet" type="text/css" href="/resources/spaceinvaders.css">
+<link rel="stylesheet" type="text/css" href="/resources/spaceinvaders/spaceinvaders.css">
 <style>
 	/* Styling needed for a fullscreen canvas and no scrollbars. */
 	body, html {

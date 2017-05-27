@@ -5,7 +5,7 @@
 
 <div id="Top"><span class="Title"><svg class="icon"><use xlink:href="#icon-about"></use></svg>ABOUT</span><span class="Time"></span></div>
 <br/>
-<img src="/resources/DSM_Logo.png" alt="DSM"/>
+<img src="/resources/img/DSM_Logo.png" alt="DSM"/>
 <h1>Dirty Server Manager</h1>
 <h2>The Unofficial Avorion Linux Server Manager.</h2>
 <div class="Version"><h3>Version: <?php echo $Data['Version']; ?></h3><span><?php echo $Data['UpToDate']; ?></span></div>

@@ -266,17 +266,14 @@
             }
           }
       </style>
-      <link rel="stylesheet" type="text/css" href="/resources/flags.min.css">
-      <link rel="stylesheet" type="text/css" href="/resources/select2.min.css">
-      <link rel="stylesheet" type="text/css" href="/resources/SpriteStyle.css">
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/eqcss/1.6.0/EQCSS.min.js"></script>
       <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-      <script src="https://cdn.jsdelivr.net/clipboard.js/1.6.0/clipboard.min.js"></script>
+      
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.28.8/js/jquery.tablesorter.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.28.8/js/jquery.tablesorter.widgets.min.js"></script>
-      <script src="/resources/select2.min.js"></script>
+
     </head>
     <body>
         <svg style="position: absolute; width: 0; height: 0; overflow: hidden;" version="1.1" xmlns="http://www.w3.org/2000/svg">
