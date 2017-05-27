@@ -28,7 +28,7 @@ Step 4: Unpack the tar file
 
         tar -xvf DirtyServerManager.tar.gz
 
-Step 6: Steamcmd and avvorion serve Installation
+Step 6: Steamcmd and avorion server Installation
 
         ./manager install
 
