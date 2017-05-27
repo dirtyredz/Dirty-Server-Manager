@@ -2,7 +2,11 @@
   Fixed wrong number of online players on home page.
   Added Space Invaders page, because why not?
   Updated Definitions for PHPConfig.ini
-
+  Moved Resources files to individual directories (Youll need to manually delete the exsisting files)
+  fixed bottom padding of #Main
+  Changed Font styles
+  Added % to cpu/serverload Graphs
+  
 1.0.6
   Added Support for configuration updates
 

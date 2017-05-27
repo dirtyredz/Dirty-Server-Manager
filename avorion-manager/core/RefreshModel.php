@@ -150,6 +150,8 @@ class RefreshModel extends CommonController {
           'y' => $Data,
           'type' => 'scatter',
           'fill' => 'tozeroy',
+          'text' => '%',
+          'hoverinfo'=>'x+y+text',
           'fillcolor' => 'rgba(168, 216, 234, 0.5)'
         ]];
         return $PlotlyData;
@@ -355,7 +357,7 @@ class RefreshModel extends CommonController {
           'y' => $Load,
           'type' => 'scatter',
           'fill' => 'tozeroy',
-          'text'=>'CPU Usage',
+          'text'=>'% CPU Usage',
           'hoverinfo'=>'x+y+text',
           'fillcolor' => 'rgba(168, 216, 234, 0.5)'
         ];

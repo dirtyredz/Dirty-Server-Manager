@@ -9,6 +9,7 @@
       flex-wrap: wrap;
     }
     div#Console{
+      font-family: 'Source Code Pro', monospace;
       border: 4px solid #3d3c3c;
       overflow-x: hidden;
       overflow-y: scroll;
