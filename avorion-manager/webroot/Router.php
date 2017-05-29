@@ -78,27 +78,27 @@ if (preg_match('/\.(?:png|jpg|jpeg|gif|css|js)$/', $uri_parts['path'])) {
         $Query = substr(strrchr($Query[0], 'function='), 9 );
         if(method_exists($AccountController,$Query)){
           if($Query == 'ListUsers' || $Query == 'LogOut'){
-            $AccountController->$Query();
+            echo $AccountController->$Query();
             return true;
           }
         }
       }elseif(isset($_POST['username']) && isset($_POST['password']) ){
-        $AccountController->CheckCredentials();
+        echo $AccountController->CheckCredentials();
         return true;
       }elseif(isset($_POST['NewUser'])){
-        $AccountController->AddUser();
+        echo $AccountController->AddUser();
         return true;
       }elseif(isset($_POST['DeleteUser'])){
-        $AccountController->DeleteUser();
+        echo $AccountController->DeleteUser();
         return true;
       }elseif(isset($_POST['ChangeRole'])){
-        $AccountController->ChangeRole();
+        echo $AccountController->ChangeRole();
         return true;
       }elseif(isset($_POST['ResetPass'])){
-        $AccountController->ResetPassword();
+        echo $AccountController->ResetPassword();
         return true;
       }elseif(isset($_POST['OldPass']) && isset($_POST['NewPass'])){
-        $AccountController->ChangePassword();
+        echo $AccountController->ChangePassword();
         return true;
       }
 
