@@ -13,6 +13,23 @@ for file in ${DIR}/${GALAXYNAME}/players/*.dat; do
   if [ "${StartingPositionName}" ]; then
     ID=$(echo $file | sed -e 's/.*_//g' -e 's/.dat//g')
     Name=$(xxd -ps -l 50 -seek ${StartingPositionName} "${file}" | xxd -r -p | head -n1 )
+    LastSeenConsole=$(grep -m 1 -e "${Name} joined" console.log)
+    LastSeen='Unkown'
+    if [ -z "$LastSeenConsole" ]; then
+      if [ -e ${PWD}/avorion-manager/PlayerData.php ]; then
+        PastPlayerData=$(grep -e "LastSeen" ${PWD}/avorion-manager/PlayerData.php)
+        if [ "${PastPlayerData}" ]; then
+          LastSeenPast=$(grep -e "Name\" => \"${Name}\"" ${PWD}/avorion-manager/PlayerData.php | sed -e 's/.*LastSeen\" => \"//g' -e 's/\".*//g')
+          if [ "$LastSeenPast" == "Unkown" ] || [ -z "$LastSeenPast" ]; then
+            LastSeen=$(grep -h -m 1 -e "${Name}" $(find ${PWD}/avorion-manager/logs/*_status.log -printf '%T+ %p\n' | sort -n | sed -e 's/.* //g') | tail -n1 | sed -e 's/ .*//g')
+          fi
+        fi
+      else
+        LastSeen=$(grep -h -m 1 -e "${Name}" $(find ${PWD}/avorion-manager/logs/*_status.log -printf '%T+ %p\n' | sort -n | sed -e 's/.* //g') | tail -n1 | sed -e 's/ .*//g')
+      fi
+    else
+      LastSeen=$(/bin/date +\%Y-\%m-\%d)
+    fi
     StartingPosition=$(grep -b -a -o -P 'play_time' "${file}" | sed 's/:.*//' | tail -n1)
     SteamID=$(xxd -ps -l 8 -seek "$((${StartingPosition} - 33 ))" "${file}" )
     Money=$(xxd -ps -l 4 -seek "$((${StartingPosition} - 8 ))" "${file}" )
@@ -24,7 +41,7 @@ for file in ${DIR}/${GALAXYNAME}/players/*.dat; do
     Ogonite=$(xxd -ps -l 4 -seek "$((${StartingPosition} + 173 ))" "${file}" )
     Avorion=$(xxd -ps -l 4 -seek "$((${StartingPosition} + 199 ))" "${file}" )
     PlayTime=$(xxd -ps -l 4 -seek "$((${StartingPosition} + 17 ))" "${file}" )
-    echo  "array(\"ID\" => \"$ID\",\"Name\" => \"$Name\",\"SteamID\" => \"$SteamID\",\"PlayTime\" => \"$PlayTime\",\"Money\" => \"$Money\",\"Iron\" => \"$Iron\",\"Titanium\" => \"$Titanium\",\"Naonite\" => \"$Naonite\",\"Trinium\" => \"$Trinium\",\"Xanion\" => \"$Xanion\",\"Ogonite\" => \"$Ogonite\",\"Avorion\" => \"$Avorion\")," >> $PlayerDataTmp;
+    echo  "array(\"ID\" => \"$ID\",\"Name\" => \"$Name\",\"LastSeen\" => \"$LastSeen\",\"SteamID\" => \"$SteamID\",\"PlayTime\" => \"$PlayTime\",\"Money\" => \"$Money\",\"Iron\" => \"$Iron\",\"Titanium\" => \"$Titanium\",\"Naonite\" => \"$Naonite\",\"Trinium\" => \"$Trinium\",\"Xanion\" => \"$Xanion\",\"Ogonite\" => \"$Ogonite\",\"Avorion\" => \"$Avorion\")," >> $PlayerDataTmp;
   fi
 done
 echo ");" >> $PlayerDataTmp;

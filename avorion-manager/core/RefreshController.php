@@ -139,7 +139,7 @@ class RefreshController extends CommonController
       /** @var string $Message Message Cleaned POST form value */
       $Message = htmlspecialchars($_POST['Message']);
       //Replace newlines
-      $Message = str_replace("\n", "\\n", $Message);
+      //$Message = str_replace("\n", "\\n", $Message);
       /** @var string $Credits Credits Cleaned POST form value */
       $Credits = htmlspecialchars($_POST['Credits']);
       /** @var string $Iron Iron Cleaned POST form value */
@@ -157,8 +157,9 @@ class RefreshController extends CommonController
       /** @var string $Avorion Avorion Cleaned POST form value */
       $Avorion = htmlspecialchars($_POST['Avorion']);
       /** @var string $Command Generated command from form values */
-      $Command = '/sendmail '.$Name.' '.$Credits.' "'.$Title.'" "'.$Subject.'" '.$Iron.' '.$Titanium.' '.$Naonite.' '.$Trinium.' '.$Xanion.' '.$Ogonite.' '.$Avorion.' "'.$Message.'"';
+      $Command = '/sendmail '.$Name.' "'.$Subject.'" "'.$Title.'" '.$Credits.' '.$Iron.' '.$Titanium.' '.$Naonite.' '.$Trinium.' '.$Xanion.' '.$Ogonite.' '.$Avorion;
       //Send to model
+      file_put_contents(str_replace('/manager', '', $this->Config['Manager']).'/MailMessage.txt', $Message);
       //Can this be tricked to send bad commands?
       $this->RefreshModel->SendKeys($Command);
       $return['success'] = true;

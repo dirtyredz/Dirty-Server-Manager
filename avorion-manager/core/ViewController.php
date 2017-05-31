@@ -464,13 +464,7 @@ class ViewController extends CommonController
       $this->Data['AccessGranted'] = false;
     }
     include __DIR__ ."/../PlayerData.php";
-    foreach ($PlayerData as $key => $value) {
-      $Result = `grep -h -m 1 -e "{$value['Name']}" $(find {$this->Config['LogsDir']}/*_status.log -printf '%T+ %p\n' | sort -n | sed -e 's/.* //g') | tail -n1 | sed -e 's/ .*//g'`;
-      if(!$Result){
-        $Result = '> 10 Days';
-      }
-      $PlayerData[$key]['LastSeen'] = $Result;
-    }
+
 
     $this->Data['PlayerData'] = $PlayerData;
     $this->LoadView('Players');
