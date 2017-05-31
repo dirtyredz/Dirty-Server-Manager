@@ -22,6 +22,15 @@
 <br/>
 <br/>
 <h3>CHANGE LOG:</h3>
+<h4>1.0.7</h4>
+  Fixed wrong number of online players on home page.</br>
+  Added Space Invaders page, because why not?</br>
+  Updated Definitions for PHPConfig.ini</br>
+  Moved Resources files to individual directories (Youll need to manually delete the exsisting files)</br>
+  fixed bottom padding of #Main</br>
+  Changed Font styles</br>
+  Added % to cpu/serverload Graphs</br>
+  </br>
 <h4>1.0.6</h4>
   Added Support for configuration updates</br>
   </br>

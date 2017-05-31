@@ -9,12 +9,28 @@ You don't need to own Avorion on Steam to use this.
 
 INSTALLATION
 Step 1: Verify or install these dependencies:
-
         lib32gcc1, tmux (V2.0+), php7.0, php7.0-gd
 
-        sudo apt-get install lib32gcc1 tmux php7.0 php7.0-gd
+        FOLLOW YOUR SYSTEMS INSTRUCTIONS FOR THIS STEP!!!
 
-        for more info - https://developer.valvesoftware.com/wiki/SteamCMD
+        Ubuntu is the recomended OS:
+          UBUNTU 16.04x64:
+            sudo apt-get install lib32gcc1 tmux php7.0 php7.0-gd
+
+        Debian were forced to take additional step to ensure we have  the versions of tmux and php necassary to run the manager
+          DEBIAN 8.8x64:
+            echo 'deb http://packages.dotdeb.org jessie all' >> /etc/apt/sources.list
+            echo 'deb-src http://packages.dotdeb.org jessie all' >> /etc/apt/sources.list
+            sudo apt-get install curl
+            curl https://www.dotdeb.org/dotdeb.gpg | sudo apt-key add -
+            sudo apt-get update
+            sudo apt-get install -y exuberant-ctags cmake libevent-dev libncurses5-dev lib32gcc1 php7.0 php7.0-gd
+            wget https://github.com/tmux/tmux/releases/download/2.0/tmux-2.0.tar.gz
+            tar xvf tmux-2.0.tar.gz
+            cd tmux-2.0
+            ./configure && make
+            sudo make install
+
 Step 2: Create a new user for avorion to run on. (Do not use root)
 
         sudo adduser avorion

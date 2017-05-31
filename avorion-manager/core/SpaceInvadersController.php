@@ -13,9 +13,9 @@ class SpaceInvadersController extends CommonController
    */
   function __construct()
   {
-      parent::__construct();
-      include __DIR__ .'/../HighScore.php';
-      $this->HighScore = $HighScore;
+    parent::__construct();
+    include __DIR__ .'/../HighScore.php';
+    $this->HighScore = $HighScore;
   }
 
   /**
