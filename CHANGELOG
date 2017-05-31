@@ -1,3 +1,5 @@
+1.0.8
+  
 1.0.7
   Fixed wrong number of online players on home page.
   Added Space Invaders page, because why not?
@@ -6,7 +8,7 @@
   fixed bottom padding of #Main
   Changed Font styles
   Added % to cpu/serverload Graphs
-  
+
 1.0.6
   Added Support for configuration updates
 

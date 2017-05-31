@@ -1,11 +1,13 @@
 <?php
 /**
-
- * @copyright  2017 Dirtyredz
+ * Handles request for the config page
  */
-class ServerConfigController extends CommonController{
+class ServerConfigController extends CommonController
+{
+  /** @var object $ConfigParser Hold the config Parser class object */
   private $ConfigParser;
-  public $PHPConfigDetails = array(
+  /** @var array $PHPConfigDetails Contains all the deffinitions and input type info */
+  public static $PHPConfigDetails = array(
     'HomeCustomMessageOne' => array(
           'Definition' => 'Custom message for home page, can accept html or plain text. (Does NOT support semicolens ";" use of one will break the string while displaying)',
           'Type' => 'text'),
@@ -154,69 +156,132 @@ class ServerConfigController extends CommonController{
           'Definition' => 'The directory where the status banner resides. (This path is relative to the PHPConfig.ini location)',
           'Type' => 'text'),
   );
-  function __construct(){
+
+  /**
+   * Settup class and requires ConfigParser.php
+   * @method __construct
+   */
+  function __construct()
+  {
     parent::__construct();
     require_once  __DIR__ .'/ConfigParser.php';
-
   }
-  public function GetServerINI(){
+
+  /**
+   * Parses through Server.ini
+   * @method GetServerINI
+   * @return array
+   */
+  public function GetServerINI()
+  {
+    //Settup config parser object
     $this->ConfigParser = new ConfigParser();
+    /** @var string $GalaxyName GalaxyName in manager-config */
     $GalaxyName = `grep GALAXY {$this->Config['ManagerConfig']} | sed -e 's/.*=//g'`;
+    /** @var string $File server.ini file location */
     $File = $this->Config['GalaxiesDir']."/".trim($GalaxyName)."/server.ini";
 
+    // Parses the file and return an array
     if($this->ParseINI($File)){
       return $this->ConfigParser->GetINI();
     }
   }
-  private function ParseINI($File){
+
+  /**
+   * Parses the INI file provided and returns true for success
+   * @method ParseINI
+   * @param  string $File File location to parse
+   * @return boolean
+   */
+  private function ParseINI($File)
+  {
+    //Parse the file
     $this->ConfigParser->ParseINI($File);
+    //if parsing was successful or not
     return $this->ConfigParser->Success;
   }
 
-  public function GetManagerConfig(){
+  /**
+   * Parses the manager-config.ini
+   * @method GetManagerConfig
+   * @return array
+   */
+  public function GetManagerConfig()
+  {
+    //Settup config parser object
     $this->ConfigParser = new ConfigParser();
+    // Parses the file and return an array
     if($this->ParseINI($this->Config['ManagerConfig'])){
       return $this->ConfigParser->GetINI();
     }
   }
-  public function GetPHPConfig(){
+
+  /**
+   * Parses the PHPConfig.ini
+   * @method GetPHPConfig
+   * @return array
+   */
+  public function GetPHPConfig()
+  {
+    //Settup config parser object
     $this->ConfigParser = new ConfigParser();
+    //Parses the file and returns the array
     if($this->ParseINI(__DIR__ . '/../PHPConfig.ini')){
       return $this->ConfigParser->GetINI();
     }
   }
 
-
-  public function UpdatePHPConfig(){
+  /**
+   * Validates and cleans form data from PHPConfig ChangeServerINI
+   * Updates and writes to file with comments
+   * @method UpdatePHPConfig
+   * @return string json_encoded success message
+   */
+  public function UpdatePHPConfig()
+  {
+    /** @var array $return Builds response array */
     $return = array();
+    /** @var array $NewPHPConfig array with updated values */
     $NewPHPConfig = array();
+    /** @var array $Defaults PHPConfig.ini current values from file */
     $Defaults = $this->GetPHPConfig();
+    //foreach value in the form data
     foreach ($_POST['FormData'] as $key => $value) {
-      //Clean and verification NEEDED!!!
+      /** @var mixed $RtnValue form value to be validated and update the file with */
       $RtnValue = $value['value'];
+      //if this INI option requires a number
       if($this->PHPConfigDetails[$value['name']]['Type'] == 'number'){
+        //Cleans it
         $RtnValue = htmlspecialchars($RtnValue);
+        //if its not a number restore default
         if(!is_numeric($RtnValue)){
           $RtnValue = $Defaults[$value['name']];
         }
+      //if INI option is a text field
       }elseif($this->PHPConfigDetails[$value['name']]['Type'] == 'text'){
+        //Client can use HTML here so lets only strip  out script tags
         $RtnValue = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $RtnValue);
+      //if INI option is a select input
       }elseif($this->PHPConfigDetails[$value['name']]['Type'] == 'select'){
+        //cleans it
         $RtnValue = htmlspecialchars($RtnValue);
+        //if value is not one of the allowed values then restore it
         if(!in_array($RtnValue,$this->PHPConfigDetails[$value['name']]['Values'])){
           $RtnValue = $Defaults[$value['name']];
         }
       }
+      //add the value to the array to be updated
       $NewPHPConfig[$value['name']] = $RtnValue;
     }
 
+    //Update the class array with our new array
     $this->ConfigParser->update($NewPHPConfig);
-
+    //Write the class array to the file include our comments with it so they are written in as well
     $this->ConfigParser->write($this->PHPConfigDetails);
 
+    //return success message
     $return['success'] = true;
     $return['message'] = 'PHP Config Updated';
     echo json_encode($return);
   }
 }
-?>

@@ -1,8 +1,12 @@
 <?php
-class ViewController extends CommonController{
+class ViewController extends CommonController
+{
+
   public $Data;
 
-  function __construct(){
+
+  function __construct()
+  {
     parent::__construct();
 
     $this->Data['ERROR'] = array();
@@ -23,12 +27,17 @@ class ViewController extends CommonController{
     }
   }
 
-  private function LoadView($View){
+
+  private function LoadView($View)
+  {
     $Data = $this->Data;
     $this->LogMessage('Loading page: '.$View);
     include __DIR__.'/../views/'.$View.'.php';
   }
-  public function Index(){
+
+
+  public function Index()
+  {
     $IPAddress = exec("hostname -I | awk '{print $1}'");
     $this->Data['ConsoleAccess'] = 'Disabled';
     $this->Data['AccessServerConfigPage'] = 'Disabled';
@@ -96,7 +105,10 @@ class ViewController extends CommonController{
 
     $this->LoadView('index');
   }
-  public function About(){
+
+
+  public function About()
+  {
     $AvailableVersion = `wget -O - -o /dev/null https://api.github.com/repos/dirtyredz/Dirty-Server-Manager/releases/latest | grep tag_name | sed -e 's/.*://g' -e 's/"//g' -e 's/,//g' | tr -d '[:blank:]'`;
     $InstalledVersion = `grep VERSION {$this->Config['Manager']} | head -n1 | sed -e 's/.*=//g'`;
     $this->Data['Version'] = $InstalledVersion;
@@ -108,12 +120,18 @@ class ViewController extends CommonController{
 
     $this->LoadView('About');
   }
-  public function Account(){
+
+
+  public function Account()
+  {
     $this->Data['IPAddress'] = exec("hostname -I | awk '{print $1}'");
     $this->SessionRequired();
     $this->LoadView('Account');
   }
-  public function ServerConfig(){
+
+
+  public function ServerConfig()
+  {
     //$this->SessionRequired();
     $this->RoleRequired($this->Config['AccessServerConfigPage']);//Role required to view page
 
@@ -300,7 +318,10 @@ class ViewController extends CommonController{
 
     $this->LoadView('ServerConfig');
   }
-  public function Console(){
+
+
+  public function Console()
+  {
     //$this->SessionRequired();
     $this->RoleRequired($this->Config['AccessConsolePage']);//Role required to view page
     if($this->RoleAccess($this->Config['ConsoleCommandsAccess'])){//Role required for specific feature
@@ -318,25 +339,37 @@ class ViewController extends CommonController{
     $this->Data['PlayerData'] = $PlayerData;
     $this->LoadView('Console');
   }
-  public function DiscoveredMap(){
+
+
+  public function DiscoveredMap()
+  {
     $this->RoleRequired($this->Config['AccessDiscoveredMapPage']);//Role required to view page
     include __DIR__ ."/../SectorData.php";
     $this->Data['SectorData'] = json_encode( $SectorData );
     $this->LoadView('DiscoveredMap');
   }
-  public function Factions(){
+
+
+  public function Factions()
+  {
     $this->RoleRequired($this->Config['AccessFactionsPage']);//Role required to view page
     include __DIR__ ."/../SectorData.php";
     $this->Data['SectorData'] = $SectorData;
     $this->LoadView('Factions');
   }
-  public function FactionsMap(){
+
+
+  public function FactionsMap()
+  {
     $this->RoleRequired($this->Config['AccessFactionsMapPage']);//Role required to view page
     include __DIR__ ."/../SectorData.php";
     $this->Data['SectorData'] = json_encode( $SectorData );
     $this->LoadView('FactionsMap');
   }
-  public function Graphs(){
+
+
+  public function Graphs()
+  {
     $this->RoleRequired($this->Config['AccessGraphsPage']);//Role required to view page
     $this->Data['ServerLoadGraph'] = false;
     $this->Data['OnlinePlayersGraph'] = false;
@@ -363,7 +396,10 @@ class ViewController extends CommonController{
     $this->Data['MaxPlayers'] = `grep MAX {$this->Config['ManagerConfig']} | sed -e 's/.*=//g'`;
     $this->LoadView('Graphs');
   }
-  public function Home(){
+
+
+  public function Home()
+  {
     if($this->RoleAccess($this->Config['HomeChatLog'])){//Role required for specific feature
       $this->Data['ShowChatLog'] = true;
     }else{
@@ -400,7 +436,7 @@ class ViewController extends CommonController{
       if(strlen($OnlinePlayers[0]) > 1){
         foreach ($OnlinePlayers as $key => $value) {
           $Name = str_replace("\n", '', $value);
-          $IP = `echo "{$ConnectionList}" | grep -B1 "{$Name}" | head -n1 | tr -d '\n'`;
+          $IP = `echo "{$ConnectionList}" | grep -B1 -e "{$Name}" | head -n1 | tr -d '\n'`;
           $NewOnlinePlayers[$Name]['IP'] = $IP;
           $GEO = unserialize(file_get_contents('http://www.geoplugin.net/php.gp?ip='.$IP));
           $NewOnlinePlayers[$Name]['CountryCode'] = strtolower($GEO['geoplugin_countryCode']);
@@ -416,7 +452,10 @@ class ViewController extends CommonController{
     $this->Data['IPAddress'] = exec("hostname -I | awk '{print $1}'");
     $this->LoadView('Home');
   }
-  public function Players(){
+
+
+  public function Players()
+  {
     $this->RoleRequired($this->Config['AccessPlayerPage']);//Role required to view page
     if($this->RoleAccess($this->Config['AccessDetailedPlayerData'])){//Role required for specific feature
       $this->LogMessage('Extra Player Data Granted.');
@@ -425,19 +464,36 @@ class ViewController extends CommonController{
       $this->Data['AccessGranted'] = false;
     }
     include __DIR__ ."/../PlayerData.php";
+    foreach ($PlayerData as $key => $value) {
+      $Result = `grep -h -m 1 -e "{$value['Name']}" $(find {$this->Config['LogsDir']}/*_status.log -printf '%T+ %p\n' | sort -n | sed -e 's/.* //g') | tail -n1 | sed -e 's/ .*//g'`;
+      if(!$Result){
+        $Result = '> 10 Days';
+      }
+      $PlayerData[$key]['LastSeen'] = $Result;
+    }
+
     $this->Data['PlayerData'] = $PlayerData;
     $this->LoadView('Players');
   }
-  public function SignIn(){
+
+
+  public function SignIn()
+  {
     $this->Data['IPAddress'] = exec("hostname -I | awk '{print $1}'");
     $this->LoadView('SignIn');
   }
-  public function UserManagment(){
+
+
+  public function UserManagment()
+  {
     $this->SessionRequired();
     $this->RoleRequired($this->Config['AccessUserManagmentPage']);//Role required to view page
     $this->LoadView('UserManagment');
   }
-  public function RSS(){
+
+
+  public function RSS()
+  {
     if($this->Config['EnableRSS']){
       include __DIR__ .'/../core/RefreshModel.php';
       $RefreshModel = new RefreshModel;
@@ -453,7 +509,10 @@ class ViewController extends CommonController{
       $this->LoadView('rss');
     }
   }
-  public function SpaceInvaders(){
+
+
+  public function SpaceInvaders()
+  {
     $this->RoleRequired($this->Config['AccessSpaceInvadersPage']);//Role required to view page
     $this->Data['IPAddress'] = $this->getUserIP();
     $this->LoadView('SpaceInvaders');
