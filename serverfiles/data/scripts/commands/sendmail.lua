@@ -12,6 +12,7 @@ function execute(sender, command, RecipientID, Header, Sender, Credits, Iron, Ti
   Xanion = Xanion or 0
   Ogonite = Ogonite or 0
   Avorion = Avorion or 0
+  Message = "Default Message"
   --Message = Message or "Default Message"
   --Message = string.gsub(Message,"\\n", "\n")
 local input = assert(io.open('../MailMessage.txt', "r"))

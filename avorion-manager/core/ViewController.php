@@ -1,44 +1,67 @@
 <?php
+/**
+ * Prepares data to be displayed to the page and then loads the page
+ */
 class ViewController extends CommonController
 {
-
+  /** @var array $Data All data to be available to the page will be inside this array */
   public $Data;
 
-
+  /**
+   * Prepares Data for every page.
+   * @method __construct
+   * @return void
+   */
   function __construct()
   {
     parent::__construct();
 
+    //An array of errors to display
     $this->Data['ERROR'] = array();
+    //is this config option an actuall file on the server?
     if(!is_file($this->Config['ManagerConfig'])){
       $this->Data['ERROR'][] = 'Config Option, ManagerConfig: "'.$this->Config['ManagerConfig'].'" Is not a valid file path.';
     }
+    //is this config option an actuall file on the server?
     if(!is_file($this->Config['Manager'])){
       $this->Data['ERROR'][] = 'Config Option, Manager: "'.$this->Config['Manager'].'" Is not a valid file path.';
     }
+    //is this config option an actuall directory on the server?
     if(!is_dir($this->Config['LogsDir'])){
       $this->Data['ERROR'][] = 'Config Option, LogsDir: "'.$this->Config['LogsDir'].'" Is not a valid directory path.';
     }
+    //is this config option an actuall directory on the server?
     if(!is_dir($this->Config['StatusBannerDir'])){
       $this->Data['ERROR'][] = 'Config Option, StatusBannerDir: "'.$this->Config['StatusBannerDir'].'" Is not a valid directory path.';
     }
+    //is this config option an actuall file on the server?
     if(!is_file($this->Config['ConsoleLog'])){
       $this->Data['ERROR'][] = 'Config Option, ConsoleLog: "'.$this->Config['ConsoleLog'].'" Is not a valid file path.';
     }
   }
 
-
+  /**
+   * Logs and loads the file
+   * @method LoadView
+   * @param  string $View The name of the file to load from the views directory
+   */
   private function LoadView($View)
   {
+    //Makes the data available
     $Data = $this->Data;
     $this->LogMessage('Loading page: '.$View);
     include __DIR__.'/../views/'.$View.'.php';
   }
 
-
+  /**
+   * The initial page to be loaded.
+   * @method Index
+   * @return void
+   */
   public function Index()
   {
     $IPAddress = exec("hostname -I | awk '{print $1}'");
+    //Default all links to be disabled
     $this->Data['ConsoleAccess'] = 'Disabled';
     $this->Data['AccessServerConfigPage'] = 'Disabled';
     $this->Data['UserManagmentAccess'] = 'Disabled';
@@ -53,48 +76,62 @@ class ViewController extends CommonController
     $this->Data['Username'] = '';
     $this->Data['LoggedIn'] = false;
     $this->Data['LoggedInClass'] = 'Disabled';
+    //Checks for a cookie
     $cookie = isset($_COOKIE['rememberme']) ? $_COOKIE['rememberme'] : '';
+    //If we already have a session, Prepare page for a logged in user
     if($this->SessionLoggedIn()) {
       $this->Data['LoggedInClass'] = '';
       $this->Data['LoggedIn'] = true;
       $this->LogMessage('Accessed Web Interface with valid session.');
       $this->Data['Username'] = 'Logged in as: <span>'.$_SESSION['username'].'</span>';
     }elseif ($cookie) {
+      //if we have a cookie, lets validate it
       require_once __DIR__ . '/AccountModel.php';
       $AccountModel = new AccountModel;
+      //if the cookie is valid prepare page for a logged in user
       if($AccountModel->CheckCookie($cookie)){
         $this->Data['Username'] = 'Logged in as: <span>'.$_SESSION['username'].'</span>';
         $this->Data['LoggedInClass'] = '';
         $this->Data['LoggedIn'] = true;
       }
     }
+    //role is required to be greater then config option, otherwise do not display
     if($this->RoleAccess($this->Config['AccessConsolePage'])){//Role required for specific feature
       $this->Data['ConsoleAccess'] = '';
     }
+    //role is required to be greater then config option, otherwise do not display
     if($this->RoleAccess($this->Config['AccessServerConfigPage'])){//Role required for specific feature
       $this->Data['AccessServerConfigPage'] = '';
     }
+    //role is required to be greater then config option, otherwise do not display
     if($this->RoleAccess($this->Config['AccessUserManagmentPage'])){//Role required for specific feature
       $this->Data['UserManagmentAccess'] = '';
     }
+    //role is required to be greater then config option, otherwise do not display
     if($this->RoleAccess($this->Config['AccessPlayerPage'])){//Role required for specific feature
       $this->Data['AccessPlayerPage'] = '';
     }
+    //role is required to be greater then config option, otherwise do not display
     if($this->RoleAccess($this->Config['AccessFactionsPage'])){//Role required for specific feature
       $this->Data['AccessFactionsPage'] = '';
     }
+    //role is required to be greater then config option, otherwise do not display
     if($this->RoleAccess($this->Config['AccessGraphsPage'])){//Role required for specific feature
       $this->Data['AccessGraphsPage'] = '';
     }
+    //role is required to be greater then config option, otherwise do not display
     if($this->RoleAccess($this->Config['AccessDiscoveredMapPage'])){//Role required for specific feature
       $this->Data['AccessDiscoveredMapPage'] = '';
     }
+    //role is required to be greater then config option, otherwise do not display
     if($this->RoleAccess($this->Config['AccessFactionsMapPage'])){//Role required for specific feature
       $this->Data['AccessFactionsMapPage'] = '';
     }
+    //role is required to be greater then config option, otherwise do not display
     if($this->RoleAccess($this->Config['AccessSpaceInvadersPage'])){//Role required for specific feature
       $this->Data['AccessSpaceInvadersPage'] = '';
     }
+    //Prepare additional data to put on the page and load the page
     $this->Data['IPAddress'] = exec("hostname -I | awk '{print $1}'");
     $DefaultPage = $this->Config['DefaultPage'];
     $AllowedPages = array('Home','Factions','Players','DiscoveredMap','FactionsMap','Graphs','SignIn','About');
@@ -102,42 +139,59 @@ class ViewController extends CommonController
       $DefaultPage = 'Home';
     }
     $this->Data['DefaultPage'] = $DefaultPage;
-
     $this->LoadView('index');
   }
 
-
+  /**
+   * Prepares and Loads the about page
+   * @method About
+   * @return void
+   */
   public function About()
   {
+    //Get the current available version from github
     $AvailableVersion = `wget -O - -o /dev/null https://api.github.com/repos/dirtyredz/Dirty-Server-Manager/releases/latest | grep tag_name | sed -e 's/.*://g' -e 's/"//g' -e 's/,//g' | tr -d '[:blank:]'`;
+    //Get the installed version from the manager
     $InstalledVersion = `grep VERSION {$this->Config['Manager']} | head -n1 | sed -e 's/.*=//g'`;
+    //Load the installed version to the page
     $this->Data['Version'] = $InstalledVersion;
+    //Compare the versions and display the appropriate message
     if($InstalledVersion != $AvailableVersion){
       $this->Data['UpToDate'] = 'Dirty Server Manager is not up to date!';
     }else{
       $this->Data['UpToDate'] = 'Dirty Server Manager up to date!';
     }
-
+    //Loads the page
     $this->LoadView('About');
   }
 
-
+  /**
+   * Prepares and loads the account page
+   * @method Account
+   * @return void
+   */
   public function Account()
   {
     $this->Data['IPAddress'] = exec("hostname -I | awk '{print $1}'");
+    //No need to check for role here, if they dont have a session at all redirect them
     $this->SessionRequired();
+    //Loads the page
     $this->LoadView('Account');
   }
 
-
+  /**
+   * Prepares and loads config page
+   * @method ServerConfig
+   * @return void
+   */
   public function ServerConfig()
   {
-    //$this->SessionRequired();
+    //Role required in comparison to the config, if not redirect
     $this->RoleRequired($this->Config['AccessServerConfigPage']);//Role required to view page
-
+    //Load config controller
     require_once  __DIR__ .'/ServerConfigController.php';
     $ServerConfigController = new ServerConfigController();
-
+    //Grab all INI configuration files data
     $this->Data['ServerINI'] = $ServerConfigController->GetServerINI();
     $this->Data['ServerINIDetails'] = array(
       array('name' => 'Seed',
@@ -264,6 +318,7 @@ class ViewController extends CommonController
             'Values' => array('Blacklist'=>'Blacklist','Whitelist'=>'Whitelist')),
     );
     $this->Data['ManagerConfig'] = $ServerConfigController->GetManagerConfig();
+    //Need to move to config controller
     $this->Data['ManagerConfigDetails'] = array(
       array('name' => 'MAX_PLAYERS',
             'Definition' => 'Max number of players on the server at once. Used here so the manager has easy access to this value.',
@@ -296,144 +351,194 @@ class ViewController extends CommonController
             'Definition' => 'The port the web interface will listen to.',
             'Type' => 'input'),
     );
-    $TempConfig = $ServerConfigController->GetPHPConfig();
-
-
-    $this->Data['PHPConfig'] = $TempConfig;
+    $this->Data['PHPConfig'] = $ServerConfigController->GetPHPConfig();
+    //need to move to config controller
     $this->Data['PHPConfigDetails'] = $ServerConfigController->PHPConfigDetails;
-
+    //Set the ability to edit the options to false
     $this->Data['ChangeServerINI'] = false;
     $this->Data['ChangeManagerConfigINI'] = false;
     $this->Data['ChangePHPConfigINI'] = false;
-
+    //If logged in user has access to change the server INI
+    //We should also check here if the serve is offline
     if($this->RoleAccess($this->Config['ChangeServerINI'])){//Role required for specific feature
       $this->Data['ChangeServerINI'] = true;
     }
+    //If logged in user has access to change the server INI
+    //We should also check here if the serve is offline
     if($this->RoleAccess($this->Config['ChangeManagerConfigINI'])){//Role required for specific feature
       $this->Data['ChangeManagerConfigINI'] = true;
     }
+    //If logged in user has access to change the server INI
     if($this->RoleAccess($this->Config['ChangePHPConfigINI'])){//Role required for specific feature
       $this->Data['ChangePHPConfigINI'] = true;
     }
-
+    //Load the page
     $this->LoadView('ServerConfig');
   }
 
-
+  /**
+   * Prepares and Loads Console page
+   * @method Console
+   * @return void
+   */
   public function Console()
   {
-    //$this->SessionRequired();
+    //Role required in comparison to the config, if not redirect
     $this->RoleRequired($this->Config['AccessConsolePage']);//Role required to view page
+    //If logged in user has access to the commands bar
     if($this->RoleAccess($this->Config['ConsoleCommandsAccess'])){//Role required for specific feature
       $this->LogMessage('Extra Console Access Granted.');
       $this->Data['AccessGranted'] = true;
     }else{
       $this->Data['AccessGranted'] = false;
     }
+    //If user has access to the send mail form
     if($this->RoleAccess($this->Config['SendMail'])){//Role required for specific feature
       $this->Data['SendMail'] = true;
     }else{
       $this->Data['SendMail'] = false;
     }
+    //Include player data for the send mail form to use
     include __DIR__ ."/../PlayerData.php";
+    //Load page
     $this->Data['PlayerData'] = $PlayerData;
     $this->LoadView('Console');
   }
 
-
+  /**
+   * Prepares and Loads Discovered Map
+   * @method DiscoveredMap
+   * @return void
+   */
   public function DiscoveredMap()
   {
+    //Role required in comparison to the config, if not redirect
     $this->RoleRequired($this->Config['AccessDiscoveredMapPage']);//Role required to view page
+    //Loades Sector Data into php for parsing
     include __DIR__ ."/../SectorData.php";
+    //Send sector data to JS so it can manipulate it
     $this->Data['SectorData'] = json_encode( $SectorData );
     $this->LoadView('DiscoveredMap');
   }
 
-
+  /**
+   * Prepares and Loads Factions page
+   * @method Factions
+   * @return void
+   */
   public function Factions()
   {
+    //Role required in comparison to the config, if not redirect
     $this->RoleRequired($this->Config['AccessFactionsPage']);//Role required to view page
+    //Loades Sector Data into php for parsing
     include __DIR__ ."/../SectorData.php";
+    //Send sector data to page so it can manipulate it
     $this->Data['SectorData'] = $SectorData;
     $this->LoadView('Factions');
   }
 
-
+  /**
+   * Prepares and loads the Factions Map Page
+   * @method FactionsMap
+   * @return void
+   */
   public function FactionsMap()
   {
+    //Role required in comparison to the config, if not redirect
     $this->RoleRequired($this->Config['AccessFactionsMapPage']);//Role required to view page
+    //Loades Sector Data into php for parsing
     include __DIR__ ."/../SectorData.php";
+    //Send sector data to JS so it can manipulate it
     $this->Data['SectorData'] = json_encode( $SectorData );
     $this->LoadView('FactionsMap');
   }
 
-
+  /**
+   * Prepares data for the graphs page and loads it
+   * @method Graphs
+   * @return void
+   */
   public function Graphs()
   {
+    //Role is required to be greater then config option, otherwise redirect
     $this->RoleRequired($this->Config['AccessGraphsPage']);//Role required to view page
+    //default the graphs to false display
     $this->Data['ServerLoadGraph'] = false;
     $this->Data['OnlinePlayersGraph'] = false;
     $this->Data['InMemoryGraph'] = false;
     $this->Data['UpdatesGraph'] = false;
     $this->Data['CpuUsageGraph'] = false;
-
+    //role is required to be greater then config option, otherwise do not display
     if($this->RoleAccess($this->Config['ServerLoadGraph'])){//Role required for specific feature
       $this->Data['ServerLoadGraph'] = true;
     }
+    //role is required to be greater then config option, otherwise do not display
     if($this->RoleAccess($this->Config['OnlinePlayersGraph'])){//Role required for specific feature
       $this->Data['OnlinePlayersGraph'] = true;
     }
+    //role is required to be greater then config option, otherwise do not display
     if($this->RoleAccess($this->Config['InMemoryGraph'])){//Role required for specific feature
       $this->Data['InMemoryGraph'] = true;
     }
+    //role is required to be greater then config option, otherwise do not display
     if($this->RoleAccess($this->Config['UpdatesGraph'])){//Role required for specific feature
       $this->Data['UpdatesGraph'] = true;
     }
+    //role is required to be greater then config option, otherwise do not display
     if($this->RoleAccess($this->Config['CpuUsageGraph'])){//Role required for specific feature
       $this->Data['CpuUsageGraph'] = true;
     }
-
+    //Prepare Data and load
     $this->Data['MaxPlayers'] = `grep MAX {$this->Config['ManagerConfig']} | sed -e 's/.*=//g'`;
     $this->LoadView('Graphs');
   }
 
-
+  /**
+   * Prepares data for Home page and Load the page
+   * @method Home
+   * @return void
+   */
   public function Home()
   {
+    //if role comparison with config options is successfull, Display Chat Log
     if($this->RoleAccess($this->Config['HomeChatLog'])){//Role required for specific feature
       $this->Data['ShowChatLog'] = true;
     }else{
       $this->Data['ShowChatLog'] = false;
     }
-
+    //if role comparison with config options is successfull, Display Players List
     if($this->RoleAccess($this->Config['HomePlayerList'])){//Role required for specific feature
       $this->Data['ShowOnlinePlayers'] = true;
     }else{
       $this->Data['ShowOnlinePlayers'] = false;
     }
-
+    //if role comparison with config options is successfull, Display Disk Usage
     if($this->RoleAccess($this->Config['HomeDiskUsage'])){//Role required for specific feature
       $this->Data['ShowDiskUsage'] = true;
     }else{
       $this->Data['ShowDiskUsage'] = false;
     }
-
+    //Prepare data to be displayed
     $this->Data['ShowOnlinePlayerCount'] = $this->Config['ShowOnlinePlayerCount'];
     $this->Data['CustomMessageOne'] = $this->Config['HomeCustomMessageOne'];
     $this->Data['CustomMessageTwo'] = $this->Config['HomeCustomMessageTwo'];
     $this->Data['CustomMessageThree'] = $this->Config['HomeCustomMessageThree'];
     $this->Data['CustomMessageFour'] = $this->Config['HomeCustomMessageFour'];
     $this->Data['GalaxyName'] = `grep GALAXY {$this->Config['ManagerConfig']} | sed -e 's/.*=//g'`;
+    //Check if pid status is available, display online if pid is available
     $this->Data['OnlineStatus'] = `if [ $(pidof $(grep SERVER= {$this->Config['Manager']} | sed -e 's/.*=//g')) > /dev/null ]; then echo 'Online'; else echo 'Offline'; fi  | tr -d '[:space:]'`;
     if($this->Data['ShowDiskUsage']){
       $this->Data['DiskUsage'] = `df -h --total | awk '{print $5}' | tail -n 1 | sed -e 's/%//g'`;
     }
     if($this->Data['ShowOnlinePlayers'] && $this->Data['OnlineStatus'] == "Online"){
+      //Grab last Online Players report
       $OnlinePlayers = explode(", ",`tac {$this->Config['ConsoleLog']} | grep 'online players (' | head -n 1 | sed -e 's/.*://g' -e 's/^.//g' -e 's/.$//g'`);
       $NewOnlinePlayers = array();
       $PID = `pidof AvorionServer | tr -d '\n'`;
+      //Grab all Player IP's connected to server during this uptime of server
       $ConnectionList = `awk "/Connection accepted from/,/joined the galaxy/" /proc/"{$PID}"/fd/3 | grep 'accepted\|joined' | sed -e 's/.*> //g' -e 's/ joined.*//g' -e 's/.*from //g' -e 's/:.*//g'`;
       if(strlen($OnlinePlayers[0]) > 1){
+        //assign Online Players to IP address and connect with geoplugin to detect country status
         foreach ($OnlinePlayers as $key => $value) {
           $Name = str_replace("\n", '', $value);
           $IP = `echo "{$ConnectionList}" | grep -B1 -e "{$Name}" | head -n1 | tr -d '\n'`;
@@ -450,65 +555,100 @@ class ViewController extends CommonController
       $this->Data['OnlinePlayerCount'] = `netstat -tlunp 2> /dev/null | grep -iv ':270' | grep -i "[0-9]/Avorion" | wc -l | tr -d "[:space:]"`;
     }
     $this->Data['IPAddress'] = exec("hostname -I | awk '{print $1}'");
+    //Loads page
     $this->LoadView('Home');
   }
 
-
+  /**
+   * Loads and displays the players page
+   * @method Players
+   * @return void
+   */
   public function Players()
   {
-    $this->RoleRequired($this->Config['AccessPlayerPage']);//Role required to view page
-    if($this->RoleAccess($this->Config['AccessDetailedPlayerData'])){//Role required for specific feature
+    //Role required in comparison to the config, if not redirect
+    $this->RoleRequired($this->Config['AccessPlayerPage']);
+    //if config option is accessible via config
+    if($this->RoleAccess($this->Config['AccessDetailedPlayerData'])){
+      //Log and assigns boolean to page to display more data
       $this->LogMessage('Extra Player Data Granted.');
       $this->Data['AccessGranted'] = true;
     }else{
       $this->Data['AccessGranted'] = false;
     }
+    //Includes the PlayerData.php page, and pass to the page
     include __DIR__ ."/../PlayerData.php";
-
-
     $this->Data['PlayerData'] = $PlayerData;
+    //Loads the page
     $this->LoadView('Players');
   }
 
-
+  /**
+   * Loads and displays Sign In page
+   * @method SignIn
+   * @return void
+   */
   public function SignIn()
   {
     $this->Data['IPAddress'] = exec("hostname -I | awk '{print $1}'");
     $this->LoadView('SignIn');
   }
 
-
+  /**
+   * Loads and displays User Managment page
+   * @method UserManagment
+   * @return void
+   */
   public function UserManagment()
   {
+    //session required
     $this->SessionRequired();
-    $this->RoleRequired($this->Config['AccessUserManagmentPage']);//Role required to view page
+    //Role level required to access page
+    $this->RoleRequired($this->Config['AccessUserManagmentPage']);
+    //Loads User Managment page
     $this->LoadView('UserManagment');
   }
 
-
+  /**
+   * Loads and displays Rss page
+   * @method RSS
+   * @return void
+   */
   public function RSS()
   {
+    //if the config allows RSS
     if($this->Config['EnableRSS']){
+      //Access RefreshModel directly
       include __DIR__ .'/../core/RefreshModel.php';
       $RefreshModel = new RefreshModel;
+      //Settup data for page to display
       $this->Data['ServerLoad'] = $RefreshModel->GetCurrentServerLoad();
       $this->Data['IPAddress'] = exec("hostname -I | awk '{print $1}'");
       $this->Data['GalaxyName'] = `grep GALAXY {$this->Config['ManagerConfig']} | sed -e 's/.*=//g'`;
       $this->Data['OnlineStatus'] = `if [ $(pidof $(grep SERVER= {$this->Config['Manager']} | sed -e 's/.*=//g')) > /dev/null ]; then echo 'Online'; else echo 'Offline'; fi`;
       $this->Data['ShowOnlinePlayerCount'] = $this->Config['ShowOnlinePlayerCount'];
+      //if the config allows showing online player count
       if($this->Config['ShowOnlinePlayerCount']){
         $this->Data['MaxPlayers'] = `grep MAX {$this->Config['ManagerConfig']} | sed -e 's/.*=//g'`;
         $this->Data['OnlinePlayerCount'] = `netstat -tlunp 2> /dev/null | grep -iv ':270'|grep -i avorion|wc -l|tr -d "[:space:]"`;
       }
+      //display rss page
       $this->LoadView('rss');
     }
   }
 
-
+  /**
+   * Loads Space Invaders page
+   * @method SpaceInvaders
+   * @return void
+   */
   public function SpaceInvaders()
   {
-    $this->RoleRequired($this->Config['AccessSpaceInvadersPage']);//Role required to view page
+    //If page access is not available, redirect to home page
+    $this->RoleRequired($this->Config['AccessSpaceInvadersPage']);
+    //Get IPAddress for Spaceinvaders JS to use
     $this->Data['IPAddress'] = $this->getUserIP();
+    //Load the page
     $this->LoadView('SpaceInvaders');
   }
 }

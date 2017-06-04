@@ -63,10 +63,18 @@
   </thead>
   <tbody>
   <?php
+    //THIS WHOLE SECTION OF PHP SHOULD BE DONE IN THE CONTROLLER
+    /** @var array $Faction The array of sector data to display */
     $Faction = array();
+    //Parse through the Galaxies sectors data
     foreach ($Data['SectorData'] as $key => $value) {
+      /** @var array $value A sub array contianing all the sector data */
+
+      //If the sector has a faction name, then there is a faction present in the sector
       if(isset($value['FactionName'])){
+        //Default to 0
         $Crafts = $Wrecks = $Asteroids = $Stations = $Influence = 0;
+        //If weve a;ready visited this Faction in the parsing grab the values so we can math them
         if(array_key_exists($value['FactionIndex'],$Faction)){
           $Crafts = $Faction[$value['FactionIndex']]['Crafts'];
           $Wrecks = $Faction[$value['FactionIndex']]['Wrecks'];
@@ -74,8 +82,9 @@
           $Stations = $Faction[$value['FactionIndex']]['Stations'];
           $Influence = $Faction[$value['FactionIndex']]['Influence'];
         }
-
+        //Reset this factions array to empty values
         $Faction[$value['FactionIndex']] = array('Crafts'=>'','Wrecks'=>'','Asteroids'=>'','Stations'=>'','Influence'=>'','FactionName'=>'');
+        //Perform math and reassign value to faction array
         $Faction[$value['FactionIndex']]['Crafts'] = ($Crafts + intval($value['Crafts']));
         $Faction[$value['FactionIndex']]['Wrecks'] += ($Wrecks + intval($value['Wrecks']));
         $Faction[$value['FactionIndex']]['Asteroids'] += ($Asteroids + intval($value['Asteroids']));
@@ -84,15 +93,9 @@
         $Faction[$value['FactionIndex']]['FactionName'] = $value['FactionName'];
       }
     }
-    $Even = false;
+    //Display the data in a table format
     foreach ($Faction as $key => $value) {
-      if($Even){
-        echo '<tr class="Even">';
-        $Even = false;
-      }else{
-        echo '<tr>';
-        $Even = true;
-      }
+      echo '<tr>';
       echo '<td>'.$value['FactionName'].'</td>';
       echo '<td>'.$value['Stations'].'</td>';
       echo '<td>'.$value['Asteroids'].'</td>';

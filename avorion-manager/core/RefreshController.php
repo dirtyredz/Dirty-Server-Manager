@@ -157,7 +157,7 @@ class RefreshController extends CommonController
       /** @var string $Avorion Avorion Cleaned POST form value */
       $Avorion = htmlspecialchars($_POST['Avorion']);
       /** @var string $Command Generated command from form values */
-      $Command = '/sendmail '.$Name.' "'.$Subject.'" "'.$Title.'" '.$Credits.' '.$Iron.' '.$Titanium.' '.$Naonite.' '.$Trinium.' '.$Xanion.' '.$Ogonite.' '.$Avorion;
+      $Command = '/sendmail '.$Name.' "'.$Subject.'" "'.$Title.'" "'.$Credits.'" "'.$Iron.'" "'.$Titanium.'" "'.$Naonite.'" "'.$Trinium.'" "'.$Xanion.'" "'.$Ogonite.'" "'.$Avorion.'"';
       //Send to model
       file_put_contents(str_replace('/manager', '', $this->Config['Manager']).'/MailMessage.txt', $Message);
       //Can this be tricked to send bad commands?

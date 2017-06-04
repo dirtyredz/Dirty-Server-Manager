@@ -1,11 +1,12 @@
 #!/bin/bash
-
+cd "${0%/*}"
+cd ".."
 echo -e -n $(date +"%F %H-%M-00| ") >> ${PWD}/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_manager.log
 echo -e '[Manager]: Starting GetSectorData()' >> ${PWD}/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_manager.log
 SectorDataTmp=${PWD}/avorion-manager/SectorData.tmp
 DIR="$1"
 COUNT=0
-GALAXYNAME=$(grep GALAXY ${PWD}/manager-config.sh | sed -e 's/.*=//g' -e 's/\r//g')
+GALAXYNAME=$(grep GALAXY ${PWD}/manager-config.ini | sed -e 's/.*=//g' -e 's/\r//g')
 echo "<?php" > $SectorDataTmp;
 echo "\$SectorData = array(" >> $SectorDataTmp;
 for file in ${DIR}/${GALAXYNAME}/sectors/*v; do

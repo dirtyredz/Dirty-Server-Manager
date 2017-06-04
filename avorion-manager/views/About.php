@@ -25,6 +25,9 @@
 <h4>1.0.8</h4>
   Added Last Seen support for players, GetPlayerData will track the last time it saw the player in the console</br>
   Changed SendMail script so that the console sendmail form can now send long messages (previously not possible due to max characters in commands)</br>
+  Updated/fixed failed GetPlayerData.sh and GetSectorData.sh</br>
+  Fixed send mail sending wrong resource when not filling in all the resources in the form</br>
+  Added "version" command to manager</br>
   </br>
 <h4>1.0.7</h4>
   Fixed wrong number of online players on home page.</br>

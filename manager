@@ -401,6 +401,9 @@ case $1 in
       kill $(pidof php)
     fi
 	;;
+  "version")
+    echo $VERSION
+	;;
 	"install")
     LogToManagerLog "Ran Install command.";
     echo ---------------------------------------------------------------------
