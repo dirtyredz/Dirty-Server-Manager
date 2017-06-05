@@ -152,7 +152,7 @@ class ViewController extends CommonController
     //Get the current available version from github
     $AvailableVersion = `wget -O - -o /dev/null https://api.github.com/repos/dirtyredz/Dirty-Server-Manager/releases/latest | grep tag_name | sed -e 's/.*://g' -e 's/"//g' -e 's/,//g' | tr -d '[:blank:]'`;
     //Get the installed version from the manager
-    $InstalledVersion = `grep VERSION {$this->Config['Manager']} | head -n1 | sed -e 's/.*=//g'`;
+    $InstalledVersion = `{$this->Config['Manager']} version`;//`grep VERSION {$this->Config['Manager']} | head -n1 | sed -e 's/.*=//g'`;
     //Load the installed version to the page
     $this->Data['Version'] = $InstalledVersion;
     //Compare the versions and display the appropriate message

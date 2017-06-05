@@ -17,6 +17,7 @@ for file in ${DIR}/${GALAXYNAME}/players/*.dat; do
   if [ "${StartingPositionName}" ]; then
     ID=$(echo $file | sed -e 's/.*_//g' -e 's/.dat//g')
     Name=$(xxd -ps -l 50 -seek ${StartingPositionName} "${file}" | xxd -r -p | head -n1 )
+
     LastSeenConsole=$(grep -m 1 -e "${Name} joined" console.log)
     LastSeen='Unkown'
     #If they arnt seen in the consle

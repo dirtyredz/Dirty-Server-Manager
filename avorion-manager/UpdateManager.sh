@@ -1,7 +1,9 @@
 #!/bin/bash
+cd "${0%/*}"
+cd ".."
 Latest=$(wget -O - -o /dev/null https://api.github.com/repos/dirtyredz/Dirty-Server-Manager/releases/latest)
 VERSION=$(echo ${Latest}  | tr -d '[:blank:]' | sed -e 's/.*tag_name":"//g' -e 's/".*//g')
-CurrentVersion=$(grep VERSION manager | head -n1 | sed -e 's/VERSION=//g')
+CurrentVersion=$(./manager version)
 if [ "${CurrentVersion}" != "${VERSION}" ]; then
   echo Dirty Server Manager is NOT Up To Date!
   echo downloading update for Dirty Server Manager

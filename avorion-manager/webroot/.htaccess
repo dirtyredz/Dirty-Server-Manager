@@ -1,0 +1,6 @@
+
+AddType application/x-httpd-php .html .htm .php
+
+RewriteEngine on
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule . /index.php [L]

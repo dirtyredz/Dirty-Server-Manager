@@ -9,7 +9,7 @@ You don't need to own Avorion on Steam to use this.
 
 INSTALLATION
 Step 1: Verify or install these dependencies:
-        lib32gcc1, tmux (V2.0+), php7.0, php7.0-gd
+         lib32gcc1, tmux (V2.0+), php7.0, php7.0-gd
 
         FOLLOW YOUR SYSTEMS INSTRUCTIONS FOR THIS STEP!!!
 
@@ -69,6 +69,12 @@ Step 9: After all is done and working properly be sure to secure your firewall w
         udp/27021  -Steam
         tcp/27021  -Steam
         tcp/8080   -web interface default
+
+Step 10: Optional: Apache settup for those who wish to take advantage of SSL(https)
+
+    sudo apt-get install apache2 libapache2-mod-php7.0 
+    sudo ApacheInstall.sh
+
 
 Check help for more commands:
 
