@@ -1,3 +1,4 @@
+#!/bin/bash
 #Pull values from config INI
 source <(grep = manager-config.ini)
 PHPPORT=`echo ${PHPPORT} | sed -e 's/\r//g'`
@@ -37,3 +38,4 @@ sudo a2dissite 000-default.conf
 sudo service apache2 reload
 sudo a2enmod rewrite
 sudo service apache2 restart
+
