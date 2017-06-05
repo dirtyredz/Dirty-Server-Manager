@@ -15,10 +15,12 @@ Step 1: Verify or install these dependencies:
 
         Ubuntu is the recomended OS:
           UBUNTU 16.04x64:
+            sudo apt-get update
             sudo apt-get install lib32gcc1 tmux php7.0 php7.0-gd
 
         Debian were forced to take additional step to ensure we have  the versions of tmux and php necassary to run the manager
           DEBIAN 8.8x64:
+            sudo apt-get update
             echo 'deb http://packages.dotdeb.org jessie all' >> /etc/apt/sources.list
             echo 'deb-src http://packages.dotdeb.org jessie all' >> /etc/apt/sources.list
             sudo apt-get install curl
@@ -56,7 +58,23 @@ Step 8: [Optional] To start the web interface run this commands
 
         ./manager start-web
 
-        use ./manager stop-web to stop the web server
+        This command will start the PHP-web-server, this server is unable to handle ssl requests.
+        Ultimatly the php server is not as robust as an apache server, that is why I include an apache settup below.
+
+Alternativly: [Optional] Apache settup for those who wish to take advantage of SSL(https)
+
+    Switch to a user with sudo/root access
+
+    sudo apt-get update
+    sudo apt-get install apache2 libapache2-mod-php7.0
+    sudo cd /home/avorion
+    sudo ./ApacheInstall.sh
+
+
+    Regardless of which server you choose, the site will be accessed via:
+    http://YOUR-IP-ADDRESS:The_Web_Port
+    http://104.236.73.30:8080
+
 
 Step 9: After all is done and working properly be sure to secure your firewall with the appropriate commands. Remember to open ports for the game as well as the web interface
         These are the default ports you will need to open:
@@ -70,10 +88,7 @@ Step 9: After all is done and working properly be sure to secure your firewall w
         tcp/27021  -Steam
         tcp/8080   -web interface default
 
-Step 10: Optional: Apache settup for those who wish to take advantage of SSL(https)
 
-    sudo apt-get install apache2 libapache2-mod-php7.0 
-    sudo ApacheInstall.sh
 
 
 Check help for more commands:
