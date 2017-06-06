@@ -26,6 +26,9 @@
   Added Apache web server support</br>
   changed Router.php to index.php</br>
   Changed PHPPort to WEBPORT in manager-config.ini</br>
+  Added 'ampersand' charecter escaping in UpdateManager</br>
+  Updated manager to use unique tmux identifier</br>
+  Added Memory Usage graph</br>
   </br>
 <h4>1.0.8</h4>
   Added Last Seen support for players, GetPlayerData will track the last time it saw the player in the console</br>

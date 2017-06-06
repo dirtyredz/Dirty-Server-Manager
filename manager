@@ -20,7 +20,7 @@ BETA=`echo ${BETA} | sed -e 's/\r//g'`
 PHPPORT=`echo ${PHPPORT} | sed -e 's/\r//g'`
 
 # Standard Config - Dont touch
-TMUX_SESSION=avoriontmux
+TMUX_SESSION=${GALAXY}_Tmux
 INSTALL_DIR=$SCRIPTPATH/serverfiles
 STEAM_DIR=$SCRIPTPATH/steamcmd
 # Colors
@@ -42,8 +42,8 @@ CRONDAILYRESTART_10='46 11,23 * * * '${SCRIPTPATH}'/manager send CRON "/say Rest
 CRONDAILYRESTART_5='51 11,23 * * * '${SCRIPTPATH}'/manager send CRON "/say Restarting server in 5 Minutes!"'
 CRONDAILYRESTART_1='55 11,23 * * * '${SCRIPTPATH}'/manager send CRON "/say Restarting server in 1 Minute!"'
 CRONDAILYRESTART_NOW='56 11,23 * * * '${SCRIPTPATH}'/manager restart CRON >> '${SCRIPTPATH}'/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_status.log'
-CRONSECTORDATA='0 12,0 * * * nice -n 10 '${SCRIPTPATH}'/avorion-manager/GetSectorData.sh '${SCRIPTPATH}'/.avorion/galaxies'
-CRONPLAYERATA='0,30 * * * * nice -n 15 '${SCRIPTPATH}'/avorion-manager/GetPlayerData.sh '${SCRIPTPATH}'/.avorion/galaxies'
+CRONSECTORDATA='0 12,0 * * * nice -n 10 '${SCRIPTPATH}'/avorion-manager/GetSectorData.sh '${HOME}'/.avorion/galaxies'
+CRONPLAYERATA='0,30 * * * * nice -n 15 '${SCRIPTPATH}'/avorion-manager/GetPlayerData.sh '${HOME}'/.avorion/galaxies'
 RUN_BY=$2
 
 DynamicEcho() {
@@ -99,6 +99,10 @@ case $1 in
     LogToManagerLog "Ran Start command.";
     # remove the cron job just incase
     DeleteCronJobs;
+    cp serverfiles/linux64/steamclient.so serverfiles/steamclient.so
+    #if [ ! -f bin/${SERVER} ]; then
+      #cp serverfiles/bin/AvorionServer serverfiles/bin/${SERVER}
+    #fi
 		if tmux new -d -c ${INSTALL_DIR} -s ${TMUX_SESSION} bin/${SERVER} --port ${PORT} --galaxy-name ${GALAXY} --max-players ${MAX_PLAYERS}  ${PARAMS} 2> /dev/null
 		then
       cat ${SCRIPTPATH}'/console.log' | grep '^<.*>' | grep -v '^<Rusty>' >> ${SCRIPTPATH}/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_playerchat.log
@@ -159,7 +163,7 @@ case $1 in
       time=0
       while [ $time -lt 120 ]; do
         SHUTDOWN=$(cat ${SCRIPTPATH}'/console.log' | awk "/${D}/,/Server shutdown successful/" | grep 'Server shutdown successful')
-        if [ "${SHUTDOWN}" ] || [ "$( ps ax | grep AvorionServer | grep -v grep | grep tmux | wc -l)" ]; then
+        if [ "${SHUTDOWN}" ] || [ "$( ps ax | grep ${SERVER} | grep -v grep | grep tmux | wc -l)" ]; then
           DynamicEcho "\r" "${RUN_BY}" "DONTLOG"
           DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} has been stopped." "${RUN_BY}"
           break;
@@ -236,7 +240,7 @@ case $1 in
 
             #First Try
             while [ $time -lt 20 ]; do
-              PlayerMemory=$(awk "/${D}/,/min. update/" /proc/`pidof AvorionServer`/fd/3 | grep 'players in memory')
+              PlayerMemory=$(awk "/${D}/,/min. update/" /proc/`pidof ${SERVER}`/fd/3 | grep 'players in memory')
               if [ "${PlayerMemory}" ]; then
                 success=true
                 break;
@@ -257,7 +261,7 @@ case $1 in
               $T /status C-m
               time=0
               while [ $time -lt 20 ]; do
-                PlayerMemory=$(cat /proc/`pidof AvorionServer`/fd/3 | awk "/${D}/,/min. update/" | grep 'players in memory')
+                PlayerMemory=$(cat /proc/`pidof ${SERVER}`/fd/3 | awk "/${D}/,/min. update/" | grep 'players in memory')
                 if [ "${PlayerMemory}" ]; then
                   success=true
                   break;
@@ -309,17 +313,17 @@ case $1 in
             DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} is running with pid ${YELLOW}$(pidof ${SERVER})${NOCOLOR}." "${RUN_BY}"
             #Get and display players online info
             ServerTime=$(grep "${D}" ${SCRIPTPATH}'/console.log' | sed -e 's/\/echo//g' | tail -n 1)
-            PlayerMemory=$(awk "/${D}/,/min. update/" /proc/`pidof AvorionServer`/fd/3 | grep 'players in memory' | sed -e 's/.*| //g')
-            FactionsMemory=$(awk "/${D}/,/min. update/" /proc/`pidof AvorionServer`/fd/3 | grep 'factions in memory' | sed -e 's/.*| //g')
-            SectorsMemory=$(awk "/${D}/,/min. update/" /proc/`pidof AvorionServer`/fd/3 | grep 'sectors in memory' | sed -e 's/.*| //g')
-            ScriptsMemory=$(awk "/${D}/,/min. update/" /proc/`pidof AvorionServer`/fd/3 | grep 'Memory used by scripts' | sed -e 's/.*| //g')
-            ServerLoad=$(awk "/${D}/,/min. update/" /proc/`pidof AvorionServer`/fd/3 | grep 'server load' | sed -e 's/ 0%/ 0.01%/g' -e 's/.*| //g')
+            PlayerMemory=$(awk "/${D}/,/min. update/" /proc/`pidof ${SERVER}`/fd/3 | grep 'players in memory' | sed -e 's/.*| //g')
+            FactionsMemory=$(awk "/${D}/,/min. update/" /proc/`pidof ${SERVER}`/fd/3 | grep 'factions in memory' | sed -e 's/.*| //g')
+            SectorsMemory=$(awk "/${D}/,/min. update/" /proc/`pidof ${SERVER}`/fd/3 | grep 'sectors in memory' | sed -e 's/.*| //g')
+            ScriptsMemory=$(awk "/${D}/,/min. update/" /proc/`pidof ${SERVER}`/fd/3 | grep 'Memory used by scripts' | sed -e 's/.*| //g')
+            ServerLoad=$(awk "/${D}/,/min. update/" /proc/`pidof ${SERVER}`/fd/3 | grep 'server load' | sed -e 's/ 0%/ 0.01%/g' -e 's/.*| //g')
             SectorsUpdate=$(grep -A 15 "${D}" ${SCRIPTPATH}'/console.log' | grep 'Sectors Updated' | tail -n 1 | sed -e 's/.*| //g')
-            AvgUpdate=$(awk "/${D}/,/min. update/" /proc/`pidof AvorionServer`/fd/3 | grep 'avg. update' | sed -e 's/.*| //g')
-            MaxUpdate=$(awk "/${D}/,/min. update/" /proc/`pidof AvorionServer`/fd/3 | grep 'max. update' | sed -e 's/.*| //g')
-            MinUpdate=$(awk "/${D}/,/min. update/" /proc/`pidof AvorionServer`/fd/3 | grep 'min. update' | sed -e 's/.*| //g')
-            Players=$(awk "/${D}/,/online players/" /proc/`pidof AvorionServer`/fd/3 | grep 'online players (' | sed -e 's/online players (//' -e 's/).*//' -e 's/.*| //g' | tr -d '[:blank:]')
-            PlayersNames=$(awk "/${D}/,/online players/" /proc/`pidof AvorionServer`/fd/3 | grep 'online players ('| sed -e 's/.*://' | tr -d '[:blank:]')
+            AvgUpdate=$(awk "/${D}/,/min. update/" /proc/`pidof ${SERVER}`/fd/3 | grep 'avg. update' | sed -e 's/.*| //g')
+            MaxUpdate=$(awk "/${D}/,/min. update/" /proc/`pidof ${SERVER}`/fd/3 | grep 'max. update' | sed -e 's/.*| //g')
+            MinUpdate=$(awk "/${D}/,/min. update/" /proc/`pidof ${SERVER}`/fd/3 | grep 'min. update' | sed -e 's/.*| //g')
+            Players=$(awk "/${D}/,/online players/" /proc/`pidof ${SERVER}`/fd/3 | grep 'online players (' | sed -e 's/online players (//' -e 's/).*//' -e 's/.*| //g' | tr -d '[:blank:]')
+            PlayersNames=$(awk "/${D}/,/online players/" /proc/`pidof ${SERVER}`/fd/3 | grep 'online players ('| sed -e 's/.*://' | tr -d '[:blank:]')
             DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} is hosting galaxy: ${GALAXY}" "${RUN_BY}"
             DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} ${ServerTime}" "${RUN_BY}"
             DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} ${PlayerMemory}" "${RUN_BY}"
@@ -335,6 +339,7 @@ case $1 in
             DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} ${MinUpdate}" "${RUN_BY}"
             DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Players Online: ${Players}/${MAX_PLAYERS}" "${RUN_BY}"
             DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Players: ${PlayersNames}" "${RUN_BY}"
+            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} `free -m | awk '/Mem:/ { print "Memory(mb)-Total:"$2",Used:"$3",Free:"$4",Cache:"$6 }'`" "${RUN_BY}"
             DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} CPU Usage: `top -bn 2 -d 1 | grep '^%Cpu' | tail -n 1 | awk '{print $2+$4+$6}'`" "${RUN_BY}"
 
             #Status.log rotation
@@ -518,5 +523,13 @@ case $1 in
 	;;
     *)
 		DynamicEcho "available commands:\n           ${GREEN}start${NOCOLOR} server,\n           ${GREEN}stop${NOCOLOR} server,\n           ${GREEN}restart${NOCOLOR} server,\n           check server's ${GREEN}status${NOCOLOR},\n           check for ${GREEN}update${NOCOLOR}s,\n           ${GREEN}attach${NOCOLOR} to console,\n           show this ${GREEN}help${NOCOLOR},\n           ${GREEN}install${NOCOLOR} steamcmd,\n           ${GREEN}start-web${NOCOLOR} starts php server\n           ${GREEN}stop-web${NOCOLOR} Stops PHP server"  "${RUN_BY}"
+    echo ""
+    echo "To update Dirty-Server-Manager itself run this command:"
+    echo "avorion-manager/UpdateManager.sh"
+    echo ""
+    echo "To install apache server run this command:"
+    echo "./ApacheInstall.sh"
+    echo ""
+    echo "For both these commands be sure you run them from the same directory this manager file resides."
 	;;
 esac

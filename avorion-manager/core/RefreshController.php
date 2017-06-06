@@ -219,6 +219,22 @@ class RefreshController extends CommonController
 
   /**
    * Verifies Role access of logged in user and returns generated graph detail
+   * Memory Usage of physical server. Generated every 5 mins by the manager/cron job
+   * Requires Class to be constructed with GET 'Range'
+   * @method GetServerMemoryUsageGraph
+   * @return string json_encoded array of graph details
+   */
+  public function GetServerMemoryUsageGraph()
+  {
+    //checks logged in users role against config options
+    if($this->RoleAccess($this->Config['MemoryUsageGraph'])){
+      //Gets the Graph array from the model and return
+      echo json_encode($this->RefreshModel->GetServerMemoryUsageGraph());
+    }
+  }
+
+  /**
+   * Verifies Role access of logged in user and returns generated graph detail
    * In Memory, Faction/Player/Sector memory usage Generated every 5 mins by the manager/cron job
    * Requires Class to be constructed with GET 'Range'
    * @method GetInMemory

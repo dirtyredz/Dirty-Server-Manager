@@ -17,7 +17,7 @@ for file in ${DIR}/${GALAXYNAME}/players/*.dat; do
   if [ "${StartingPositionName}" ]; then
     ID=$(echo $file | sed -e 's/.*_//g' -e 's/.dat//g')
     Name=$(xxd -ps -l 50 -seek ${StartingPositionName} "${file}" | xxd -r -p | head -n1 )
-
+    Group=$(avorion-manager/XMLParser.sh "${Name}")
     LastSeenConsole=$(grep -m 1 -e "${Name} joined" console.log)
     LastSeen='Unkown'
     #If they arnt seen in the consle
@@ -55,7 +55,7 @@ for file in ${DIR}/${GALAXYNAME}/players/*.dat; do
     Ogonite=$(xxd -ps -l 4 -seek "$((${StartingPosition} + 173 ))" "${file}" )
     Avorion=$(xxd -ps -l 4 -seek "$((${StartingPosition} + 199 ))" "${file}" )
     PlayTime=$(xxd -ps -l 4 -seek "$((${StartingPosition} + 17 ))" "${file}" )
-    echo  "array(\"ID\" => \"$ID\",\"Name\" => \"$Name\",\"LastSeen\" => \"$LastSeen\",\"SteamID\" => \"$SteamID\",\"PlayTime\" => \"$PlayTime\",\"Money\" => \"$Money\",\"Iron\" => \"$Iron\",\"Titanium\" => \"$Titanium\",\"Naonite\" => \"$Naonite\",\"Trinium\" => \"$Trinium\",\"Xanion\" => \"$Xanion\",\"Ogonite\" => \"$Ogonite\",\"Avorion\" => \"$Avorion\")," >> $PlayerDataTmp;
+    echo  "array(\"ID\" => \"$ID\",\"Name\" => \"$Name\",\"LastSeen\" => \"$LastSeen\",\"Group\" => \"$Group\",\"SteamID\" => \"$SteamID\",\"PlayTime\" => \"$PlayTime\",\"Money\" => \"$Money\",\"Iron\" => \"$Iron\",\"Titanium\" => \"$Titanium\",\"Naonite\" => \"$Naonite\",\"Trinium\" => \"$Trinium\",\"Xanion\" => \"$Xanion\",\"Ogonite\" => \"$Ogonite\",\"Avorion\" => \"$Avorion\")," >> $PlayerDataTmp;
   fi
 done
 echo ");" >> $PlayerDataTmp;

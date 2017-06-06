@@ -57,6 +57,7 @@ Click Column Head to sort.
     <th>Name</th>
     <th>PlayTime</th>
     <th>LastSeen</th>
+    <th>Group</th>
     <th>Net Worth</th>
     <?php
         if($Data['AccessGranted']) {
@@ -89,6 +90,7 @@ Click Column Head to sort.
       $secs = floor($Seconds % 60);
       echo '<td>'.$hours.':'.$mins.':'.$secs.'</td>';
       echo '<td>'.$value['LastSeen'].'</td>';
+      echo '<td>'.$value['Group'].'</td>';
       $Money = base_convert(implode('',array_reverse(str_split($value['Money'],2))),16,10);
       $Iron = base_convert(implode('',array_reverse(str_split($value['Iron'],2))),16,10);
       $Titanium = base_convert(implode('',array_reverse(str_split($value['Titanium'],2))),16,10);

@@ -8,21 +8,28 @@ echo ""
 echo "Grabbing Web Port settings and IP address...."
 source <(grep = manager-config.ini)
 WEBPORT=`echo ${WEBPORT} | sed -e 's/\r//g'`
+GALAXY=`echo ${GALAXY} | sed -e 's/\r//g'`
 IPAddress=$(hostname -I | awk '{print $1}')
+
+ApachePortsConf=/etc/apache2/ports.conf
+AvorionConf=/etc/apache2/sites-available/${GALAXY}_avorion.conf
+AvorionSSLConf=/etc/apache2/sites-available/${GALAXY}_avorionssl.conf
+SSLParams=/etc/apache2/conf-available/ssl-params.conf
 
 echo "Stopping PHP Web Server incase its running..."
 ./manager stop-web
 
 echo "Mdoifying Apache's ports.conf to reflect chosen port number..."
-echo "Listen ${WEBPORT}" > /etc/apache2/ports.conf
-echo "<IfModule ssl_module>" >> /etc/apache2/ports.conf
-echo "    Listen 443" >> /etc/apache2/ports.conf
-echo "</IfModule>" >> /etc/apache2/ports.conf
-echo "<IfModule mod_gnutls.c>" >> /etc/apache2/ports.conf
-echo "    Listen 443" >> /etc/apache2/ports.conf
-echo "</IfModule>" >> /etc/apache2/ports.conf
-echo "" >> /etc/apache2/ports.conf
-echo "# vim: syntax=apache ts=4 sw=4 sts=4 sr noet" >> /etc/apache2/ports.conf
+echo "Listen 80" >> $ApachePortsConf
+echo "Listen ${WEBPORT}" > $ApachePortsConf
+echo "<IfModule ssl_module>" >> $ApachePortsConf
+echo "    Listen 443" >> $ApachePortsConf
+echo "</IfModule>" >> $ApachePortsConf
+echo "<IfModule mod_gnutls.c>" >> $ApachePortsConf
+echo "    Listen 443" >> $ApachePortsConf
+echo "</IfModule>" >> $ApachePortsConf
+echo "" >> $ApachePortsConf
+echo "# vim: syntax=apache ts=4 sw=4 sts=4 sr noet" >> $ApachePortsConf
 
 echo ""
 read -p "Would you like to enable SSL: [y/N]"  SSLEnable
@@ -34,27 +41,28 @@ else
 fi
 echo SSL Enabled: $SSLEnable
 echo ""
+
 echo "Creating virtual host..."
 
-echo "<VirtualHost *:${WEBPORT}>" > /etc/apache2/sites-available/avorion.conf
-echo "    ServerName ${IPAddress}:${WEBPORT}" >> /etc/apache2/sites-available/avorion.conf
-echo "    ServerAdmin webmaster@localhost" >> /etc/apache2/sites-available/avorion.conf
-echo "    DocumentRoot ${PWD}/avorion-manager/webroot" >> /etc/apache2/sites-available/avorion.conf
-echo "    ErrorLog ${PWD}/avorion-manager/webroot/error.log" >> /etc/apache2/sites-available/avorion.conf
-echo "    CustomLog ${PWD}/avorion-manager/webroot/access.log combined" >> /etc/apache2/sites-available/avorion.conf
+echo "<VirtualHost *:${WEBPORT}>" > $AvorionConf
+echo "    ServerName ${IPAddress}:${WEBPORT}" >> $AvorionConf
+echo "    ServerAdmin webmaster@localhost" >> $AvorionConf
+echo "    DocumentRoot ${PWD}/avorion-manager/webroot" >> $AvorionConf
+echo "    ErrorLog ${PWD}/avorion-manager/webroot/error.log" >> $AvorionConf
+echo "    CustomLog ${PWD}/avorion-manager/webroot/access.log combined" >> $AvorionConf
 if [ "$SSLEnable" == "true" ]; then
-  echo "    Redirect permanent \"/\" \"https://${IPAddress}/\"" >> /etc/apache2/sites-available/avorion.conf
+  echo "    Redirect permanent \"/\" \"https://${IPAddress}/\"" >> $AvorionConf
 fi
-echo "    <Directory ${PWD}/avorion-manager/webroot>" >> /etc/apache2/sites-available/avorion.conf
-echo "        AllowOverride All" >> /etc/apache2/sites-available/avorion.conf
-echo "        Options Indexes FollowSymLinks MultiViews" >> /etc/apache2/sites-available/avorion.conf
-echo "        Order allow,deny" >> /etc/apache2/sites-available/avorion.conf
-echo "        Allow from all" >> /etc/apache2/sites-available/avorion.conf
-echo "        Require all granted" >> /etc/apache2/sites-available/avorion.conf
-echo "    </Directory>" >> /etc/apache2/sites-available/avorion.conf
-echo "</VirtualHost>" >> /etc/apache2/sites-available/avorion.conf
-echo "" >> /etc/apache2/sites-available/avorion.conf
-echo "# vim: syntax=apache ts=4 sw=4 sts=4 sr noet" >> /etc/apache2/sites-available/avorion.conf
+echo "    <Directory ${PWD}/avorion-manager/webroot>" >> $AvorionConf
+echo "        AllowOverride All" >> $AvorionConf
+echo "        Options Indexes FollowSymLinks MultiViews" >> $AvorionConf
+echo "        Order allow,deny" >> $AvorionConf
+echo "        Allow from all" >> $AvorionConf
+echo "        Require all granted" >> $AvorionConf
+echo "    </Directory>" >> $AvorionConf
+echo "</VirtualHost>" >> $AvorionConf
+echo "" >> $AvorionConf
+echo "# vim: syntax=apache ts=4 sw=4 sts=4 sr noet" >> $AvorionConf
 
 echo "Disabling apache's Default site, and Enabling our sites virtual host."
 sudo a2ensite -q avorion.conf
@@ -67,60 +75,66 @@ sudo service apache2 restart
 #SSL
 if [ "$SSLEnable" == "true" ]; then
   echo "You have chosen to add SSL we will generate a self signed certificate."
-  echo "Follow all command promts, be sure to set the following line to your IPAddress (${IPAddress}):"
-  echo "Common Name (e.g. server FQDN or YOUR name) []:server_IP_addres"
   echo ""
-  sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/avorion-selfsigned.key -out /etc/ssl/certs/avorion-selfsigned.crt
+  sudo openssl req -x509 -nodes -days 365 -subj "/C=NA/ST=NA/L=NA/CN=${IPAddress}" -newkey rsa:2048 -keyout /etc/ssl/private/${GALAXY}-avorion-selfsigned.key -out /etc/ssl/certs/${GALAXY}-avorion-selfsigned.crt
   sudo openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
 
   echo "Setting up Apache's SSL Parameters..."
-  echo "# from https://cipherli.st/" > /etc/apache2/conf-available/ssl-params.conf
-  echo "# and https://raymii.org/s/tutorials/Strong_SSL_Security_On_Apache2.html" >> /etc/apache2/conf-available/ssl-params.conf
-  echo "" >> /etc/apache2/conf-available/ssl-params.conf
-  echo "SSLCipherSuite EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH" >> /etc/apache2/conf-available/ssl-params.conf
-  echo "SSLProtocol All -SSLv2 -SSLv3" >> /etc/apache2/conf-available/ssl-params.conf
-  echo "# Disable preloading HSTS for now.  You can use the commented out header line that includes" >> /etc/apache2/conf-available/ssl-params.conf
-  echo "# the \"preload\" directive if you understand the implications." >> /etc/apache2/conf-available/ssl-params.conf
-  echo "#Header always set Strict-Transport-Security \"max-age=63072000; includeSubdomains; preload\"" >> /etc/apache2/conf-available/ssl-params.conf
-  echo "Header always set Strict-Transport-Security \"max-age=63072000; includeSubdomains\"" >> /etc/apache2/conf-available/ssl-params.conf
-  echo "Header always set X-Frame-Options DENY" >> /etc/apache2/conf-available/ssl-params.conf
-  echo "Header always set X-Content-Type-Options nosniff" >> /etc/apache2/conf-available/ssl-params.conf
-  echo "# Requires Apache >= 2.4" >> /etc/apache2/conf-available/ssl-params.conf
-  echo "SSLCompression off " >> /etc/apache2/conf-available/ssl-params.conf
-  echo "SSLSessionTickets Off" >> /etc/apache2/conf-available/ssl-params.conf
-  echo "SSLUseStapling on" >> /etc/apache2/conf-available/ssl-params.conf
-  echo "SSLStaplingCache \"shmcb:logs/stapling-cache(150000)\"" >> /etc/apache2/conf-available/ssl-params.conf
-  echo "" >> /etc/apache2/conf-available/ssl-params.conf
-  echo "SSLOpenSSLConfCmd DHParameters \"/etc/ssl/certs/dhparam.pem\"" >> /etc/apache2/conf-available/ssl-params.conf
+  echo "# from https://cipherli.st/" > $SSLParams
+  echo "# and https://raymii.org/s/tutorials/Strong_SSL_Security_On_Apache2.html" >> $SSLParams
+  echo "" >> $SSLParams
+  echo "SSLCipherSuite EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH" >> $SSLParams
+  echo "SSLProtocol All -SSLv2 -SSLv3" >> $SSLParams
+  echo "# Disable preloading HSTS for now.  You can use the commented out header line that includes" >> $SSLParams
+  echo "# the \"preload\" directive if you understand the implications." >> $SSLParams
+  echo "#Header always set Strict-Transport-Security \"max-age=63072000; includeSubdomains; preload\"" >> $SSLParams
+  echo "Header always set Strict-Transport-Security \"max-age=63072000; includeSubdomains\"" >> $SSLParams
+  echo "Header always set X-Frame-Options DENY" >> $SSLParams
+  echo "Header always set X-Content-Type-Options nosniff" >> $SSLParams
+  echo "# Requires Apache >= 2.4" >> $SSLParams
+  echo "SSLCompression off " >> $SSLParams
+  echo "SSLSessionTickets Off" >> $SSLParams
+  echo "SSLUseStapling on" >> $SSLParams
+  echo "SSLStaplingCache \"shmcb:logs/stapling-cache(150000)\"" >> $SSLParams
+  echo "" >> $SSLParams
+  echo "SSLOpenSSLConfCmd DHParameters \"/etc/ssl/certs/dhparam.pem\"" >> $SSLParams
 
   echo "Creating the SSL VirtualHost..."
-  echo "<IfModule mod_ssl.c>" > /etc/apache2/sites-available/avorionssl.conf
-  echo "        <VirtualHost _default_:443>" >> /etc/apache2/sites-available/avorionssl.conf
-  echo "                ServerAdmin your_email@example.com" >> /etc/apache2/sites-available/avorionssl.conf
-  echo "                ServerName server_domain_or_IP" >> /etc/apache2/sites-available/avorionssl.conf
-  echo "" >> /etc/apache2/sites-available/avorionssl.conf
-  echo "                DocumentRoot /var/www/html" >> /etc/apache2/sites-available/avorionssl.conf
-  echo "" >> /etc/apache2/sites-available/avorionssl.conf
-  echo "                ErrorLog ${APACHE_LOG_DIR}/error.log" >> /etc/apache2/sites-available/avorionssl.conf
-  echo "                CustomLog ${APACHE_LOG_DIR}/access.log combined" >> /etc/apache2/sites-available/avorionssl.conf
-  echo "" >> /etc/apache2/sites-available/avorionssl.conf
-  echo "                SSLEngine on" >> /etc/apache2/sites-available/avorionssl.conf
-  echo "" >> /etc/apache2/sites-available/avorionssl.conf
-  echo "                SSLCertificateFile      /etc/ssl/certs/apache-selfsigned.crt" >> /etc/apache2/sites-available/avorionssl.conf
-  echo "                SSLCertificateKeyFile /etc/ssl/private/apache-selfsigned.key" >> /etc/apache2/sites-available/avorionssl.conf
-  echo "" >> /etc/apache2/sites-available/avorionssl.conf
-  echo "                <FilesMatch \"\.(cgi|shtml|phtml|php)$\">" >> /etc/apache2/sites-available/avorionssl.conf
-  echo "                                SSLOptions +StdEnvVars" >> /etc/apache2/sites-available/avorionssl.conf
-  echo "                </FilesMatch>" >> /etc/apache2/sites-available/avorionssl.conf
-  echo "                <Directory /usr/lib/cgi-bin>" >> /etc/apache2/sites-available/avorionssl.conf
-  echo "                                SSLOptions +StdEnvVars" >> /etc/apache2/sites-available/avorionssl.conf
-  echo "                </Directory>" >> /etc/apache2/sites-available/avorionssl.conf
-  echo "" >> /etc/apache2/sites-available/avorionssl.conf
-  echo "                BrowserMatch \"MSIE [2-6]\" \\" >> /etc/apache2/sites-available/avorionssl.conf
-  echo "                               nokeepalive ssl-unclean-shutdown \\" >> /etc/apache2/sites-available/avorionssl.conf
-  echo "                               downgrade-1.0 force-response-1.0" >> /etc/apache2/sites-available/avorionssl.conf
-  echo "        </VirtualHost>" >> /etc/apache2/sites-available/avorionssl.conf
-  echo "</IfModule>" >> /etc/apache2/sites-available/avorionssl.conf
+  echo "<IfModule mod_ssl.c>" > $AvorionSSLConf
+  echo "        <VirtualHost _default_:443>" >> $AvorionSSLConf
+  echo "                ServerAdmin your_email@example.com" >> $AvorionSSLConf
+  echo "                ServerName ${IPAddress}:443" >> $AvorionSSLConf
+  echo "" >> $AvorionSSLConf
+  echo "                DocumentRoot ${PWD}/avorion-manager/webroot" >> $AvorionSSLConf
+  echo "" >> $AvorionSSLConf
+  echo "                ErrorLog ${PWD}/avorion-manager/webroot/error.log" >> $AvorionSSLConf
+  echo "                CustomLog ${PWD}/avorion-manager/webroot/access.log combined" >> $AvorionSSLConf
+  echo "" >> $AvorionSSLConf
+  echo "                SSLEngine on" >> $AvorionSSLConf
+  echo "" >> $AvorionSSLConf
+  echo "                SSLCertificateFile      /etc/ssl/certs/${GALAXY}-avorion-selfsigned.crt" >> $AvorionSSLConf
+  echo "                SSLCertificateKeyFile /etc/ssl/private/${GALAXY}-avorion-selfsigned.key" >> $AvorionSSLConf
+  echo "" >> $AvorionSSLConf
+  echo "                <FilesMatch \"\.(cgi|shtml|phtml|php)$\">" >> $AvorionSSLConf
+  echo "                                SSLOptions +StdEnvVars" >> $AvorionSSLConf
+  echo "                </FilesMatch>" >> $AvorionSSLConf
+  echo "                <Directory /usr/lib/cgi-bin>" >> $AvorionSSLConf
+  echo "                                SSLOptions +StdEnvVars" >> $AvorionSSLConf
+  echo "                </Directory>" >> $AvorionSSLConf
+  echo "" >> $AvorionSSLConf
+  echo "                BrowserMatch \"MSIE [2-6]\" \\" >> $AvorionSSLConf
+  echo "                               nokeepalive ssl-unclean-shutdown \\" >> $AvorionSSLConf
+  echo "                               downgrade-1.0 force-response-1.0" >> $AvorionSSLConf
+  echo "" >> $AvorionSSLConf
+  echo "                <Directory ${PWD}/avorion-manager/webroot>" >> $AvorionSSLConf
+  echo "                    AllowOverride All" >> $AvorionSSLConf
+  echo "                    Options Indexes FollowSymLinks MultiViews" >> $AvorionSSLConf
+  echo "                    Order allow,deny" >> $AvorionSSLConf
+  echo "                    Allow from all" >> $AvorionSSLConf
+  echo "                    Require all granted" >> $AvorionSSLConf
+  echo "                </Directory>" >> $AvorionSSLConf
+  echo "        </VirtualHost>" >> $AvorionSSLConf
+  echo "</IfModule>" >> $AvorionSSLConf
 
   echo "Enabling SSL in Apache..."
   sudo a2enmod -q ssl

@@ -59,6 +59,17 @@
       <br/>
       <?php
     }
+    if($Data['MemoryUsageGraph']) {
+        ?>
+        <div id="MemoryUsage" style="width: 100%; height: 250px;"><!-- Plotly chart will be drawn inside this DIV --></div>
+        <br/>
+        <?php
+    }else{
+      ?>
+      Memory Usage Graph available when logged in.
+      <br/>
+      <?php
+    }
  ?>
 
 
@@ -125,6 +136,9 @@
       <?php
         if($Data['CpuUsageGraph']) { ?>LoadCpuLoadGraph();<?php }
       ?>
+      <?php
+        if($Data['MemoryUsageGraph']) { ?>LoadMemoryUsageGraph();<?php }
+      ?>
   });
 
 
@@ -142,6 +156,9 @@
   ?>
   <?php
     if($Data['CpuUsageGraph']) { ?>LoadCpuLoadGraph();<?php }
+  ?>
+  <?php
+    if($Data['MemoryUsageGraph']) { ?>LoadMemoryUsageGraph();<?php }
   ?>
 
 
@@ -161,6 +178,9 @@
       ?>
       <?php
         if($Data['CpuUsageGraph']) { ?>LoadCpuLoadGraph();<?php }
+      ?>
+      <?php
+        if($Data['MemoryUsageGraph']) { ?>LoadMemoryUsageGraph();<?php }
       ?>
     }
   },60000)
@@ -283,6 +303,29 @@
     };
     $.get( "GetData", {function:"GetPlayersOnline",Range:$('.OptionsWrapper > input[name="range"]').val()},function(RecievedData) {
       Plotly.newPlot('PlayersOnline', RecievedData,layout,{displaylogo: false});
+    },"json");
+  }
+  function LoadMemoryUsageGraph(){
+    var layout = {
+        title: 'Server Memory Usage',
+        showlegend: false,
+        paper_bgcolor:'rgba(0,0,0,0)',
+        plot_bgcolor:'rgba(0,0,0,0)',
+        yaxis: {
+          gridcolor: 'rgba(0,0,0,0)'
+        },
+        xaxis: {
+          gridcolor: 'rgba(0,0,0,0)'
+        },
+        margin: {
+            l: 30,
+            r: 30,
+            t: 30,
+            b: 30
+        },
+    };
+    $.get( "GetData", {function:"GetServerMemoryUsageGraph",Range:$('.OptionsWrapper > input[name="range"]').val()},function(RecievedData) {
+      Plotly.newPlot('MemoryUsage', RecievedData,layout,{displaylogo: false});
     },"json");
   }
 </script>

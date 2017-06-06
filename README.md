@@ -63,17 +63,19 @@ Step 8: [Optional] To start the web interface run this commands
 
 Alternativly: [Optional] Apache settup for those who wish to take advantage of SSL(https)
 
-    Switch to a user with sudo/root access
+    Script tested on:
+      Ubuntu 16.04
 
+    su root           'or another user with sudo access'
     sudo apt-get update
     sudo apt-get install apache2 libapache2-mod-php7.0
-    sudo cd /home/avorion
+    cd /home/avorion
     sudo ./ApacheInstall.sh
 
 
     Regardless of which server you choose, the site will be accessed via:
     http://YOUR-IP-ADDRESS:The_Web_Port
-    http://104.236.73.30:8080
+    example: http://104.236.73.30:8080
 
 
 Step 9: After all is done and working properly be sure to secure your firewall with the appropriate commands. Remember to open ports for the game as well as the web interface
@@ -87,6 +89,7 @@ Step 9: After all is done and working properly be sure to secure your firewall w
         udp/27021  -Steam
         tcp/27021  -Steam
         tcp/8080   -web interface default
+        tcp/443    -If using apche/ssl
 
 
 

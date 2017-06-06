@@ -115,7 +115,7 @@ class RefreshModel extends CommonController
    * @param  array $Data3 optional additional Data
    * @return void
    */
-  private function RunThoughTimeArray($Time,$Data1,$Data2 = null,$Data3 = null)
+  private function RunThoughTimeArray($Time,$Data1,$Data2 = null,$Data3 = null,$Data4 = null)
   {
     //Runs through the array of Time marks
     foreach ($Time as $key => $value) {
@@ -130,8 +130,11 @@ class RefreshModel extends CommonController
         if(isset($Data2)){
           unset($Data2[$key]);
         }
-        if(isset($Data2)){
+        if(isset($Data3)){
           unset($Data3[$key]);
+        }
+        if(isset($Data4)){
+          unset($Data4[$key]);
         }
         unset($Time[$key]);
       }
@@ -150,12 +153,15 @@ class RefreshModel extends CommonController
         if(isset($Data2)){
           array_splice( $Data2, $key, 0, 0);
         }
-        if(isset($Data2)){
+        if(isset($Data3)){
           array_splice( $Data3, $key, 0, 0);
+        }
+        if(isset($Data4)){
+          array_splice( $Data4, $key, 0, 0);
         }
       }
     }
-    return array($Time, $Data1, $Data2, $Data3);
+    return array($Time, $Data1, $Data2, $Data3, $Data4);
   }
 
   /**
@@ -247,6 +253,86 @@ class RefreshModel extends CommonController
       'hoverinfo'=>'x+y+text',
       'fillcolor' => 'rgba(168, 216, 234, 0.5)'
     ]];
+    return $PlotlyData;
+  }
+
+  /**
+   * Pulls the server(physical) from the status.log's and generates a graph from it
+   * @method GetServerMemoryUsageGraph
+   * @return array Plotly Graph Data
+   */
+  public function GetServerMemoryUsageGraph()
+  {
+    //If no status.log file exsists return an empty array
+    if(!is_file(dirname(__FILE__).'/../logs/'.date('d-m-Y').'_status.log')){
+      return array();
+    }
+
+    $Time = `grep -h "Memory(mb)" $(find {$this->Config['LogsDir']}/*_status.log -printf '%T+ %p\n' | sort -n | sed -e 's/.* //g') | tail -n {$this->Range} | sed -e 's/|.*//g' -e 's/-/:/g3' | tr ' ' 'T' | sed -e 's/..$/00/' | awk '{print q $0 q}' ORS=','`;
+    $Total = `grep -h "Memory(mb)" $(find {$this->Config['LogsDir']}/*_status.log -printf '%T+ %p\n' | sort -n | sed -e 's/.* //g') | tail -n {$this->Range} |  sed -e 's/.*Total://g' -e 's/,.*//g' | awk '{print q $0 q}' ORS=','`;
+    $Used = `grep -h "Memory(mb)" $(find {$this->Config['LogsDir']}/*_status.log -printf '%T+ %p\n' | sort -n | sed -e 's/.* //g') | tail -n {$this->Range} |  sed -e 's/.*Used://g' -e 's/,.*//g' | awk '{print q $0 q}' ORS=','`;
+    $Free = `grep -h "Memory(mb)" $(find {$this->Config['LogsDir']}/*_status.log -printf '%T+ %p\n' | sort -n | sed -e 's/.* //g') | tail -n {$this->Range} |  sed -e 's/.*Free://g' -e 's/,.*//g' | awk '{print q $0 q}' ORS=','`;
+    $Cache = `grep -h "Memory(mb)" $(find {$this->Config['LogsDir']}/*_status.log -printf '%T+ %p\n' | sort -n | sed -e 's/.* //g') | tail -n {$this->Range} |  sed -e 's/.*Cache://g' | awk '{print q $0 q}' ORS=','`;
+
+    /** @var array $Time array of each 5 minute /status command ran withen Range of the Timestamp */
+    $Time = explode(',',$Time);
+    /** @var array $Total array of each 5 minute /status command ran withen Range of Total Memory usage */
+    $Total = explode(',',$Total);
+    /** @var array $Used array of each 5 minute /status command ran withen Range of Used Memory Usage */
+    $Used = explode(',',$Used);
+    /** @var array $Free array of each 5 minute /status command ran withen Range of Free Memory Usage */
+    $Free = explode(',',$Free);
+    /** @var array $Cache array of each 5 minute /status command ran withen Range of Cache Memory Usage */
+    $Cache = explode(',',$Cache);
+
+    //Remove the last index since awk will always add an additional , at the end
+    array_pop($Time);
+    array_pop($Total);
+    array_pop($Used);
+    array_pop($Free);
+    array_pop($Cache);
+
+    //Fix array inconsistancys with the $Timearray
+    list ($Time, $Total, $Used, $Free, $Cache) = $this->RunThoughTimeArray($Time, $Total, $Used, $Free, $Cache);
+    //Build Plotly data and return
+    $TotalUsage = [
+      'x' => $Time,
+      'y' => $Total,
+      'type' => 'scatter',
+      'fill' => 'tozeroy',
+      'fillcolor' => 'rgba(0, 0, 255, 0.5)',
+      'text'=>'MB',
+      'name' => 'Total'
+    ];
+    $UsedUsage = [
+      'x' => $Time,
+      'y' => $Used,
+      'type' => 'scatter',
+      'fill' => 'tozeroy',
+      'fillcolor' => 'rgba(0, 255, 0, 0.5)',
+      'text'=>'MB',
+      'name' => 'Used'
+    ];
+    $FreeUsage = [
+      'x' => $Time,
+      'y' => $Free,
+      'type' => 'scatter',
+      'fill' => 'tozeroy',
+      'fillcolor' => 'rgba(255, 0, 0, 0.5)',
+      'text'=>'MB',
+      'name' => 'Free'
+    ];
+    $CacheUsage = [
+      'x' => $Time,
+      'y' => $Cache,
+      'type' => 'scatter',
+      'fill' => 'tozeroy',
+      'fillcolor' => 'rgba(255, 255, 0, 0.5)',
+      'text'=>'MB',
+      'name' => 'Cache'
+    ];
+
+    $PlotlyData = array($TotalUsage,$UsedUsage,$FreeUsage,$CacheUsage);
     return $PlotlyData;
   }
 

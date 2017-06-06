@@ -28,7 +28,8 @@ if [ "${CurrentVersion}" != "${VERSION}" ]; then
     do
       if [ ! -z "$var" ]; then
         OldLineConfigName=$(echo $var | sed -e '0,/=.*/s///')
-        sed -i "s~${OldLineConfigName}.*~${var}~" manager-config.ini
+        replaceEscaped=$(sed 's/[&/\]/\\&/g' <<<"$var")
+        sed -i "s~${OldLineConfigName}.*~${replaceEscaped}~" manager-config.ini
       fi
     done < "$input"
     rm manager-config.ini.old
@@ -41,7 +42,8 @@ if [ "${CurrentVersion}" != "${VERSION}" ]; then
     do
       if [ ! -z "$var" ]; then
         OldLineConfigName=$(echo $var | sed -e '0,/=.*/s///')
-        sed -i "s~${OldLineConfigName}=.*~${var}~" avorion-manager/PHPConfig.ini
+        replaceEscaped=$(sed 's/[&/\]/\\&/g' <<<"$var")
+        sed -i "s~${OldLineConfigName}=.*~${replaceEscaped}~" avorion-manager/PHPConfig.ini
       fi
     done < "$input"
     rm avorion-manager/PHPConfig.ini.old

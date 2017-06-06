@@ -7,7 +7,7 @@ class ServerConfigController extends CommonController
   /** @var object $ConfigParser Hold the config Parser class object */
   private $ConfigParser;
   /** @var array $PHPConfigDetails Contains all the deffinitions and input type info */
-  public static $PHPConfigDetails = array(
+  const PHPConfigDetails = array(
     'HomeCustomMessageOne' => array(
           'Definition' => 'Custom message for home page, can accept html or plain text. (Does NOT support semicolens ";" use of one will break the string while displaying)',
           'Type' => 'text'),
@@ -99,6 +99,10 @@ class ServerConfigController extends CommonController
           'Range' => array('min'=>0,'max'=>99)),
     'CpuUsageGraph' => array(
           'Definition' => 'The role level required to view the Cpu Usage graph on the graphs page. (0=public)',
+          'Type' => 'number',
+          'Range' => array('min'=>0,'max'=>99)),
+    'MemoryUsageGraph' => array(
+          'Definition' => 'The role level required to view the Server Memory Usage graph on the graphs page. (0=public)',
           'Type' => 'number',
           'Range' => array('min'=>0,'max'=>99)),
     'ConsoleCommandsAccess' => array(
@@ -250,7 +254,7 @@ class ServerConfigController extends CommonController
       /** @var mixed $RtnValue form value to be validated and update the file with */
       $RtnValue = $value['value'];
       //if this INI option requires a number
-      if($this->PHPConfigDetails[$value['name']]['Type'] == 'number'){
+      if(self::PHPConfigDetails[$value['name']]['Type'] == 'number'){
         //Cleans it
         $RtnValue = htmlspecialchars($RtnValue);
         //if its not a number restore default
@@ -258,15 +262,15 @@ class ServerConfigController extends CommonController
           $RtnValue = $Defaults[$value['name']];
         }
       //if INI option is a text field
-      }elseif($this->PHPConfigDetails[$value['name']]['Type'] == 'text'){
+    }elseif(self::PHPConfigDetails[$value['name']]['Type'] == 'text'){
         //Client can use HTML here so lets only strip  out script tags
         $RtnValue = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $RtnValue);
       //if INI option is a select input
-      }elseif($this->PHPConfigDetails[$value['name']]['Type'] == 'select'){
+    }elseif(self::PHPConfigDetails[$value['name']]['Type'] == 'select'){
         //cleans it
         $RtnValue = htmlspecialchars($RtnValue);
         //if value is not one of the allowed values then restore it
-        if(!in_array($RtnValue,$this->PHPConfigDetails[$value['name']]['Values'])){
+        if(!in_array($RtnValue,self::PHPConfigDetails[$value['name']]['Values'])){
           $RtnValue = $Defaults[$value['name']];
         }
       }
@@ -277,7 +281,7 @@ class ServerConfigController extends CommonController
     //Update the class array with our new array
     $this->ConfigParser->update($NewPHPConfig);
     //Write the class array to the file include our comments with it so they are written in as well
-    $this->ConfigParser->write($this->PHPConfigDetails);
+    $this->ConfigParser->write(self::PHPConfigDetails);
 
     //return success message
     $return['success'] = true;

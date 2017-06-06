@@ -353,7 +353,7 @@ class ViewController extends CommonController
     );
     $this->Data['PHPConfig'] = $ServerConfigController->GetPHPConfig();
     //need to move to config controller
-    $this->Data['PHPConfigDetails'] = $ServerConfigController->PHPConfigDetails;
+    $this->Data['PHPConfigDetails'] = $ServerConfigController::PHPConfigDetails;
     //Set the ability to edit the options to false
     $this->Data['ChangeServerINI'] = false;
     $this->Data['ChangeManagerConfigINI'] = false;
@@ -468,6 +468,7 @@ class ViewController extends CommonController
     $this->Data['InMemoryGraph'] = false;
     $this->Data['UpdatesGraph'] = false;
     $this->Data['CpuUsageGraph'] = false;
+    $this->Data['MemoryUsageGraph'] = false;
     //role is required to be greater then config option, otherwise do not display
     if($this->RoleAccess($this->Config['ServerLoadGraph'])){//Role required for specific feature
       $this->Data['ServerLoadGraph'] = true;
@@ -487,6 +488,9 @@ class ViewController extends CommonController
     //role is required to be greater then config option, otherwise do not display
     if($this->RoleAccess($this->Config['CpuUsageGraph'])){//Role required for specific feature
       $this->Data['CpuUsageGraph'] = true;
+    }
+    if($this->RoleAccess($this->Config['MemoryUsageGraph'])){//Role required for specific feature
+      $this->Data['MemoryUsageGraph'] = true;
     }
     //Prepare Data and load
     $this->Data['MaxPlayers'] = `grep MAX {$this->Config['ManagerConfig']} | sed -e 's/.*=//g'`;
@@ -534,7 +538,7 @@ class ViewController extends CommonController
       //Grab last Online Players report
       $OnlinePlayers = explode(", ",`tac {$this->Config['ConsoleLog']} | grep 'online players (' | head -n 1 | sed -e 's/.*://g' -e 's/^.//g' -e 's/.$//g'`);
       $NewOnlinePlayers = array();
-      $PID = `pidof AvorionServer | tr -d '\n'`;
+      $PID = `pidof $(grep SERVER= {$this->Config['Manager']} | tr -d '\n'`;
       //Grab all Player IP's connected to server during this uptime of server
       $ConnectionList = `awk "/Connection accepted from/,/joined the galaxy/" /proc/"{$PID}"/fd/3 | grep 'accepted\|joined' | sed -e 's/.*> //g' -e 's/ joined.*//g' -e 's/.*from //g' -e 's/:.*//g'`;
       if(strlen($OnlinePlayers[0]) > 1){
