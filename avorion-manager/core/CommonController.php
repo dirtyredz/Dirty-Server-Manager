@@ -6,7 +6,8 @@ class CommonController
 {
   /** @var array $Config array built by parsing PHPConfig.ini making it accesible to all controllers */
   public $Config;
-
+  /** @var array $ManagerConfig array built by parsing manager-config.ini making it accesible to all controllers */
+  public $ManagerConfig;
   /**
    * Settup controller and builds $Config
    * @method __construct
@@ -24,6 +25,8 @@ class CommonController
     $this->Config['ManagerConfig'] = __DIR__.'/..'.$this->Config['ManagerConfig'];
     $this->Config['LogsDir'] = __DIR__.'/..'.$this->Config['LogsDir'];
     $this->Config['StatusBannerDir'] = __DIR__.'/..'.$this->Config['StatusBannerDir'];
+    //Parse manager-config.ini
+    $this->ManagerConfig = parse_ini_file($this->Config['ManagerConfig'], true, INI_SCANNER_TYPED);//$Config;
   }
 
   /**
@@ -38,7 +41,7 @@ class CommonController
       /** @var string $IPAddress performs a command line execution to retrieve servers IP address */
       $IPAddress = exec("hostname -I | awk '{print $1}'");
       //header("Location: http://".$IPAddress.":8080");
-      echo "<script>parent.self.location='http://".$IPAddress.":8080';</script>";
+      echo "<script>parent.self.location='http://".$IPAddress.":".$this->ManagerConfig['WEBPORT']."';</script>";
       exit;
     }
   }
@@ -124,7 +127,7 @@ class CommonController
       $IPAddress = exec("hostname -I | awk '{print $1}'");
       //header("Location: http://".$IPAddress.":8080");
       //echo's a redirect script back to page
-      echo "<script>parent.self.location='http://".$IPAddress.":8080';</script>";
+      echo "<script>parent.self.location='http://".$IPAddress.":".$this->ManagerConfig['WEBPORT']."';</script>";
       exit;
     }
   }

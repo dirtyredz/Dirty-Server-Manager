@@ -17,7 +17,7 @@ LOG_ROTATION=`echo ${LOG_ROTATION} | sed -e 's/\r//g'`
 AutoRestart=`echo ${AutoRestart} | sed -e 's/\r//g'`
 DAILYRESTART=`echo ${DailyRestart} | sed -e 's/\r//g'`
 BETA=`echo ${BETA} | sed -e 's/\r//g'`
-PHPPORT=`echo ${PHPPORT} | sed -e 's/\r//g'`
+WEBPORT=`echo ${WEBPORT} | sed -e 's/\r//g'`
 
 # Standard Config - Dont touch
 TMUX_SESSION=${GALAXY}_Tmux
@@ -105,6 +105,9 @@ case $1 in
     #fi
 		if tmux new -d -c ${INSTALL_DIR} -s ${TMUX_SESSION} bin/${SERVER} --port ${PORT} --galaxy-name ${GALAXY} --max-players ${MAX_PLAYERS}  ${PARAMS} 2> /dev/null
 		then
+      if [ ! -f ${SCRIPTPATH}'/console.log' ]; then
+        touch ${SCRIPTPATH}'/console.log'
+      fi
       cat ${SCRIPTPATH}'/console.log' | grep '^<.*>' | grep -v '^<Rusty>' >> ${SCRIPTPATH}/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_playerchat.log
       #Start loging console into console.log.
       tmux pipe-pane -o -t ${TMUX_SESSION} "cat > ${SCRIPTPATH}/console.log"
@@ -382,13 +385,13 @@ case $1 in
   "start-web")
     LogToManagerLog "Ran Start-web command.";
     IPADDRESS=$(hostname -I | awk '{print $1}')
-    if tmux new-session -d -s php 'php -S '"${IPADDRESS}"':'"${PHPPORT}"' -t '${SCRIPTPATH}'/avorion-manager/webroot '${SCRIPTPATH}'/avorion-manager/webroot/index.php' 2> /dev/null
+    if tmux new-session -d -s php 'php -S '"${IPADDRESS}"':'"${WEBPORT}"' -t '${SCRIPTPATH}'/avorion-manager/webroot '${SCRIPTPATH}'/avorion-manager/webroot/index.php' 2> /dev/null
     then
       DynamicEcho "starting PHP Server"
 
       if pidof php > /dev/null;
       then
-        DynamicEcho "PHP Server started on server: http://${IPADDRESS}"':'"${PHPPORT}"
+        DynamicEcho "PHP Server started on server: http://${IPADDRESS}"':'"${WEBPORT}"
       else
         DynamicEcho "PHP Server Failed"
       fi

@@ -141,7 +141,11 @@ if [ "$SSLEnable" == "true" ]; then
   sudo a2enmod -q headers
   echo "Enabling SSL VirtualHost..."
   sudo a2ensite -q avorionssl
-  sudo a2enconf -q ssl-params
+  OS=$(lsb_release -si)
+  if [ "$OS" == "Ubuntu" ]; then
+    echo "Loading SSL Params..."
+    sudo a2enconf -q ssl-params
+  fi
   sudo service apache2 reload
   echo "Restarting Apache..."
   sudo service apache2 restart

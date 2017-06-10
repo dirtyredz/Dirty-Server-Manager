@@ -18,16 +18,44 @@
     width: 770px;
     height: 770px;
   }
+  #GalaxyMap{
+    position: absolute;
+  }
+  .tooltip {
+  	display:none;
+  	position:absolute;
+  	border:1px solid #333;
+  	background-color:#161616;
+  	border-radius:5px;
+  	padding:10px;
+  	color:#fff;
+  	font-size:12px Arial;
+  }
 </style>
 <div id="Top"><span class="Title"><svg class="icon"><use xlink:href="#icon-map"></use></svg>DISCOVERED SECTORS MAP</span><span class="Time"></span></div>
 <br/>
 <h1>Discovered Sectors</h1>
 <div id="GalaxyMapImage"></div>
 <div id="GalaxyMapImage2"></div>
-<div id="GalaxyMap" style="width: 800px; height: 800px;"><!-- Plotly chart will be drawn inside this DIV --></div>
-<div id="HoverInfo"></div>
+<div id="GalaxyMap" title="Discovered Sector" style="width: 800px; height: 800px;"><!-- Plotly chart will be drawn inside this DIV --></div>
 <script type="text/javascript">
     console.clear()
+
+    $('#GalaxyMap').hover(function(){
+      // Hover over code
+      var title = $(this).attr('title');
+      $(this).data('tipText', title).removeAttr('title');
+      $('<p class="tooltip"></p>').text(title).appendTo('body').fadeIn('slow');
+    }, function() {
+      // Hover out code
+      $(this).attr('title', $(this).data('tipText'));
+      $('.tooltip').remove();
+    }).mousemove(function(e) {
+      var mousex = e.pageX + 20; //Get X coordinates
+      var mousey = e.pageY + 10; //Get Y coordinates
+      $('.tooltip').css({ top: mousey, left: mousex })
+    });
+
     var layout = {
       showlegend: false,
       paper_bgcolor:'rgba(0,0,0,0)',
@@ -88,29 +116,29 @@
                 if(Sector['X'] == d.x){
                   if(Sector['Y'] == d.y){
                     if(("FactionName" in Sector)){
-                      FactionName = 'FactionName: '+Sector['FactionName'];
+                      FactionName = '<br/>FactionName: '+Sector['FactionName'];
                     }
                     if(Sector['Crafts'] != '0')
-                      Crafts = 'Crafts: '+Sector['Crafts']+' ';
+                      Crafts = '<br/>Crafts: '+Sector['Crafts']+' ';
                     if(Sector['Wrecks'] != '0')
-                      Wrecks = 'Wrecks: '+Sector['Wrecks']+' ';
+                      Wrecks = '<br/>Wrecks: '+Sector['Wrecks']+' ';
                     if(Sector['Stations'] != '0')
-                      Stations = 'Stations: '+Sector['Stations']+' ';
+                      Stations = '<br/>Stations: '+Sector['Stations']+' ';
                     if(Sector['Asteroids'] != '0')
-                      Asteroids = 'Asteroids: '+Sector['Asteroids']+' ';
+                      Asteroids = '<br/>Asteroids: '+Sector['Asteroids']+' ';
                     if(Sector['Influence'] != '0')
-                      Influence = 'Influence: '+Sector['Influence']+' ';
+                      Influence = '<br/>Influence: '+Sector['Influence']+' ';
                     if(Sector['FactionIndex'] != '0')
-                      FactionIndex = 'FactionIndex: '+Sector['FactionIndex']+' ';
+                      FactionIndex = '<br/>FactionIndex: '+Sector['FactionIndex']+' ';
                   }
                 }
             });
-            return ('x = '+d.x+', y = '+d.y+' '+Crafts+Wrecks+Stations+Asteroids+Influence+FactionIndex+FactionName);
+            return ('('+d.x+' , '+d.y+') '+Crafts+Wrecks+Stations+Asteroids+Influence+FactionIndex+FactionName);
           });
-            $('#HoverInfo').html(infotext);
+            $('.tooltip').html(infotext);
         })
          .on('plotly_unhover', function(data){
-            $('#HoverInfo').html('Hover over dots to view more info.');
+            $('.tooltip').html('Hover over dots to view more info.');
         });
 
         var XOffsetDown = 0;

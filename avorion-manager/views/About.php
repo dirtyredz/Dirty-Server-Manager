@@ -22,6 +22,16 @@
 <br/>
 <br/>
 <h3>CHANGE LOG:</h3>
+<h4>1.0.10</h4>
+  Added Groups detection into GetPlayerData script (parses admin.xml for players groups)</br>
+  Added Debian support for ApacheInstaller script.</br>
+  Fixed Maps scrolling issues.</br>
+  Added modal confirmation to password change.</br>
+  Added /run detection to console input.</br>
+  Added Chat Input to home page chat log.</br>
+  Added manager-config.ini parsing to CommonController, making it so we dont have to grep for commenly used options like Galaxy Name</br>
+  fixed error when starting server for first time and there is no console.log present.</br>
+  </br>
 <h4>1.0.9</h4>
   Added Apache web server support</br>
   changed Router.php to index.php</br>

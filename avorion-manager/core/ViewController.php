@@ -493,7 +493,7 @@ class ViewController extends CommonController
       $this->Data['MemoryUsageGraph'] = true;
     }
     //Prepare Data and load
-    $this->Data['MaxPlayers'] = `grep MAX {$this->Config['ManagerConfig']} | sed -e 's/.*=//g'`;
+    $this->Data['MaxPlayers'] = $this->ManagerConfig['MAX_PLAYERS'];//`grep MAX {$this->Config['ManagerConfig']} | sed -e 's/.*=//g'`;
     $this->LoadView('Graphs');
   }
 
@@ -509,6 +509,12 @@ class ViewController extends CommonController
       $this->Data['ShowChatLog'] = true;
     }else{
       $this->Data['ShowChatLog'] = false;
+    }
+    //if role comparison with config options is successfull, add chat log input
+    if($this->RoleAccess($this->Config['ChatLogInput'])){//Role required for specific feature
+      $this->Data['ChatLogInput'] = true;
+    }else{
+      $this->Data['ChatLogInput'] = false;
     }
     //if role comparison with config options is successfull, Display Players List
     if($this->RoleAccess($this->Config['HomePlayerList'])){//Role required for specific feature
@@ -528,7 +534,7 @@ class ViewController extends CommonController
     $this->Data['CustomMessageTwo'] = $this->Config['HomeCustomMessageTwo'];
     $this->Data['CustomMessageThree'] = $this->Config['HomeCustomMessageThree'];
     $this->Data['CustomMessageFour'] = $this->Config['HomeCustomMessageFour'];
-    $this->Data['GalaxyName'] = `grep GALAXY {$this->Config['ManagerConfig']} | sed -e 's/.*=//g'`;
+    $this->Data['GalaxyName'] = $this->ManagerConfig['GALAXY'];//`grep GALAXY {$this->Config['ManagerConfig']} | sed -e 's/.*=//g'`;
     //Check if pid status is available, display online if pid is available
     $this->Data['OnlineStatus'] = `if [ $(pidof $(grep SERVER= {$this->Config['Manager']} | sed -e 's/.*=//g')) > /dev/null ]; then echo 'Online'; else echo 'Offline'; fi  | tr -d '[:space:]'`;
     if($this->Data['ShowDiskUsage']){
@@ -545,17 +551,23 @@ class ViewController extends CommonController
         //assign Online Players to IP address and connect with geoplugin to detect country status
         foreach ($OnlinePlayers as $key => $value) {
           $Name = str_replace("\n", '', $value);
-          $IP = `echo "{$ConnectionList}" | grep -B1 -e "{$Name}" | head -n1 | tr -d '\n'`;
+          $TempName = quotemeta(str_replace("\n", '', $value));
+          $IP = `echo "{$ConnectionList}" | grep -B1 -e "{$TempName}" | head -n1 | tr -d '\n'`;
           $NewOnlinePlayers[$Name]['IP'] = $IP;
           $GEO = unserialize(file_get_contents('http://www.geoplugin.net/php.gp?ip='.$IP));
-          $NewOnlinePlayers[$Name]['CountryCode'] = strtolower($GEO['geoplugin_countryCode']);
-          $NewOnlinePlayers[$Name]['CountryName'] = strtolower($GEO['geoplugin_countryName']);
+          if($GEO['geoplugin_status'] == '404'){
+            $NewOnlinePlayers[$Name]['CountryCode'] = '';
+            $NewOnlinePlayers[$Name]['CountryName'] = '';
+          }else{
+            $NewOnlinePlayers[$Name]['CountryCode'] = 'flag flag-'.strtolower($GEO['geoplugin_countryCode']);
+            $NewOnlinePlayers[$Name]['CountryName'] = strtolower($GEO['geoplugin_countryName']);
+          }
         }
         $this->Data['OnlinePlayers']  = $NewOnlinePlayers;
       }
     }
     if($this->Config['ShowOnlinePlayerCount']){
-      $this->Data['MaxPlayers'] = `grep MAX {$this->Config['ManagerConfig']} | sed -e 's/.*=//g'`;
+      $this->Data['MaxPlayers'] = $this->ManagerConfig['MAX_PLAYERS'];//`grep MAX {$this->Config['ManagerConfig']} | sed -e 's/.*=//g'`;
       $this->Data['OnlinePlayerCount'] = `netstat -tlunp 2> /dev/null | grep -iv ':270' | grep -i "[0-9]/Avorion" | wc -l | tr -d "[:space:]"`;
     }
     $this->Data['IPAddress'] = exec("hostname -I | awk '{print $1}'");
@@ -628,12 +640,12 @@ class ViewController extends CommonController
       //Settup data for page to display
       $this->Data['ServerLoad'] = $RefreshModel->GetCurrentServerLoad();
       $this->Data['IPAddress'] = exec("hostname -I | awk '{print $1}'");
-      $this->Data['GalaxyName'] = `grep GALAXY {$this->Config['ManagerConfig']} | sed -e 's/.*=//g'`;
+      $this->Data['GalaxyName'] = $this->ManagerConfig['GALAXY'];//`grep GALAXY {$this->Config['ManagerConfig']} | sed -e 's/.*=//g'`;
       $this->Data['OnlineStatus'] = `if [ $(pidof $(grep SERVER= {$this->Config['Manager']} | sed -e 's/.*=//g')) > /dev/null ]; then echo 'Online'; else echo 'Offline'; fi`;
       $this->Data['ShowOnlinePlayerCount'] = $this->Config['ShowOnlinePlayerCount'];
       //if the config allows showing online player count
       if($this->Config['ShowOnlinePlayerCount']){
-        $this->Data['MaxPlayers'] = `grep MAX {$this->Config['ManagerConfig']} | sed -e 's/.*=//g'`;
+        $this->Data['MaxPlayers'] = $this->ManagerConfig['MAX_PLAYERS'];//`grep MAX {$this->Config['ManagerConfig']} | sed -e 's/.*=//g'`;
         $this->Data['OnlinePlayerCount'] = `netstat -tlunp 2> /dev/null | grep -iv ':270'|grep -i avorion|wc -l|tr -d "[:space:]"`;
       }
       //display rss page

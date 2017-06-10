@@ -72,6 +72,32 @@ class RefreshController extends CommonController
   }
 
   /**
+   * Sends a message to the manager prepended with '/say '
+   * Requires POST form values
+   * @method SendChat
+   * @return string json_encoded array
+   */
+  public function SendChat()
+  {
+    /** @var array $return Settup array to build response */
+    $return = array();
+    //checks logged in users role against config options
+    if($this->RoleAccess($this->Config['ChatLogInput'])){
+      $Message = $_POST["Message"];
+      //Can this be tricked to send bad commands?
+      $this->RefreshModel->SendKeys('/say [Web Interface] '.$Message);
+      $return['success'] = true;
+      $return['message'] = 'Message Sent';
+    }else {
+      //Role was not high enough
+      $return['success'] = false;
+      $return['message'] = 'Your Role level is not high enough to Send Chat.';
+    }
+    //Encode and return
+    echo json_encode($return);
+  }
+
+  /**
    * Verifies Users Role and sends message to model to be sent to the servers manager
    * Requires POST 'Message'
    * @method SendKeys
@@ -79,12 +105,15 @@ class RefreshController extends CommonController
    */
   public function SendKeys()
   {
-    //WARNING there is a specifc command that is a HUGE security risk to the server
-    //Especially without HTTPS, YOU KNOW WHAT COMMAND IM TALKING ABOUT
-    //I NEED TO BLOCK THAT COMMAND ON EVERY LEVEL INCLUDING THE MANAGER
-
     /** @var array $return Settup array to build response */
     $return = array();
+    if($_POST["Message"] == '/run'){
+      $return['success'] = False;
+      $return['message'] = 'Cannot use /run via the web interface.';
+      //Return json array and kill script
+      echo json_encode($return);
+      exit;
+    }
     //checks logged in users role against config options
     if($this->RoleAccess($this->Config['ConsoleCommandsAccess'])){
       //if message doesnt start with /stop

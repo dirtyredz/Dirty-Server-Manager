@@ -113,6 +113,10 @@ class ServerConfigController extends CommonController
           'Definition' => 'The role level required to run the /stop command in the console page. (0=public)',
           'Type' => 'number',
           'Range' => array('min'=>0,'max'=>99)),
+    'ChatLogInput' => array(
+          'Definition' => 'The role level required to send chat message from home. (0=public)',
+          'Type' => 'number',
+          'Range' => array('min'=>0,'max'=>99)),
     'AccessDetailedPlayerData' => array(
           'Definition' => 'The role level required to view extra details on the players page. (0=public)',
           'Type' => 'number',
@@ -181,7 +185,7 @@ class ServerConfigController extends CommonController
     //Settup config parser object
     $this->ConfigParser = new ConfigParser();
     /** @var string $GalaxyName GalaxyName in manager-config */
-    $GalaxyName = `grep GALAXY {$this->Config['ManagerConfig']} | sed -e 's/.*=//g'`;
+    $GalaxyName = $this->ManagerConfig['GALAXY'];//`grep GALAXY {$this->Config['ManagerConfig']} | sed -e 's/.*=//g'`;
     /** @var string $File server.ini file location */
     $File = $this->Config['GalaxiesDir']."/".trim($GalaxyName)."/server.ini";
 

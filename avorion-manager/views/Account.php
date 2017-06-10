@@ -1,3 +1,5 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.6.5/sweetalert2.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.6.5/sweetalert2.min.css" rel="stylesheet">
 <style type="text/css">
     #PasswordManagment{
       text-align: center;
@@ -93,30 +95,47 @@ $("#SignOutAll").click(function() {
 
 $("#ChangePassword").submit(function(event){
   event.preventDefault();
-  $.ajax({
-    'url': 'Account',
-    'type': 'POST',
-    'dataType': 'json',
-    'data': {
-      'OldPass': $('input[name="OldPass"]').val(),
-      'NewPass': $('input[name="NewPass"]').val()
-    },
-    'success': function(data) {
-      console.log(data);
-      if(data['success']) { // Successful login
-        console.log('Success');
-        $('.Glow').removeClass("Error");
-        $('label[for="submit"]').removeClass("Error").html(data['message']);
-        AddNotification(data['message']);
-      } else { // Login failed, call error()
-        $('.Glow').addClass("Error");
-        $('label[for="submit"]').addClass('Error').html(data['message']);
-        AddNotification(data['message']);
+
+  swal({
+    title: 'Are you sure?',
+    text: "Do you wish to continue with changing your password?",
+    type: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes!'
+  }).then(function () {
+    $.ajax({
+      'url': 'Account',
+      'type': 'POST',
+      'dataType': 'json',
+      'data': {
+        'OldPass': $('input[name="OldPass"]').val(),
+        'NewPass': $('input[name="NewPass"]').val()
+      },
+      'success': function(data) {
+        console.log(data);
+        if(data['success']) { // Successful login
+          swal(
+            'Success!',
+            'Your password has been changed.',
+            'success'
+          );
+          console.log('Success');
+          $('.Glow').removeClass("Error");
+          $('label[for="submit"]').removeClass("Error").html(data['message']);
+          AddNotification(data['message']);
+        } else { // Login failed, call error()
+          $('.Glow').addClass("Error");
+          $('label[for="submit"]').addClass('Error').html(data['message']);
+          AddNotification(data['message']);
+        }
+        $('input[name="OldPass"]').val('');
+        $('input[name="NewPass"]').val('');
+        $('input[name="OldPass"]').focus();
       }
-      $('input[name="OldPass"]').val('');
-      $('input[name="NewPass"]').val('');
-      $('input[name="OldPass"]').focus();
-    }
-  });
+    });
+  }).catch(swal.noop);
 });
+
 </script>

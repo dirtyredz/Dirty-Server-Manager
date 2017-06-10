@@ -1,18 +1,24 @@
 DIRTY-SERVER-MANAGER
 A script for quick server deployment and managment of the server.
 
-Tested and works on these linux OS:
-Ubuntu 16.04
-Debian 8, for debian instructions see here:
-
-You don't need to own Avorion on Steam to use this.
+Debian specific instructions are neccassary due to its package manager is slightly behind on a few packages.
 
 INSTALLATION
 Step 1: Verify or install these dependencies:
          lib32gcc1, tmux (V2.0+), php7.0, php7.0-gd
 
         sudo apt-get update
-        sudo apt-get install lib32gcc1 tmux php7.0 php7.0-gd
+        echo 'deb http://packages.dotdeb.org jessie all' >> /etc/apt/sources.list
+        echo 'deb-src http://packages.dotdeb.org jessie all' >> /etc/apt/sources.list
+        sudo apt-get install curl
+        curl https://www.dotdeb.org/dotdeb.gpg | sudo apt-key add -
+        sudo apt-get update
+        sudo apt-get install -y exuberant-ctags cmake libevent-dev libncurses5-dev lib32gcc1 php7.0 php7.0-gd
+        wget https://github.com/tmux/tmux/releases/download/2.0/tmux-2.0.tar.gz
+        tar xvf tmux-2.0.tar.gz
+        cd tmux-2.0
+        ./configure && make
+        sudo make install
 
 Step 2: Create a new user for avorion to run on. (Do not use root)
 
@@ -44,14 +50,11 @@ Step 8: [Optional] To start the web interface run this commands
 
 Alternativly: [Optional] Apache settup for those who wish to take advantage of SSL(https)
 
-    Script tested on:
-      Ubuntu 16.04
-
-    su root           'or another user with sudo access'
-    sudo apt-get update
-    sudo apt-get install apache2 libapache2-mod-php7.0
-    cd /home/avorion
-    sudo ./ApacheInstall.sh
+        su root           'or another user with sudo access'
+        sudo apt-get update
+        sudo apt-get install apache2 libapache2-mod-php7.0
+        cd /home/avorion
+        sudo ./ApacheInstall.sh
 
 
     Regardless of which server you choose, the site will be accessed via:
@@ -71,38 +74,3 @@ Step 9: After all is done and working properly be sure to secure your firewall w
         tcp/27021  -Steam
         tcp/8080   -web interface default
         tcp/443    -If using apche/ssl
-
-
-
-
-Check help for more commands:
-
-    ./manager help
-
-To update your manager and web interface use command from the directory the manager is located:
-
-    avorion-manager/UpdateManager.sh
-
-
-
-FAQ:
-Q: How do I see server's console and use commands?
-A: Attach to it with ./manager attach.
-
-Q: How do I safely detach from server's console?
-A: Press Ctrl+B and then D.
-
-Q: I have a "steamclient.so: wrong ELF class: ELFCLASS32" error!
-A: Copy steamclient.so from serverfiles/linux64 to server's root(serverfiles/). For default configuration:
-
-cd serverfiles
-cp linux64/steamclient.so .
-
-Q: Installation/update is stuck in a loop!
-A: Press Ctrl+C to stop it, then check for errors. If you can't solve them try posting them here.
-
-
-Credit:
-I want to give some credit to Aki
-for his original work here: http://www.avorion.net/forum/index.php?topic=642.0
-Aki provided me with a base script to start with and allowed me to focus on adding features.

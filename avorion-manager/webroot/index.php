@@ -1,4 +1,5 @@
 <?php
+header_remove("X-Powered-By");
 $uri_parts = parse_url($_SERVER['REQUEST_URI']);
 if (preg_match('/\.(?:png|jpg|jpeg|gif|css|js)$/', $uri_parts['path'])) {
     return false;

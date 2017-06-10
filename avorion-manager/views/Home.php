@@ -22,29 +22,32 @@
     div#ChatLog{
       font-family: 'Source Code Pro', monospace;
       border: 4px solid #3d3c3c;
-      overflow-x: hidden;
-      overflow-y: scroll;
+      overflow: hidden;
       height: 400px;
       width: 400px;
-      padding-left: 5px;
       order: 1;
       background-color: #0e0e0e;
       min-width: 400px;
       flex: 3;
       order: -1;
     }
+    div#ChatLog div{
+      height: 100%;
+      overflow-x: hidden;
+      overflow-y: scroll;
+    }
     div#ChatLog span{
       width: 100%;
       display: block;
     }
     div#ChatLog span:nth-child(even) {background: #1f1f1f}
-    div#ChatLog::-webkit-scrollbar {
+    div#ChatLog div::-webkit-scrollbar {
         width: 1em;
     }
-    div#ChatLog::-webkit-scrollbar-track {
+    div#ChatLog div::-webkit-scrollbar-track {
         -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
     }
-    div#ChatLog::-webkit-scrollbar-thumb {
+    div#ChatLog div::-webkit-scrollbar-thumb {
       background-color: darkgrey;
       outline: 1px solid slategrey;
     }
@@ -66,6 +69,18 @@
     }
     a:visited{
       color: gray;
+    }
+    form#Post{
+      display: flex;
+    }
+    input#Input{
+      min-height: 20px;
+      flex: 1 0 0;
+      padding: 5px 10px;
+      border: 4px solid #3d3c3c;
+      background-color: transparent;
+      color:inherit;
+      outline: none;
     }
 </style>
 <script src="https://cdn.jsdelivr.net/clipboard.js/1.6.0/clipboard.min.js"></script>
@@ -104,8 +119,20 @@
 </div>
 <br/>
 <div id="PlayerData">
-  <?php if($Data['ShowChatLog']){ ?>
-    <div id="ChatLog"></div>
+  <?php
+  if($Data['ShowChatLog']){ ?>
+    <div id="ChatLog">
+      <?php
+          if($Data['ChatLogInput']) {
+              ?>
+              <form id="Post" method="post">
+                <input id="Input" autocomplete="off" placeholder='Chat Message'></input>
+              </form>
+              <?php
+          }
+       ?>
+       <div></div>
+    </div>
   <?php }?>
   <?php if($Data['ShowOnlinePlayers']){ ?>
     <div id="OnlinePlayers">
@@ -113,7 +140,7 @@
       <?php
       if(isset($Data['OnlinePlayers'])){
         foreach ($Data['OnlinePlayers'] as $key => $value) {
-          echo '<span class="OnlinePlayer"><span>'.$key.'</span>&nbsp;&nbsp;&nbsp;&nbsp;<img src="/resources/img/blank.gif" class="flag flag-'.$value['CountryCode'].'" alt="'.$value['CountryName'].'" /></span>';
+          echo '<span class="OnlinePlayer"><span>'.$key.'</span>&nbsp;&nbsp;&nbsp;&nbsp;<img src="/resources/img/blank.gif" class="'.$value['CountryCode'].'" alt="'.$value['CountryName'].'" /></span>';
         }
       }
       ?>
@@ -154,13 +181,31 @@
 
 <script type="text/javascript">
     $.get( "GetData", {function:"GetChatLog"},function(data) {
-      $("#ChatLog").html(data);
+      $("#ChatLog div").html(data);
     });
     window.PageRefresh = setInterval(function () {
       $.get( "GetData", {function:"GetChatLog"},function(data) {
-        $("#ChatLog").html(data);
+        $("#ChatLog div").html(data);
       });
     }, 60000);
+
+    <?php
+        if($Data['ChatLogInput']) {
+            ?>
+            $("#Post").submit(function(event){
+              event.preventDefault();
+              $.post("GetData", {function:'SendChat',Message:$("#Input").val()}, function(data) {
+                  $("#Input").val("");
+                  AddNotification(data['message']);
+                  $.get( "GetData", {function:"GetChatLog"},function(data) {
+                    $("#ChatLog div").html(data);
+                  });
+              });
+            });
+            <?php
+        }
+     ?>
+
     //Show DiskUsage
     <?php if($Data['ShowDiskUsage']){ ?>
       var data = [{
