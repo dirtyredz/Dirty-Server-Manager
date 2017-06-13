@@ -39,7 +39,7 @@ class CommonController
     if(!isset($_SESSION['login'])) {
       session_destroy();
       /** @var string $IPAddress performs a command line execution to retrieve servers IP address */
-      $IPAddress = exec("hostname -I | awk '{print $1}'");
+      $IPAddress = $this->ManagerConfig['IPAddress'];
       //header("Location: http://".$IPAddress.":8080");
       echo "<script>parent.self.location='http://".$IPAddress.":".$this->ManagerConfig['WEBPORT']."';</script>";
       exit;
@@ -47,7 +47,7 @@ class CommonController
   }
 
   /**
-   * [SignedInUsername description]
+   * Returns the username of the currently logged in user.
    * @method SignedInUsername
    */
   public function SignedInUsername()
@@ -124,7 +124,7 @@ class CommonController
     if($this->SessionRole() < $Role){
       if(!isset($_SESSION)) { session_start(); };
       session_destroy();
-      $IPAddress = exec("hostname -I | awk '{print $1}'");
+      $IPAddress = $this->ManagerConfig['IPAddress'];
       //header("Location: http://".$IPAddress.":8080");
       //echo's a redirect script back to page
       echo "<script>parent.self.location='http://".$IPAddress.":".$this->ManagerConfig['WEBPORT']."';</script>";

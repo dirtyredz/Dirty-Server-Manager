@@ -124,18 +124,20 @@
           </div>
           <div class="ConfigInput">
             <?php
-              if($Data['ServerINIDetails'][$Count]['Type'] == 'input'){
-                echo '<input class="" type="text" name="'.$key.'" value="'.$value.'"></input>';
-              }elseif($Data['ServerINIDetails'][$Count]['Type'] == 'select'){
-                echo '<select>';
-                  foreach ($Data['ServerINIDetails'][$Count]['Values'] as $SelectKey => $SelectValue) {
-                    if($value == $SelectValue){
-                      echo '<option value="'.$SelectValue.'" selected>'.$SelectKey.'</option>';
-                    }else{
-                      echo '<option value="'.$SelectValue.'">'.$SelectKey.'</option>';
+              if($Data['ChangeServerINI']){
+                if($Data['ServerINIDetails'][$Count]['Type'] == 'input'){
+                  echo '<input class="" type="text" name="'.$key.'" value="'.$value.'"></input>';
+                }elseif($Data['ServerINIDetails'][$Count]['Type'] == 'select'){
+                  echo '<select>';
+                    foreach ($Data['ServerINIDetails'][$Count]['Values'] as $SelectKey => $SelectValue) {
+                      if($value == $SelectValue){
+                        echo '<option value="'.$SelectValue.'" selected>'.$SelectKey.'</option>';
+                      }else{
+                        echo '<option value="'.$SelectValue.'">'.$SelectKey.'</option>';
+                      }
                     }
-                  }
-                echo '</select>';
+                  echo '</select>';
+                }
               }
               echo '&nbsp;&nbsp;&nbsp;'.$value;
              ?>
@@ -164,18 +166,20 @@
           </div>
           <div class="ConfigInput">
             <?php
-              if($Data['ManagerConfigDetails'][$Count]['Type'] == 'input'){
-                echo '<input class="" type="text" name="'.$key.'" value="'.$value.'"></input>';
-              }elseif($Data['ManagerConfigDetails'][$Count]['Type'] == 'select'){
-                echo '<select>';
-                  foreach ($Data['ManagerConfigDetails'][$Count]['Values'] as $SelectKey => $SelectValue) {
-                    if($value == $SelectValue){
-                      echo '<option value="'.$SelectValue.'" selected>'.$SelectKey.'</option>';
-                    }else{
-                      echo '<option value="'.$SelectValue.'">'.$SelectKey.'</option>';
+              if($Data['ChangeManagerConfigINI']){
+                if($Data['ManagerConfigDetails'][$Count]['Type'] == 'input'){
+                  echo '<input class="" type="text" name="'.$key.'" value="'.$value.'"></input>';
+                }elseif($Data['ManagerConfigDetails'][$Count]['Type'] == 'select'){
+                  echo '<select>';
+                    foreach ($Data['ManagerConfigDetails'][$Count]['Values'] as $SelectKey => $SelectValue) {
+                      if($value == $SelectValue){
+                        echo '<option value="'.$SelectValue.'" selected>'.$SelectKey.'</option>';
+                      }else{
+                        echo '<option value="'.$SelectValue.'">'.$SelectKey.'</option>';
+                      }
                     }
-                  }
-                echo '</select>';
+                  echo '</select>';
+                }
               }
               echo '&nbsp;&nbsp;&nbsp;'.$value;
              ?>
@@ -192,7 +196,11 @@
     <h2>PHP Config</h2>
     </br></br>
     <form id="PHPConfigForm">
-      <input type="submit" name="submit" value="Submit" />
+      <?php if($Data['ChangePHPConfigINI']){
+        ?>
+        <input type="submit" name="submit" value="Submit" />
+        <?php
+      }?>
       </br>
       </br>
       </br>
@@ -212,20 +220,22 @@
             </div>
             <div class="ConfigInput">
               <?php
-                if($Data['PHPConfigDetails'][$key]['Type'] == 'text'){
-                  echo '<input class="" type="text" name="'.$key.'" value="'.$value.'"></input>';
-                }elseif($Data['PHPConfigDetails'][$key]['Type'] == 'select'){
-                  echo '<select name="'.$key.'">';
-                    foreach ($Data['PHPConfigDetails'][$key]['Values'] as $SelectKey => $SelectValue) {
-                      if($value == $SelectValue){
-                        echo '<option value="'.$SelectValue.'" selected>'.$SelectKey.'</option>';
-                      }else{
-                        echo '<option value="'.$SelectValue.'">'.$SelectKey.'</option>';
+                if($Data['ChangePHPConfigINI']){
+                  if($Data['PHPConfigDetails'][$key]['Type'] == 'text'){
+                    echo '<input class="" type="text" name="'.$key.'" value="'.$value.'"></input>';
+                  }elseif($Data['PHPConfigDetails'][$key]['Type'] == 'select'){
+                    echo '<select name="'.$key.'">';
+                      foreach ($Data['PHPConfigDetails'][$key]['Values'] as $SelectKey => $SelectValue) {
+                        if($value == $SelectValue){
+                          echo '<option value="'.$SelectValue.'" selected>'.$SelectKey.'</option>';
+                        }else{
+                          echo '<option value="'.$SelectValue.'">'.$SelectKey.'</option>';
+                        }
                       }
-                    }
-                  echo '</select>';
-                }elseif($Data['PHPConfigDetails'][$key]['Type'] == 'number'){
-                  echo '<input type="number" name="'.$key.'" min="'.$Data['PHPConfigDetails'][$key]['Range']['min'].'" max="'.$Data['PHPConfigDetails'][$key]['Range']['max'].'" value="'.$value.'">';
+                    echo '</select>';
+                  }elseif($Data['PHPConfigDetails'][$key]['Type'] == 'number'){
+                    echo '<input type="number" name="'.$key.'" min="'.$Data['PHPConfigDetails'][$key]['Range']['min'].'" max="'.$Data['PHPConfigDetails'][$key]['Range']['max'].'" value="'.$value.'">';
+                  }
                 }
                 echo '&nbsp;&nbsp;&nbsp;'.$value;
                ?>

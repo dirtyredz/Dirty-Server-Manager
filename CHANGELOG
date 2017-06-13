@@ -1,3 +1,10 @@
+1.1.1
+  Disabled links on the sidebar are now set to have no display instead of just being greyed out
+  Added chatlog input to use username as prefix to chat
+  Removed inputs for configuration page for users with role access not high enough to change the values.
+  changed sign out all button text
+  Added IP Address to installation and manager-config.ini
+
 1.1.0
   Added zlib_Uncompress.php to handle decompressing data file_put_contents
   *Changed GetSectorData to handle the new data structure

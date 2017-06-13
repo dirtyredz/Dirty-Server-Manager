@@ -18,6 +18,7 @@ AutoRestart=`echo ${AutoRestart} | sed -e 's/\r//g'`
 DAILYRESTART=`echo ${DailyRestart} | sed -e 's/\r//g'`
 BETA=`echo ${BETA} | sed -e 's/\r//g'`
 WEBPORT=`echo ${WEBPORT} | sed -e 's/\r//g'`
+IPAddress=`echo ${IPAddress} | sed -e 's/\r//g'`
 
 # Standard Config - Dont touch
 TMUX_SESSION=${GALAXY}_Tmux
@@ -500,6 +501,13 @@ case $1 in
     else
       echo Admin Steam ID: $AdminInput
     fi
+    echo ''
+    read -p "The IPAddress you want the web interface to run on: []"  IPAddressInput
+    IPAddressInput=${IPAddressInput:-y}
+    if [[ $IPAddressInput =~ ^[Yy]$ ]]; then
+      IPAddressInput=$(hostname -I | awk '{print $1}')
+    fi
+    echo IPAddress to use: $IPAddressInput
 
     echo ''
     echo "Completed manager configuration, to make changes to these settings in the future edit file manager-config.ini"

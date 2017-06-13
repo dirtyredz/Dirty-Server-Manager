@@ -69,6 +69,7 @@ opacity: 0;
   color: rgb(80, 80, 80);
   cursor: default;
   pointer-events: none;
+  display: none;
 }
 #SideBar li.Disabled svg.icon{
   fill: rgb(80, 80, 80);

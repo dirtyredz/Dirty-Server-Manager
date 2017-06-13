@@ -85,7 +85,7 @@ class RefreshController extends CommonController
     if($this->RoleAccess($this->Config['ChatLogInput'])){
       $Message = $_POST["Message"];
       //Can this be tricked to send bad commands?
-      $this->RefreshModel->SendKeys('/say [Web Interface] '.$Message);
+      $this->RefreshModel->SendKeys('/say ['.$this->SignedInUsername().'] '.$Message);
       $return['success'] = true;
       $return['message'] = 'Message Sent';
     }else {

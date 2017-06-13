@@ -82,7 +82,7 @@
 <div id="PasswordManagment">
     <div>Sign out of all devices.</div>
     <br/>
-    <input id="SignOutAll" type="submit" name="submit" value="Submit" />
+    <input id="SignOutAll" type="submit" name="submit" value="Sign Out All" />
 </div>
 <script type="text/javascript">
 

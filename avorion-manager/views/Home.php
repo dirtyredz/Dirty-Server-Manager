@@ -200,7 +200,7 @@
                   $.get( "GetData", {function:"GetChatLog"},function(data) {
                     $("#ChatLog div").html(data);
                   });
-              });
+              },'json');
             });
             <?php
         }

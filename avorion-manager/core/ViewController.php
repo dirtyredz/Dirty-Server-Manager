@@ -60,7 +60,7 @@ class ViewController extends CommonController
    */
   public function Index()
   {
-    $IPAddress = exec("hostname -I | awk '{print $1}'");
+    $this->Data['IPAddress'] = $this->ManagerConfig['IPAddress'];
     //Default all links to be disabled
     $this->Data['ConsoleAccess'] = 'Disabled';
     $this->Data['AccessServerConfigPage'] = 'Disabled';
@@ -132,7 +132,7 @@ class ViewController extends CommonController
       $this->Data['AccessSpaceInvadersPage'] = '';
     }
     //Prepare additional data to put on the page and load the page
-    $this->Data['IPAddress'] = exec("hostname -I | awk '{print $1}'");
+    $this->Data['IPAddress'] = $this->ManagerConfig['IPAddress'];
     $DefaultPage = $this->Config['DefaultPage'];
     $AllowedPages = array('Home','Factions','Players','DiscoveredMap','FactionsMap','Graphs','SignIn','About');
     if($this->Config['DefaultPage'] == 'SignIn' && $this->Data['LoggedIn'] || !in_array($DefaultPage,$AllowedPages)){
@@ -172,7 +172,7 @@ class ViewController extends CommonController
    */
   public function Account()
   {
-    $this->Data['IPAddress'] = exec("hostname -I | awk '{print $1}'");
+    $this->Data['IPAddress'] = $this->ManagerConfig['IPAddress'];
     //No need to check for role here, if they dont have a session at all redirect them
     $this->SessionRequired();
     //Loads the page
@@ -573,7 +573,7 @@ class ViewController extends CommonController
       $this->Data['MaxPlayers'] = $this->ManagerConfig['MAX_PLAYERS'];//`grep MAX {$this->Config['ManagerConfig']} | sed -e 's/.*=//g'`;
       $this->Data['OnlinePlayerCount'] = `netstat -tlunp 2> /dev/null | grep -iv ':270' | grep -i "[0-9]/Avorion" | wc -l | tr -d "[:space:]"`;
     }
-    $this->Data['IPAddress'] = exec("hostname -I | awk '{print $1}'");
+    $this->Data['IPAddress'] = $this->ManagerConfig['IPAddress'];
     //Loads page
     $this->LoadView('Home');
   }
@@ -609,7 +609,7 @@ class ViewController extends CommonController
    */
   public function SignIn()
   {
-    $this->Data['IPAddress'] = exec("hostname -I | awk '{print $1}'");
+    $this->Data['IPAddress'] = $this->ManagerConfig['IPAddress'];
     $this->LoadView('SignIn');
   }
 
@@ -642,7 +642,7 @@ class ViewController extends CommonController
       $RefreshModel = new RefreshModel;
       //Settup data for page to display
       $this->Data['ServerLoad'] = $RefreshModel->GetCurrentServerLoad();
-      $this->Data['IPAddress'] = exec("hostname -I | awk '{print $1}'");
+      $this->Data['IPAddress'] = $this->ManagerConfig['IPAddress'];
       $this->Data['GalaxyName'] = $this->ManagerConfig['GALAXY'];//`grep GALAXY {$this->Config['ManagerConfig']} | sed -e 's/.*=//g'`;
       $this->Data['OnlineStatus'] = `if [ $(pidof $(grep SERVER= {$this->Config['Manager']} | sed -e 's/.*=//g')) > /dev/null ]; then echo 'Online'; else echo 'Offline'; fi`;
       $this->Data['ShowOnlinePlayerCount'] = $this->Config['ShowOnlinePlayerCount'];

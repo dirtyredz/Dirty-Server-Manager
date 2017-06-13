@@ -247,6 +247,12 @@ class ServerConfigController extends CommonController
    */
   public function UpdatePHPConfig()
   {
+    if(!$this->RoleAccess($this->Config['ChangePHPConfigINI'])){
+      $return['success'] = false;
+      $return['message'] = 'Role level not high enough.';
+      echo json_encode($return);
+      exit;
+    }
     /** @var array $return Builds response array */
     $return = array();
     /** @var array $NewPHPConfig array with updated values */
