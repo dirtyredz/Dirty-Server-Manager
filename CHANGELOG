@@ -1,3 +1,6 @@
+1.1.2
+  Removed Hostname from manager
+
 1.1.1
   Disabled links on the sidebar are now set to have no display instead of just being greyed out
   Added chatlog input to use username as prefix to chat

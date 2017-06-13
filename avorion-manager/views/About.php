@@ -22,6 +22,9 @@
 <br/>
 <br/>
 <h3>CHANGE LOG:</h3>
+<h4>1.1.2</h4>
+  Removed Hostname from manager</br>
+  </br>
 <h4>1.1.1</h4>
   Disabled links on the sidebar are now set to have no display instead of just being greyed out</br>
   Added chatlog input to use username as prefix to chat</br>

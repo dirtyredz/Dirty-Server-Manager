@@ -32,7 +32,7 @@ YELLOW='\033[1;33m'
 PURPLE='\033[1;35m'
 NOCOLOR='\033[0m'
 # Static - Dont change these
-VERSION=1.1.1
+VERSION=1.1.2
 APPID=565060
 SERVER=AvorionServer
 T='tmux send-keys -t '${TMUX_SESSION}':0.0'
@@ -64,7 +64,6 @@ DynamicEcho() {
   fi
 }
 GenerateBrowser(){
-  IPADDRESS=$(hostname -I | awk '{print $1}')
   OnlineCount=$(netstat -tlunp 2>/dev/null | grep -iv ':270'|grep -i avorion|wc -l)
   OnlinePlayers="$OnlineCount/$MAX_PLAYERS"
   php -f ${SCRIPTPATH}/avorion-manager/BannerGenerator.php "$1" "${IPADDRESS}" "${GALAXY}" "${OnlinePlayers}"
@@ -385,7 +384,6 @@ case $1 in
 	;;
   "start-web")
     LogToManagerLog "Ran Start-web command.";
-    IPADDRESS=$(hostname -I | awk '{print $1}')
     if tmux new-session -d -s php 'php -S '"${IPADDRESS}"':'"${WEBPORT}"' -t '${SCRIPTPATH}'/avorion-manager/webroot '${SCRIPTPATH}'/avorion-manager/webroot/index.php' 2> /dev/null
     then
       DynamicEcho "starting PHP Server"
