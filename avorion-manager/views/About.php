@@ -26,6 +26,7 @@
   Added zlib_Uncompress.php to handle decompressing data file_put_contents</br>
   *Changed GetSectorData to handle the new data structure</br>
   *Changed GetSectorData to handle the new data structure</br>
+  *Changed server.ini configuration deffinitions</br>
   </br>
   *WARNING: Compatible with avorion build 0.12 r8487</br>
   </br>

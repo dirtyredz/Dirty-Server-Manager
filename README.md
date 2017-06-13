@@ -27,15 +27,15 @@ Step 4: Unpack the tar file
 
         tar -xvf DirtyServerManager.tar.gz
 
-Step 6: Steamcmd and avorion server Installation
+Step 5: Steamcmd and avorion server Installation
 
         ./manager install
 
-Step 7: After a succesful server installation you can start the server
+Step 6: After a succesful server installation you can start the server
 
         ./manager start
 
-Step 8: [Optional] To start the web interface run this commands
+Step 7: [Optional] To start the web interface run this commands
 
         ./manager start-web
 
@@ -43,9 +43,6 @@ Step 8: [Optional] To start the web interface run this commands
         Ultimatly the php server is not as robust as an apache server, that is why I include an apache settup below.
 
 Alternativly: [Optional] Apache settup for those who wish to take advantage of SSL(https)
-
-    Script tested on:
-      Ubuntu 16.04
 
     su root           'or another user with sudo access'
     sudo apt-get update
@@ -59,7 +56,7 @@ Alternativly: [Optional] Apache settup for those who wish to take advantage of S
     example: http://104.236.73.30:8080
 
 
-Step 9: After all is done and working properly be sure to secure your firewall with the appropriate commands. Remember to open ports for the game as well as the web interface
+Step 8: After all is done and working properly be sure to secure your firewall with the appropriate commands. Remember to open ports for the game as well as the web interface
         These are the default ports you will need to open:
 
         tcp/27000
@@ -71,8 +68,6 @@ Step 9: After all is done and working properly be sure to secure your firewall w
         tcp/27021  -Steam
         tcp/8080   -web interface default
         tcp/443    -If using apche/ssl
-
-
 
 
 Check help for more commands:
