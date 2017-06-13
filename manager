@@ -526,7 +526,7 @@ case $1 in
     echo "DailyRestart=${DailyRestartInput}" >> manager-config.ini
     echo "BETA=${BetaInput}" >> manager-config.ini
     echo "WEBPORT=8080" >> manager-config.ini
-    echo "BETA=${IPAddressInput}" >> manager-config.ini
+    echo "IPAddress=${IPAddressInput}" >> manager-config.ini
 
     mkdir -p $STEAM_DIR
     wget https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz
