@@ -22,6 +22,13 @@
 <br/>
 <br/>
 <h3>CHANGE LOG:</h3>
+<h4>1.1.0</h4>
+  Added zlib_Uncompress.php to handle decompressing data file_put_contents</br>
+  *Changed GetSectorData to handle the new data structure</br>
+  *Changed GetSectorData to handle the new data structure</br>
+  </br>
+  *WARNING: Compatible with avorion build 0.12 r8487</br>
+  </br>
 <h4>1.0.10</h4>
   Added Groups detection into GetPlayerData script (parses admin.xml for players groups)</br>
   Added Debian support for ApacheInstaller script.</br>

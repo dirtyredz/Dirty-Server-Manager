@@ -1,3 +1,10 @@
+1.1.0
+  Added zlib_Uncompress.php to handle decompressing data file_put_contents
+  *Changed GetSectorData to handle the new data structure
+  *Changed GetSectorData to handle the new data structure
+
+  *WARNING: Compatible with avorion build 0.12 r8487
+
 1.0.10
   Added Groups detection into GetPlayerData script (parses admin.xml for players groups)
   Added Debian support for ApacheInstaller script.
@@ -7,7 +14,7 @@
   Added Chat Input to home page chat log.
   Added manager-config.ini parsing to CommonController, making it so we dont have to grep for commenly used options like Galaxy Name
   fixed error when starting server for first time and there is no console.log present.
-  
+
 1.0.9
   Added Apache web server support
   changed Router.php to index.php
