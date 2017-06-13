@@ -66,7 +66,7 @@ DynamicEcho() {
 GenerateBrowser(){
   OnlineCount=$(netstat -tlunp 2>/dev/null | grep -iv ':270'|grep -i avorion|wc -l)
   OnlinePlayers="$OnlineCount/$MAX_PLAYERS"
-  php -f ${SCRIPTPATH}/avorion-manager/BannerGenerator.php "$1" "${IPADDRESS}" "${GALAXY}" "${OnlinePlayers}"
+  php -f ${SCRIPTPATH}/avorion-manager/BannerGenerator.php "$1" "${IPAddress}" "${GALAXY}" "${OnlinePlayers}"
 }
 DeleteCronJobs(){
   crontab -l | grep -v "${SCRIPTPATH}/manager"  | crontab -
@@ -384,13 +384,13 @@ case $1 in
 	;;
   "start-web")
     LogToManagerLog "Ran Start-web command.";
-    if tmux new-session -d -s php 'php -S '"${IPADDRESS}"':'"${WEBPORT}"' -t '${SCRIPTPATH}'/avorion-manager/webroot '${SCRIPTPATH}'/avorion-manager/webroot/index.php' 2> /dev/null
+    if tmux new-session -d -s php 'php -S '"${IPAddress}"':'"${WEBPORT}"' -t '${SCRIPTPATH}'/avorion-manager/webroot '${SCRIPTPATH}'/avorion-manager/webroot/index.php' 2> /dev/null
     then
       DynamicEcho "starting PHP Server"
 
       if pidof php > /dev/null;
       then
-        DynamicEcho "PHP Server started on server: http://${IPADDRESS}"':'"${WEBPORT}"
+        DynamicEcho "PHP Server started on server: http://${IPAddress}"':'"${WEBPORT}"
       else
         DynamicEcho "PHP Server Failed"
       fi
