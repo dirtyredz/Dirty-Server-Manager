@@ -1,4 +1,4 @@
- <style type="text/css">
+<style type="text/css">
   tbody{
     background-color: #315683;
     font-size: 25px;
@@ -44,21 +44,19 @@
 </style>
 <div id="Top"><span class="Title"><svg class="icon"><use xlink:href="#icon-players"></use></svg>PLAYERS</span><span class="Time"></span></div>
 <br/>
-<label for="Search">Search Factions</label>
+<label for="Search">Search Alliances</label>
 <br/>
 <input id="SearchFaction" type="text">
 <br/>
 <br/>
 Click Column Head to sort.
 <br/>
-<table id="PlayersTable">
+<table id="AlliancesTable">
   <thead>
   <tr>
     <th>Name</th>
-    <th>PlayTime</th>
-    <th>LastSeen</th>
-    <th>Group</th>
-    <th>Alliance</th>
+    <th>Leader</th>
+    <th># Players</th>
     <th>Net Worth</th>
     <?php
         if($Data['AccessGranted']) {
@@ -72,7 +70,6 @@ Click Column Head to sort.
             <th>Xanion</th>
             <th>Ogonite</th>
             <th>Avorion</th>
-            <th>SteamID</th>
             <?php
         }
      ?>
@@ -81,34 +78,23 @@ Click Column Head to sort.
   <tbody>
   <?php
     $Even = false;
-    foreach ($Data['PlayerData'] as $key => $value) {
+    foreach ($Data['AllianceData'] as $key => $value) {
       echo '<tr>';
 
       echo '<td>'.$value['Name'].'</td>';
-      $Seconds = base_convert(implode('',array_reverse(str_split($value['PlayTime'],2))),16,10);
-      $hours = floor($Seconds / 3600);
-      $mins = floor($Seconds / 60 % 60);
-      $secs = floor($Seconds % 60);
-      echo '<td>'.$hours.':'.$mins.':'.$secs.'</td>';
-      echo '<td>'.$value['LastSeen'].'</td>';
-      echo '<td>'.$value['Group'].'</td>';
-      $AllianceID = base_convert(implode('',array_reverse(str_split($value['Alliance'],2))),16,10);
-      $HasAllianceName = false;
-      if($AllianceID != 0){
-        foreach ($Data['AllianceData'] as $AllianceKey => $AllianceArray) {
-          if($AllianceArray['ID'] == $AllianceID){
-            echo '<td>'.$AllianceArray['Name'].'</td>';
-            $HasAllianceName = true;
-            break;
-          }
+      $Leader = implode('',array_reverse(str_split($value['Leader'],2)));
+      $Leader = base_convert($Leader[0].$Leader[1],16,10);
+      $NumberOfPlayers = 0;
+      foreach ($Data['PlayerData'] as $PlayerArray => $Player) {
+        if($Player['ID'] == $Leader){
+          echo '<td>'.$Player['Name'].'</td>';
         }
-        if(!$HasAllianceName){
-          echo '<td style="color: rgba(255,255,255,0.3);">-Error-</td>';
+        $AllianceID = base_convert(implode('',array_reverse(str_split($Player['Alliance'],2))),16,10);
+        if($AllianceID == $value['ID']){
+          $NumberOfPlayers +=1;
         }
-      }else{
-        echo '<td></td>';
       }
-
+      echo '<td>'.$NumberOfPlayers.'</td>';
 
       $Money = base_convert(implode('',array_reverse(str_split($value['Money'],2))),16,10);
       $Iron = base_convert(implode('',array_reverse(str_split($value['Iron'],2))),16,10);
@@ -130,8 +116,6 @@ Click Column Head to sort.
         echo '<td>'.$Xanion.'</td>';
         echo '<td>'.$Ogonite.'</td>';
         echo '<td>'.$Avorion.'</td>';
-        $SteamID = base_convert(implode('',array_reverse(str_split($value['SteamID'],2))),16,10);
-        echo '<td>'.'<a target="_blank" href="http://steamcommunity.com/profiles/'.$SteamID.'/">'.$SteamID.'</a></td>';
       }
       echo '</tr>';
     }
@@ -143,7 +127,7 @@ Click Column Head to sort.
     var input, filter, table, tr, td, i;
     input = document.getElementById("SearchFaction");
     filter = input.value.toUpperCase();
-    table = document.getElementById("PlayersTable");
+    table = document.getElementById("AlliancesTable");
     tr = table.getElementsByTagName("tr");
 
     // Loop through all table rows, and hide those who don't match the search query
@@ -157,9 +141,9 @@ Click Column Head to sort.
         }
       }
     }
-      $("#PlayersTable").trigger("update")
+      $("#AlliancesTable").trigger("update")
   });
-  $("#PlayersTable").tablesorter({
+  $("#AlliancesTable").tablesorter({
     widgets: ['zebra']
   });
 </script>

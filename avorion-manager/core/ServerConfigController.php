@@ -69,6 +69,10 @@ class ServerConfigController extends CommonController
           'Definition' => 'The role level required to view the Space Invaders page. (0=public)',
           'Type' => 'number',
           'Range' => array('min'=>0,'max'=>99)),
+    'AccessAlliancePage' => array(
+          'Definition' => 'The role level required to view the Alliances page. (0=public)',
+          'Type' => 'number',
+          'Range' => array('min'=>0,'max'=>99)),
     'HomeChatLog' => array(
           'Definition' => 'The role level required to view the Chat log on the home page. (0=public)',
           'Type' => 'number',
@@ -119,6 +123,10 @@ class ServerConfigController extends CommonController
           'Range' => array('min'=>0,'max'=>99)),
     'AccessDetailedPlayerData' => array(
           'Definition' => 'The role level required to view extra details on the players page. (0=public)',
+          'Type' => 'number',
+          'Range' => array('min'=>0,'max'=>99)),
+    'AccessDetailedAllianceData' => array(
+          'Definition' => 'The role level required to view extra details on the alliance page. (0=public)',
           'Type' => 'number',
           'Range' => array('min'=>0,'max'=>99)),
     'ChangeServerINI' => array(

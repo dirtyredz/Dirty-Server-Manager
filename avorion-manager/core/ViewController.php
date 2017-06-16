@@ -71,6 +71,7 @@ class ViewController extends CommonController
     $this->Data['AccessDiscoveredMapPage'] = 'Disabled';
     $this->Data['AccessFactionsMapPage'] = 'Disabled';
     $this->Data['AccessSpaceInvadersPage'] = 'Disabled';
+    $this->Data['AccessAlliancePage'] = 'Disabled';
 
 
     $this->Data['Username'] = '';
@@ -98,6 +99,10 @@ class ViewController extends CommonController
     //role is required to be greater then config option, otherwise do not display
     if($this->RoleAccess($this->Config['AccessConsolePage'])){//Role required for specific feature
       $this->Data['ConsoleAccess'] = '';
+    }
+    //role is required to be greater then config option, otherwise do not display
+    if($this->RoleAccess($this->Config['AccessAlliancePage'])){//Role required for specific feature
+      $this->Data['AccessAlliancePage'] = '';
     }
     //role is required to be greater then config option, otherwise do not display
     if($this->RoleAccess($this->Config['AccessServerConfigPage'])){//Role required for specific feature
@@ -537,7 +542,7 @@ class ViewController extends CommonController
     $this->Data['CustomMessageTwo'] = $this->Config['HomeCustomMessageTwo'];
     $this->Data['CustomMessageThree'] = $this->Config['HomeCustomMessageThree'];
     $this->Data['CustomMessageFour'] = $this->Config['HomeCustomMessageFour'];
-    $this->Data['GalaxyName'] = $this->ManagerConfig['GALAXY'];//`grep GALAXY {$this->Config['ManagerConfig']} | sed -e 's/.*=//g'`;
+    $this->Data['GalaxyName'] = $this->ManagerConfig['GALAXY'];
     //Check if pid status is available, display online if pid is available
     $this->Data['OnlineStatus'] = `if [ $(pidof $(grep SERVER= {$this->Config['Manager']} | sed -e 's/.*=//g')) > /dev/null ]; then echo 'Online'; else echo 'Offline'; fi  | tr -d '[:space:]'`;
     if($this->Data['ShowDiskUsage']){
@@ -547,15 +552,23 @@ class ViewController extends CommonController
       //Grab last Online Players report
       $OnlinePlayers = explode(", ",`tac {$this->Config['ConsoleLog']} | grep 'online players (' | head -n 1 | sed -e 's/.*://g' -e 's/^.//g' -e 's/.$//g'`);
       $NewOnlinePlayers = array();
-      $PID = `pidof $(grep SERVER= {$this->Config['Manager']} | tr -d '\n'`;
+      $PID = `pidof $(grep SERVER= {$this->Config['Manager']} | sed -e 's/.*=//g') | tr -d '\n'`;
       //Grab all Player IP's connected to server during this uptime of server
       $ConnectionList = `awk "/Connection accepted from/,/joined the galaxy/" /proc/"{$PID}"/fd/3 | grep 'accepted\|joined' | sed -e 's/.*> //g' -e 's/ joined.*//g' -e 's/.*from //g' -e 's/:.*//g'`;
+      $ConnectionList = explode(PHP_EOL, $ConnectionList);
+
       if(strlen($OnlinePlayers[0]) > 1){
         //assign Online Players to IP address and connect with geoplugin to detect country status
         foreach ($OnlinePlayers as $key => $value) {
           $Name = str_replace("\n", '', $value);
-          $TempName = quotemeta(str_replace("\n", '', $value));
-          $IP = `echo "{$ConnectionList}" | grep -B1 -e "{$TempName}" | head -n1 | tr -d '\n'`;
+          //$TempName = quotemeta(str_replace("\n", '', $value));
+          //$IP = `echo "{$ConnectionList}" | grep -B1 -e "{$TempName}" | head -n1 | tr -d '\n'`;
+          foreach ($ConnectionList as $key => $value) {
+            if($Name == $value){
+              //error_log($Name.' - '.$ConnectionList[$key-1]);
+              $IP = $ConnectionList[$key-1];
+            }
+          }
           $NewOnlinePlayers[$Name]['IP'] = $IP;
           $GEO = unserialize(file_get_contents('http://www.geoplugin.net/php.gp?ip='.$IP));
           if($GEO['geoplugin_status'] == '404'){
@@ -579,6 +592,32 @@ class ViewController extends CommonController
   }
 
   /**
+   * Loads and displays the alliance page
+   * @method Alliances
+   * @return void
+   */
+  public function Alliances()
+  {
+    //Role required in comparison to the config, if not redirect
+    $this->RoleRequired($this->Config['AccessAlliancePage']);
+    //if config option is accessible via config
+    if($this->RoleAccess($this->Config['AccessDetailedAllianceData'])){
+      //Log and assigns boolean to page to display more data
+      $this->LogMessage('Extra Alliance Data Granted.');
+      $this->Data['AccessGranted'] = true;
+    }else{
+      $this->Data['AccessGranted'] = false;
+    }
+    include __DIR__ ."/../PlayerData.php";
+    $this->Data['PlayerData'] = $PlayerData;
+    //Includes the AllianceData.php page, and pass to the page
+    include __DIR__ ."/../AllianceData.php";
+    $this->Data['AllianceData'] = $AllianceData;
+    //Loads the page
+    $this->LoadView('Alliances');
+  }
+
+  /**
    * Loads and displays the players page
    * @method Players
    * @return void
@@ -598,6 +637,9 @@ class ViewController extends CommonController
     //Includes the PlayerData.php page, and pass to the page
     include __DIR__ ."/../PlayerData.php";
     $this->Data['PlayerData'] = $PlayerData;
+    //Includes the AllianceData.php page, and pass to the page
+    include __DIR__ ."/../AllianceData.php";
+    $this->Data['AllianceData'] = $AllianceData;
     //Loads the page
     $this->LoadView('Players');
   }

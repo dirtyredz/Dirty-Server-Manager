@@ -22,6 +22,22 @@
 <br/>
 <br/>
 <h3>CHANGE LOG:</h3>
+<h4>1.1.4</h4>
+  Fixed player flags</br>
+  Replaced grep command with php for loop in player list of home page</br>
+  Added timestamp to home screen chatlog of Current server session(since last restart)</br>
+  Added a "Send To All" button on the mail form.</br>
+  Added Alliance Parsing</br>
+  Added Alliance page</br>
+  Added Alliance config options to PHPConfig.ini</br>
+  Added Alliance to Players page</br>
+  Added Alliance To players parser</br>
+  Added Alliance Parser to cron job</br>
+  Added manager-config options to adjust cronjob times for data parser scripts</br>
+  </br>
+<h4>1.1.3</h4>
+  Fixed Variable name in manager for default IPAddress</br>
+  </br>
 <h4>1.1.2</h4>
   Removed Hostname from manager</br>
   </br>

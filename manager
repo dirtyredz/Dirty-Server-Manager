@@ -19,6 +19,9 @@ DAILYRESTART=`echo ${DailyRestart} | sed -e 's/\r//g'`
 BETA=`echo ${BETA} | sed -e 's/\r//g'`
 WEBPORT=`echo ${WEBPORT} | sed -e 's/\r//g'`
 IPAddress=`echo ${IPAddress} | sed -e 's/\r//g'`
+GetSectorDataInterval=`echo ${GetSectorDataInterval} | sed -e 's/\r//g'`
+GetPlayerDataInterval=`echo ${GetPlayerDataInterval} | sed -e 's/\r//g'`
+GetAllianceDataInterval=`echo ${GetAllianceDataInterval} | sed -e 's/\r//g'`
 
 # Standard Config - Dont touch
 TMUX_SESSION=${GALAXY}_Tmux
@@ -32,7 +35,7 @@ YELLOW='\033[1;33m'
 PURPLE='\033[1;35m'
 NOCOLOR='\033[0m'
 # Static - Dont change these
-VERSION=1.1.3
+VERSION=1.1.4
 APPID=565060
 SERVER=AvorionServer
 T='tmux send-keys -t '${TMUX_SESSION}':0.0'
@@ -43,8 +46,9 @@ CRONDAILYRESTART_10='46 11,23 * * * '${SCRIPTPATH}'/manager send CRON "/say Rest
 CRONDAILYRESTART_5='51 11,23 * * * '${SCRIPTPATH}'/manager send CRON "/say Restarting server in 5 Minutes!"'
 CRONDAILYRESTART_1='55 11,23 * * * '${SCRIPTPATH}'/manager send CRON "/say Restarting server in 1 Minute!"'
 CRONDAILYRESTART_NOW='56 11,23 * * * '${SCRIPTPATH}'/manager restart CRON >> '${SCRIPTPATH}'/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_status.log'
-CRONSECTORDATA='0 12,0 * * * nice -n 10 '${SCRIPTPATH}'/avorion-manager/GetSectorData.sh '${HOME}'/.avorion/galaxies'
-CRONPLAYERATA='0,30 * * * * nice -n 15 '${SCRIPTPATH}'/avorion-manager/GetPlayerData.sh '${HOME}'/.avorion/galaxies'
+CRONSECTORDATA='nice -n 10 '${SCRIPTPATH}'/avorion-manager/GetSectorData.sh '${HOME}'/.avorion/galaxies'
+CRONPLAYERDATA='nice -n 15 '${SCRIPTPATH}'/avorion-manager/GetPlayerData.sh '${HOME}'/.avorion/galaxies'
+CRONALLIANCEDATA='nice -n 15 '${SCRIPTPATH}'/avorion-manager/GetAllianceData.sh '${HOME}'/.avorion/galaxies'
 RUN_BY=$2
 
 DynamicEcho() {
@@ -80,8 +84,10 @@ CreateCronJobs(){
     (crontab -l ; echo "${CRONDAILYRESTART_1}") | crontab -
     (crontab -l ; echo "${CRONDAILYRESTART_NOW}") | crontab -
   fi
-  (crontab -l ; echo "${CRONSECTORDATA}") | crontab -
-  (crontab -l ; echo "${CRONPLAYERATA}") | crontab -
+
+  (crontab -l ; echo "0 ${GetSectorDataInterval} * * * ${CRONSECTORDATA}") | crontab -
+  (crontab -l ; echo "${GetPlayerDataInterval} * * * * ${CRONPLAYERDATA}") | crontab -
+  (crontab -l ; echo "${GetAllianceDataInterval} * * * * ${CRONALLIANCEDATA}") | crontab -
   (crontab -l ; echo "${CRONJOB}") | crontab -
 }
 LogToManagerLog(){

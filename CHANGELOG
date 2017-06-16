@@ -1,3 +1,19 @@
+1.1.4
+  Fixed player flags
+  Replaced grep command with php for loop in player list of home page
+  Added timestamp to home screen chatlog of Current server session(since last restart)
+  Added a "Send To All" button on the mail form.
+  Added Alliance Parsing
+  Added Alliance page
+  Added Alliance config options to PHPConfig.ini
+  Added Alliance to Players page
+  Added Alliance To players parser
+  Added Alliance Parser to cron job
+  Added manager-config options to adjust cronjob times for data parser scripts
+  
+1.1.3
+  Fixed Variable name in manager for default IPAddress
+
 1.1.2
   Removed Hostname from manager
 

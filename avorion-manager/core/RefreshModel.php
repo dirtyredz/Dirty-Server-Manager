@@ -718,7 +718,9 @@ class RefreshModel extends CommonController
   public function GetChatLog()
   {
     //Potentall config option to only grab the last x lines instead of everything
-    $ChatLog = `grep '^<.*>' $(find {$this->Config['LogsDir']}/*_playerchat.log -mtime -1 ) {$this->Config['ConsoleLog']} | tac | grep -v '^<Rusty>' | sed -e 's/.*</\&lt;/g' -e 's/>/\&gt;/g'  -e 's/^/<span>/g' -e 's/$/<\/span>/g'`;
+    $PID = `pidof $(grep SERVER= {$this->Config['Manager']} | sed -e 's/.*=//g') | tr -d '\n'`;
+    $ChatLog = `grep -e '^....-..-.. ..-..-..| <..*>' -e '^....-..-.. ..-..-..| <> \[.*\]' /proc/"{$PID}"/fd/3 | tac | grep -v '| <Rusty>' | sed -e 's/</\&lt;/g' -e 's/>/\&gt;/g'  -e 's/^/<span>/g' -e 's/$/<\/span>/g' -e 's/<span>....-..-.. /<span>/g'`;
+    $ChatLog .= `grep '^<.*>' $(find {$this->Config['LogsDir']}/*_playerchat.log -mtime -1 ) | tac | grep -v '^<Rusty>' | sed -e 's/.*</\&lt;/g' -e 's/>/\&gt;/g'  -e 's/^/<span>/g' -e 's/$/<\/span>/g'`;
     return $ChatLog;
   }
 

@@ -54,6 +54,7 @@
   <thead>
   <tr>
     <th>Faction</th>
+    <th>ID</th>
     <th>Stations</th>
     <th>Asteroids</th>
     <th>Wrecks</th>
@@ -97,6 +98,7 @@
     foreach ($Faction as $key => $value) {
       echo '<tr>';
       echo '<td>'.$value['FactionName'].'</td>';
+      echo '<td>'.$key.'</td>';
       echo '<td>'.$value['Stations'].'</td>';
       echo '<td>'.$value['Asteroids'].'</td>';
       echo '<td>'.$value['Wrecks'].'</td>';

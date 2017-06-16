@@ -12,6 +12,7 @@ class AccountModel extends CommonController
     //Get the database and store it in $Login
     include __DIR__ .'/../Database.php';
     $this->Login = $Login;
+    $this->Secret = "";
   }
 
   /**

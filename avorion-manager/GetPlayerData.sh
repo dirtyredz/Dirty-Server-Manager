@@ -53,6 +53,8 @@ do
       #Were seen in console add today
       LastSeen=$(/bin/date +\%Y-\%m-\%d)
     fi
+    AllianceStart=$(grep -b -a -o -P 'alliance' "${file}" | sed 's/:.*//' | head -n1)
+    Alliance=$(xxd -ps -l 1 -seek "$((${AllianceStart} + 16 ))" "${file}")
     StartingPosition=$(grep -b -a -o -P 'play_time' "${file}" | sed 's/:.*//' | tail -n1)
     SteamID=$(xxd -ps -l 8 -seek "$((${StartingPosition} - 39 ))" "${file}" )
     Money=$(xxd -ps -l 4 -seek "$((${StartingPosition} - 12 ))" "${file}" )
@@ -64,7 +66,7 @@ do
     Ogonite=$(xxd -ps -l 4 -seek "$((${StartingPosition} + 205 ))" "${file}" )
     Avorion=$(xxd -ps -l 4 -seek "$((${StartingPosition} + 237 ))" "${file}" )
     PlayTime=$(xxd -ps -l 4 -seek "$((${StartingPosition} + 17 ))" "${file}" )
-    echo  "array(\"ID\" => \"$ID\",\"Name\" => \"$Name\",\"LastSeen\" => \"$LastSeen\",\"Group\" => \"$Group\",\"SteamID\" => \"$SteamID\",\"PlayTime\" => \"$PlayTime\",\"Money\" => \"$Money\",\"Iron\" => \"$Iron\",\"Titanium\" => \"$Titanium\",\"Naonite\" => \"$Naonite\",\"Trinium\" => \"$Trinium\",\"Xanion\" => \"$Xanion\",\"Ogonite\" => \"$Ogonite\",\"Avorion\" => \"$Avorion\")," >> $PlayerDataTmp;
+    echo  "array(\"ID\" => \"$ID\",\"Name\" => \"$Name\",\"Alliance\" => \"$Alliance\",\"LastSeen\" => \"$LastSeen\",\"Group\" => \"$Group\",\"SteamID\" => \"$SteamID\",\"PlayTime\" => \"$PlayTime\",\"Money\" => \"$Money\",\"Iron\" => \"$Iron\",\"Titanium\" => \"$Titanium\",\"Naonite\" => \"$Naonite\",\"Trinium\" => \"$Trinium\",\"Xanion\" => \"$Xanion\",\"Ogonite\" => \"$Ogonite\",\"Avorion\" => \"$Avorion\")," >> $PlayerDataTmp;
   fi
 done
 echo ");" >> $PlayerDataTmp;

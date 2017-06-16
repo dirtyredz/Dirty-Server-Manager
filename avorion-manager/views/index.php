@@ -93,6 +93,7 @@
                 <li id="ServerConfigBtn" class="<?php echo ($Data['DefaultPage'] == 'Config' ? 'Active' : 'NotActive'); ?> <?php echo $Data['AccessServerConfigPage']; ?>"><svg class="icon"><use xlink:href="#icon-cogs"></use></svg>CONFIG</li>
                 <li id="FactionsBtn" class="<?php echo ($Data['DefaultPage'] == 'Factions' ? 'Active' : 'NotActive'); ?> <?php echo $Data['AccessFactionsPage']; ?>"><svg class="icon"><use xlink:href="#icon-earth"></use></svg>FACTIONS</li>
                 <li id="PlayersBtn" class="<?php echo ($Data['DefaultPage'] == 'Players' ? 'Active' : 'NotActive'); ?> <?php echo $Data['AccessPlayerPage']; ?>"><svg class="icon"><use xlink:href="#icon-players"></use></svg>PLAYERS</li>
+                <li id="AlliancesBtn" class="<?php echo ($Data['DefaultPage'] == 'Alliance' ? 'Active' : 'NotActive'); ?> <?php echo $Data['AccessAlliancePage']; ?>"><svg class="icon"><use xlink:href="#icon-players"></use></svg>ALLIANCES</li>
                 <li id="MapsBtn" class="Notactive"><svg class="icon"><use xlink:href="#icon-map"></use></svg>MAPS</li>
                 <li id="DiscoveredSectorsBtn" class="<?php echo ($Data['DefaultPage'] == 'DiscoveredMap' ? 'Active' : 'NotActive AnimateLi'); ?> SubLi <?php echo $Data['AccessDiscoveredMapPage']; ?>">Discovered Sectors</li>
                 <li id="FactionsMapBtn" class="<?php echo ($Data['DefaultPage'] == 'FactionsMap' ? 'Active' : 'NotActive AnimateLi'); ?> SubLi <?php echo $Data['AccessFactionsMapPage']; ?>">Factions Map</li>
@@ -240,6 +241,12 @@
             $(this).toggleClass('Active').toggleClass('NotActive');
             Load("Players");
             console.log("Players Link Clicked!");
+        });
+        $("li#AlliancesBtn").click(function() {
+            $('li.Active').toggleClass('Active').toggleClass('NotActive');
+            $(this).toggleClass('Active').toggleClass('NotActive');
+            Load("Alliances");
+            console.log("Alliances Link Clicked!");
         });
         var MapOpen = false;
         $("li#MapsBtn").click(function() {

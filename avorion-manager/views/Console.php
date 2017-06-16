@@ -1,5 +1,7 @@
 <link rel="stylesheet" type="text/css" href="/resources/css/SpriteStyle.css">
 <link rel="stylesheet" type="text/css" href="/resources/css/select2.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.6.5/sweetalert2.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.6.5/sweetalert2.min.css" rel="stylesheet">
 <style type="text/css">
     div#ConsoleWrapper {
       padding: 20px;
@@ -298,7 +300,9 @@ $(document).ready(function() {
     </div>
   </div>
   <div class="ButtonSection">
-    <input type="submit" name="submit" value="Submit" />
+    <input id="sendone" type="submit" name="submit" value="Send" />
+    <input id="sendall" type="submit" name="submitall" value="Send To All" />
+
   </div>
 </div>
 </form>
@@ -351,9 +355,13 @@ $(document).ready(function() {
   <?php
       if($Data['SendMail']) {
           ?>
-          if($('select[name="Name"]').val() != ""){
             $("#SendMail").submit(function(event){
               event.preventDefault();
+              console.log('Form sent');
+            });
+            $("#sendone").click(function(event){
+              event.preventDefault();
+              console.log('Sendone');
               $.ajax({
                 'url': 'GetData',
                 'type': 'POST',
@@ -384,9 +392,51 @@ $(document).ready(function() {
                 }
               });
             });
-          }else{
-            console.log('Missing Name');
-          }
+            $("#sendall").click(function(event){
+              event.preventDefault();
+              swal({
+                title: 'Are you sure?',
+                text: "Do you wish to continue with Sending Mail to EVERYONE!?",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes!'
+              }).then(function () {
+                $('select[name="Name"] > option').each(function() {
+                  $.ajax({
+                    'url': 'GetData',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'data': {
+                      'function':'SendMail',
+                      'Title': $('input[name="Title"]').val(),
+                      'Name': this.value,
+                      'Subject': $('input[name="Subject"]').val(),
+                      'Message': $('textarea[name="Message"]').val(),
+                      'Credits': $('input[name="Credits"]').val(),
+                      'Iron': $('input[name="Iron"]').val(),
+                      'Titanium': $('input[name="Titanium"]').val(),
+                      'Naonite': $('input[name="Naonite"]').val(),
+                      'Trinium': $('input[name="Trinium"]').val(),
+                      'Xanion': $('input[name="Xanion"]').val(),
+                      'Ogonite': $('input[name="Ogonite"]').val(),
+                      'Avorion': $('input[name="Avorion"]').val(),
+                    },
+                    'success': function(data) {
+                      console.log(data);
+                      if(data['success']) {
+                        console.log('Success');
+                        AddNotification(data['message']);
+                      } else {
+                        AddNotification(data['message']);
+                      }
+                    }
+                  });
+                });
+              }).catch(swal.noop);
+
+            });
           <?php
       }
    ?>

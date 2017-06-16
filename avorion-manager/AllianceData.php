@@ -1,0 +1,3 @@
+<?php
+$AllianceData = array(
+);
