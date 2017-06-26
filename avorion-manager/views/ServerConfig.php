@@ -3,7 +3,7 @@
         margin-top:30px;
         width:100%;
         font-family:sans-serif;
-        color:#555;
+        color: #bfbfbf;
         font-size:14px;
         line-height:24px;
         min-width: 450px;
@@ -37,7 +37,8 @@
       text-align:center;
       text-decoration:none;
       text-transform:uppercase;
-      color:#888;
+      color: #191818;
+      font-weight: bold;
       padding:20px 0;
       border-bottom:2px solid #888;
       background:#f7f7f7;
@@ -76,11 +77,11 @@
     }
     .tabgroup div .ConfigOption span{
       font-size: 20px;
-      color: white;
+      color: #769aff;
     }
     .tabgroup div .ConfigOption .Definition{
       font-size: 15px;
-      color: #555;
+      color: #bfbfbf;
     }
     input[type="submit"]{
       background-color: #315683;

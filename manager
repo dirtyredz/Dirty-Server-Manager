@@ -40,31 +40,33 @@ APPID=565060
 SERVER=AvorionServer
 T='tmux send-keys -t '${TMUX_SESSION}':0.0'
 # Auto Restart
-CRONJOB='0,5,10,15,20,25,30,35,40,45,50,55 * * * * '${SCRIPTPATH}'/manager status CRON >> '${SCRIPTPATH}'/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_status.log'
-CRONDAILYRESTART_15='41 11,23 * * * '${SCRIPTPATH}'/manager send CRON "/say Restarting server in 15 Minutes!"'
-CRONDAILYRESTART_10='46 11,23 * * * '${SCRIPTPATH}'/manager send CRON "/say Restarting server in 10 Minutes!"'
-CRONDAILYRESTART_5='51 11,23 * * * '${SCRIPTPATH}'/manager send CRON "/say Restarting server in 5 Minutes!"'
-CRONDAILYRESTART_1='55 11,23 * * * '${SCRIPTPATH}'/manager send CRON "/say Restarting server in 1 Minute!"'
-CRONDAILYRESTART_NOW='56 11,23 * * * '${SCRIPTPATH}'/manager restart CRON >> '${SCRIPTPATH}'/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_status.log'
+CRONJOB='0,5,10,15,20,25,30,35,40,45,50,55 * * * * '${SCRIPTPATH}'/manager status -o CRON >> '${SCRIPTPATH}'/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_status.log'
+CRONDAILYRESTART_15='41 11,23 * * * '${SCRIPTPATH}'/manager send -o CRON "/say Restarting server in 15 Minutes!"'
+CRONDAILYRESTART_10='46 11,23 * * * '${SCRIPTPATH}'/manager send -o CRON "/say Restarting server in 10 Minutes!"'
+CRONDAILYRESTART_5='51 11,23 * * * '${SCRIPTPATH}'/manager send -o RON "/say Restarting server in 5 Minutes!"'
+CRONDAILYRESTART_1='55 11,23 * * * '${SCRIPTPATH}'/manager send -o CRON "/say Restarting server in 1 Minute!"'
+CRONDAILYRESTART_NOW='56 11,23 * * * '${SCRIPTPATH}'/manager restart -o CRON >> '${SCRIPTPATH}'/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_status.log'
 CRONSECTORDATA='nice -n 10 '${SCRIPTPATH}'/avorion-manager/GetSectorData.sh '${HOME}'/.avorion/galaxies'
 CRONPLAYERDATA='nice -n 15 '${SCRIPTPATH}'/avorion-manager/GetPlayerData.sh '${HOME}'/.avorion/galaxies'
 CRONALLIANCEDATA='nice -n 15 '${SCRIPTPATH}'/avorion-manager/GetAllianceData.sh '${HOME}'/.avorion/galaxies'
-RUN_BY=$2
+RequiredCommand=$1
+verbose='false'
+output=$2
+broadcast=''
+delay=''
 
 DynamicEcho() {
   # Second Argument used to detect who were echoing too.
-  if [ "$2" = "CRON" ]; then
-      if [ -z ${3+x} ]; then
+  if [ "$output" = "CRON" ]; then
+      if [ "$2" != "DONTLOG" ]; then
           echo -e -n $(date +"%F %H-%M-00| "); echo -e '[Manager]: '$1 | sed -r 's/'$(echo -e "\033")'\[[0-9]{1,2}(;([0-9]{1,2})?)?[mK]//g'
       fi
-  elif [ "$2" = "PHP" ]; then
+  elif [ "$output" = "PHP" ]; then
+    if [ "$2" != "DONTLOG" ]; then
       echo -e $1'\n' | sed -r 's/'$(echo -e "\033")'\[[0-9]{1,2}(;([0-9]{1,2})?)?[mK]//g'
+    fi
   else
-      if [ "$3" = "DONTLOG" ]; then
-        echo -en "$1"
-      else
-        echo -e "${WHITE}[Manager]${NOCOLOR}: $1"
-      fi
+      echo -e "${WHITE}[Manager]${NOCOLOR}: $1"
   fi
 }
 GenerateBrowser(){
@@ -99,8 +101,58 @@ LogToManagerLog(){
   find ${SCRIPTPATH}/avorion-manager/logs/*_status.log -mtime +${LOG_ROTATION} -type f -delete 2> /dev/null
   find ${SCRIPTPATH}/avorion-manager/logs/*_playerchat.log -mtime +${LOG_ROTATION} -type f -delete 2> /dev/null
 }
+
+shift
+while getopts 'd:b:o:v' flag; do
+  case "${flag}" in
+    o) output="${OPTARG}" ;;
+    b) broadcast="${OPTARG}" ;;
+    d) delay="${OPTARG}" ;;
+    v) verbose='true' ;;
+    *) error "Unexpected option ${flag}" ;;
+  esac
+done
+
+if [ ! -z "$broadcast" ]; then
+  if [ "$verbose" = true ] ; then
+    DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Broadcasting message: $broadcast, will append delay time if \-d is used"
+  fi
+  if [ -z "$delay" ]; then
+    $T '/say '"${broadcast}" C-m
+  fi
+fi
+
+if [ ! -z "$delay" ]; then
+  re='^[0-9]+$'
+  if ! [[ $delay =~ $re ]] ; then
+     echo "error: Not a number" >&2; exit 1
+  fi
+  if [ "$verbose" = true ] ; then
+    DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Command suspeneded for $delay minutes"
+  fi
+  minutes=$delay
+  while [ $minutes -gt 0 ]; do
+    if [ "$verbose" = true ] ; then
+      DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} $minutes minutes until running command."
+    fi
+    if [ ! -z "$broadcast" ]; then
+      if pidof ${SERVER} > /dev/null
+  		then
+        $T '/say '"${broadcast}"' in '"${minutes}"' minutes.' C-m
+      else
+        if [ "$verbose" = true ] ; then
+          DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} is not running!"
+        fi
+      fi
+    fi
+    sleep 60
+    minutes=$(($minutes-1))
+  done
+fi
+
+
 # Main: start, stop, kill, restart, status, steam, attach, help*
-case $1 in
+case $RequiredCommand in
 	"start")
     LogToManagerLog "Ran Start command.";
     # remove the cron job just incase
@@ -117,25 +169,25 @@ case $1 in
       cat ${SCRIPTPATH}'/console.log' | grep '^<.*>' | grep -v '^<Rusty>' >> ${SCRIPTPATH}/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_playerchat.log
       #Start loging console into console.log.
       tmux pipe-pane -o -t ${TMUX_SESSION} "cat > ${SCRIPTPATH}/console.log"
-      DynamicEcho "starting ${PURPLE}${SERVER}${NOCOLOR} on ${YELLOW}${PORT}${NOCOLOR}" "${RUN_BY}"
+      DynamicEcho "starting ${PURPLE}${SERVER}${NOCOLOR} on ${YELLOW}${PORT}${NOCOLOR}"
 			if pidof ${SERVER} > /dev/null;
 			then
-        DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} has started with pid ${YELLOW}$(pidof ${SERVER})${NOCOLOR}" "${RUN_BY}"
-        DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} has started with params: ${PARAMS}" "${RUN_BY}"
+        DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} has started with pid ${YELLOW}$(pidof ${SERVER})${NOCOLOR}"
+        DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} has started with params: ${PARAMS}"
         VER=`wget -O - -o /dev/null https://api.github.com/repos/dirtyredz/Dirty-Server-Manager/releases/latest | grep tag_name | sed -e 's/.*://g' -e 's/"//g' -e 's/,//g' | tr -d '[:blank:]'`
         if [ "${VER}" != "${VERSION}" ]; then
-          DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Dirty Server Manager is NOT Up To Date!" "${RUN_BY}"
+          DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Dirty Server Manager is NOT Up To Date!"
         else
-          DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Dirty Server Manager is Up To Date!" "${RUN_BY}"
+          DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Dirty Server Manager is Up To Date!"
         fi
         #Generate jpg
         GenerateBrowser 'Online';
         CreateCronJobs;
       else
-        DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} could not be started!" "${RUN_BY}"
+        DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} could not be started!"
 			fi
 		else
-			DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} is already running!" "${RUN_BY}"
+			DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} is already running!"
 		fi
 	;;
 	"stop")
@@ -147,7 +199,8 @@ case $1 in
 
 		if pidof ${SERVER} > /dev/null
 		then
-			DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Saving..." "${RUN_BY}"
+
+			DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Saving..."
 
       D='Server Time is: '"$(date +"%F %H-%M-%S")"
       #Send commands to the console
@@ -162,35 +215,37 @@ case $1 in
         fi
         let time++
         sleep 1
-        DynamicEcho "\rSaving... ${time}" "${RUN_BY}" "DONTLOG"
+        DynamicEcho "\rSaving... ${time}" "DONTLOG"
       done
 
-      DynamicEcho "\r" "${RUN_BY}" "DONTLOG"
-      DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Has been saved." "${RUN_BY}"
-      DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Stopping...." "${RUN_BY}"
+      DynamicEcho "\r" "DONTLOG"
+      DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Has been saved."
+      DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Stopping...."
+      sleep 30
 			$T /stop C-m
       time=0
       while [ $time -lt 120 ]; do
         SHUTDOWN=$(cat ${SCRIPTPATH}'/console.log' | awk "/${D}/,/Server shutdown successful/" | grep 'Server shutdown successful')
         if [ "${SHUTDOWN}" ] || [ "$( ps ax | grep ${SERVER} | grep -v grep | grep tmux | wc -l)" ]; then
-          DynamicEcho "\r" "${RUN_BY}" "DONTLOG"
-          DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} has been stopped." "${RUN_BY}"
+          DynamicEcho "\r" "DONTLOG"
+          DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} has been stopped."
           break;
         fi
         let time++
         sleep 1
-        DynamicEcho "\rStopping... ${time}" "${RUN_BY}" "DONTLOG"
+        DynamicEcho "\rStopping... ${time}" "DONTLOG"
       done
-      DynamicEcho "\r" "${RUN_BY}" "DONTLOG"
-      DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} is being forcibly closed! Just incase." "${RUN_BY}"
+      DynamicEcho "\r" "DONTLOG"
+
+      DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} is being forcibly closed! Just incase."
       if ! kill $(pidof ${SERVER}) > /dev/null 2>&1; then
-        DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Could not send SIGTERM to Server Process." "${RUN_BY}"
+        DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Could not send SIGTERM to Server Process."
         sleep 1
         tmux kill-session -t ${TMUX_SESSION}
       fi
 
     else
-      DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} is not running currently!" "${RUN_BY}"
+      DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} is not running currently!"
 		fi
 	;;
   "send")
@@ -205,36 +260,59 @@ case $1 in
         $T "$3" C-m
       fi
 		else
-			DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} is not running!" "${RUN_BY}"
+			DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} is not running!"
 		fi
 	;;
 	"attach")
     LogToManagerLog "Ran Attach command.";
 		if pidof ${SERVER} > /dev/null
 		then
-			DynamicEcho "press ${RED}Ctrl+B${NOCOLOR} then ${RED}D${NOCOLOR} to detach. Confirm to continue..." "${RUN_BY}"
+			DynamicEcho "press ${RED}Ctrl+B${NOCOLOR} then ${RED}D${NOCOLOR} to detach. Confirm to continue..."
 			read -n 1 -s
 			tmux a -t ${TMUX_SESSION}
 		else
-			DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} is not running!" "${RUN_BY}"
+			DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} is not running!"
+		fi
+	;;
+  "disablerestart")
+    LogToManagerLog "Ran disable restart command.";
+    if pidof ${SERVER} > /dev/null
+		then
+      crontab -l | grep -v "${SCRIPTPATH}/manager restart -o CRON"  | crontab -
+      crontab -l | grep -v "${SCRIPTPATH}/manager send -o CRON \"/say Restarting server"  | crontab -
+		else
+			DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} is not running!"
+		fi
+	;;
+  "enablerestart")
+    LogToManagerLog "Ran enable restart command.";
+    $0 disablerestart
+    if pidof ${SERVER} > /dev/null
+		then
+      (crontab -l ; echo "${CRONDAILYRESTART_15}") | crontab -
+      (crontab -l ; echo "${CRONDAILYRESTART_10}") | crontab -
+      (crontab -l ; echo "${CRONDAILYRESTART_5}") | crontab -
+      (crontab -l ; echo "${CRONDAILYRESTART_1}") | crontab -
+      (crontab -l ; echo "${CRONDAILYRESTART_NOW}") | crontab -
+		else
+			DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} is not running!"
 		fi
 	;;
 	"restart")
     LogToManagerLog "Ran Restart command.";
-		DynamicEcho "restarting ${PURPLE}${SERVER}${NOCOLOR}..." "${RUN_BY}"
+		DynamicEcho "restarting ${PURPLE}${SERVER}${NOCOLOR}..."
     OLDPID=$(pidof ${SERVER})
-		$0 stop "${RUN_BY}"
+		$0 stop
     sleep 90
-		$0 start "${RUN_BY}"
+		$0 start
     NEWPID=$(pidof ${SERVER})
     if [ pidof ${SERVER} > /dev/null ] && [ OLDPID != NEWPID ]; then
-      DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} has successfully restarted!" "${RUN_BY}"
+      DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} has successfully restarted!"
     else
-      DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} attempting restart of the server." "${RUN_BY}"
+      DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} attempting restart of the server."
     fi
 	;;
 	"status")
-
     LogToManagerLog "Ran Status command.";
 		if pidof ${SERVER} > /dev/null
 		then
@@ -256,13 +334,13 @@ case $1 in
               fi
               let time++
               sleep 1
-              DynamicEcho "\rTrying... ${time}" "${RUN_BY}" "DONTLOG"
+              DynamicEcho "\rTrying... ${time}" "DONTLOG"
             done
 
             #Second Try
             if [ "${success}" = false ]; then
-              DynamicEcho "\r" "${RUN_BY}" "DONTLOG"
-              DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Unable to retrieve a status update from the server. Trying again..." "${RUN_BY}"
+              DynamicEcho "\r" "DONTLOG"
+              DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Unable to retrieve a status update from the server. Trying again..."
               D='Server Time is: '"$(date +"%F %H-%M-%S")"
               #Send commands to the console
               $T '/echo '"${D}" C-m
@@ -277,14 +355,14 @@ case $1 in
                 fi
                 let time++
                 sleep 1
-                DynamicEcho "\rTrying... ${time}" "${RUN_BY}" "DONTLOG"
+                DynamicEcho "\rTrying... ${time}" "DONTLOG"
               done
             fi
 
             #Failure = Saving
             if [ "${success}" = false ]; then
-              DynamicEcho "\r" "${RUN_BY}" "DONTLOG"
-              DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Unable to retrieve a status update from the server. Saving..." "${RUN_BY}"
+              DynamicEcho "\r" "DONTLOG"
+              DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Unable to retrieve a status update from the server. Saving..."
               D='Server Time is: '"$(date +"%F %H-%M-%S")"
               #Send commands to the console
               $T '/echo '"${D}" C-m
@@ -293,33 +371,33 @@ case $1 in
               while [ $time -lt 60 ]; do
                 PlayerMemory=$(cat ${SCRIPTPATH}'/console.log' | awk "/${D}/,/Triggered saving of all server data/" | grep 'Triggered saving of all server data')
                 if [ "${PlayerMemory}" ]; then
-                  DynamicEcho "\r" "${RUN_BY}" "DONTLOG"
-                  DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Saved, Recieved server response." "${RUN_BY}"
+                  DynamicEcho "\r" "DONTLOG"
+                  DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Saved, Recieved server response."
                   exit 1
                   break;
                 fi
                 let time++
                 sleep 1
-                DynamicEcho "\rSaving... ${time}" "${RUN_BY}" "DONTLOG"
+                DynamicEcho "\rSaving... ${time}" "DONTLOG"
               done
             fi
 
             #Complete Failure Restart
             if [ "${success}" = false ]; then
-              DynamicEcho "\r" "${RUN_BY}" "DONTLOG"
-              DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Unable to retrieve a status or save response from the server." "${RUN_BY}"
+              DynamicEcho "\r" "DONTLOG"
+              DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Unable to retrieve a status or save response from the server."
               if [ "$AutoRestart" = true ]; then
-                DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} will restart the server." "${RUN_BY}"
-                $0 restart "${RUN_BY}"
+                DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} will restart the server."
+                $0 restart
                 exit 1
               fi
 
             else
-              DynamicEcho "\r" "${RUN_BY}" "DONTLOG"
+              DynamicEcho "\r" "DONTLOG"
             fi
 
 
-            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} is running with pid ${YELLOW}$(pidof ${SERVER})${NOCOLOR}." "${RUN_BY}"
+            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} is running with pid ${YELLOW}$(pidof ${SERVER})${NOCOLOR}."
             #Get and display players online info
             ServerTime=$(grep "${D}" ${SCRIPTPATH}'/console.log' | sed -e 's/\/echo//g' | tail -n 1)
             PlayerMemory=$(awk "/${D}/,/min. update/" /proc/`pidof ${SERVER}`/fd/3 | grep 'players in memory' | sed -e 's/.*| //g')
@@ -333,23 +411,23 @@ case $1 in
             MinUpdate=$(awk "/${D}/,/min. update/" /proc/`pidof ${SERVER}`/fd/3 | grep 'min. update' | sed -e 's/.*| //g')
             Players=$(awk "/${D}/,/online players/" /proc/`pidof ${SERVER}`/fd/3 | grep 'online players (' | sed -e 's/online players (//' -e 's/).*//' -e 's/.*| //g' | tr -d '[:blank:]')
             PlayersNames=$(awk "/${D}/,/online players/" /proc/`pidof ${SERVER}`/fd/3 | grep 'online players ('| sed -e 's/.*://' | tr -d '[:blank:]')
-            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} is hosting galaxy: ${GALAXY}" "${RUN_BY}"
-            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} ${ServerTime}" "${RUN_BY}"
-            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} ${PlayerMemory}" "${RUN_BY}"
-            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} ${FactionsMemory}" "${RUN_BY}"
-            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} ${SectorsMemory}" "${RUN_BY}"
-            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} ${ScriptsMemory}" "${RUN_BY}"
-            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} ${ServerLoad}" "${RUN_BY}"
+            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} is hosting galaxy: ${GALAXY}"
+            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} ${ServerTime}"
+            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} ${PlayerMemory}"
+            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} ${FactionsMemory}"
+            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} ${SectorsMemory}"
+            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} ${ScriptsMemory}"
+            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} ${ServerLoad}"
             if [ -z ${SectorsUpdate+x} ]; then
-              DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} ${SectorsUpdate}" "${RUN_BY}"
+              DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} ${SectorsUpdate}"
             fi
-            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} ${AvgUpdate}" "${RUN_BY}"
-            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} ${MaxUpdate}" "${RUN_BY}"
-            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} ${MinUpdate}" "${RUN_BY}"
-            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Players Online: ${Players}/${MAX_PLAYERS}" "${RUN_BY}"
-            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Players: ${PlayersNames}" "${RUN_BY}"
-            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} `free -m | awk '/Mem:/ { print "Memory(mb)-Total:"$2",Used:"$3",Free:"$4",Cache:"$6 }'`" "${RUN_BY}"
-            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} CPU Usage: `top -bn 2 -d 1 | grep '^%Cpu' | tail -n 1 | awk '{print $2+$4+$6}'`" "${RUN_BY}"
+            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} ${AvgUpdate}"
+            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} ${MaxUpdate}"
+            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} ${MinUpdate}"
+            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Players Online: ${Players}/${MAX_PLAYERS}"
+            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Players: ${PlayersNames}"
+            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} `free -m | awk '/Mem:/ { print "Memory(mb)-Total:"$2",Used:"$3",Free:"$4",Cache:"$6 }'`"
+            DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} CPU Usage: `top -bn 2 -d 1 | grep '^%Cpu' | tail -n 1 | awk '{print $2+$4+$6}'`"
 
             #Status.log rotation
             find ${SCRIPTPATH}/avorion-manager/logs/*_manager.log -mtime +${LOG_ROTATION} -type f -delete 2> /dev/null
@@ -360,14 +438,14 @@ case $1 in
             GenerateBrowser 'Online';
     else
       GenerateBrowser 'Offline';
-      if [ "${RUN_BY}" = "CRON" ]; then
-        DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} has detected a crash." "${RUN_BY}"
+      if [ "$output" = "CRON" ]; then
+        DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} has detected a crash."
         if [ "$AutoRestart" = true ]; then
-          DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} will restart the server." "${RUN_BY}"
-          $0 start "${RUN_BY}"
+          DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} will restart the server."
+          $0 start
         fi
       else
-        DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} is not running." "${RUN_BY}"
+        DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} is not running."
       fi
     fi
 	;;
@@ -375,12 +453,12 @@ case $1 in
     LogToManagerLog "Ran Update command.";
 		if pidof ${SERVER} > /dev/null
 		then
-			DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} should not be running while updating." "${RUN_BY}"
+			DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} should not be running while updating."
 		else
-			DynamicEcho "steamcmd will now perform an update." "${RUN_BY}"
+			DynamicEcho "steamcmd will now perform an update."
       case $BETA in
-        (true)    DynamicEcho "Updating with Beta version..." "${RUN_BY}";;
-        (false)   DynamicEcho "Updating with Normal version..." "${RUN_BY}";;
+        (true)    DynamicEcho "Updating with Beta version...";;
+        (false)   DynamicEcho "Updating with Normal version...";;
       esac
       case $BETA in
         (true)    $STEAM_DIR/steamcmd.sh +login anonymous +force_install_dir ${INSTALL_DIR} +app_update ${APPID} -beta beta validate +quit;;
@@ -408,7 +486,7 @@ case $1 in
   "stop-web")
     LogToManagerLog "Ran Stop-web command.";
     tmux kill-session -t php
-    DynamicEcho "PHP Server Stoped" "${RUN_BY}"
+    DynamicEcho "PHP Server Stoped"
     if pidof php > /dev/null;
     then
       kill $(pidof php)
@@ -538,14 +616,14 @@ case $1 in
     $0 update
 	;;
     *)
-		DynamicEcho "available commands:\n           ${GREEN}start${NOCOLOR} server,\n           ${GREEN}stop${NOCOLOR} server,\n           ${GREEN}restart${NOCOLOR} server,\n           check server's ${GREEN}status${NOCOLOR},\n           check for ${GREEN}update${NOCOLOR}s,\n           ${GREEN}attach${NOCOLOR} to console,\n           show this ${GREEN}help${NOCOLOR},\n           ${GREEN}install${NOCOLOR} steamcmd,\n           ${GREEN}start-web${NOCOLOR} starts php server\n           ${GREEN}stop-web${NOCOLOR} Stops PHP server"  "${RUN_BY}"
+		DynamicEcho "available commands:\n           ${GREEN}start${NOCOLOR} server,\n           ${GREEN}stop${NOCOLOR} server,\n           ${GREEN}restart${NOCOLOR} server,\n           check server's ${GREEN}status${NOCOLOR},\n           check for ${GREEN}update${NOCOLOR}s,\n           ${GREEN}attach${NOCOLOR} to console,\n           show this ${GREEN}help${NOCOLOR},\n           ${GREEN}install${NOCOLOR} steamcmd,\n           ${GREEN}start-web${NOCOLOR} starts php server\n           ${GREEN}stop-web${NOCOLOR} Stops PHP server\n           ${GREEN}enablerestart${NOCOLOR} Adds restart cron jobs\n           ${GREEN}disablerestart${NOCOLOR} Removes restart cron jobs"
     echo ""
-    echo "To update Dirty-Server-Manager itself run this command:"
-    echo "avorion-manager/UpdateManager.sh"
+    DynamicEcho "available options:\n           -d #              --Delay time in minutes\n           -b \"Message\"      --Broadcast message\n           -v                --verbose output\n           -o [CRON/PHP]              --Displays message without coloring"
     echo ""
-    echo "To install apache server run this command:"
-    echo "./ApacheInstall.sh"
+    DynamicEcho "To update Dirty-Server-Manager itself run this command:\n           avorion-manager/UpdateManager.sh"
     echo ""
-    echo "For both these commands be sure you run them from the same directory this manager file resides."
+    DynamicEcho "To install apache server run this command:\n           ./ApacheInstall.sh"
+    echo ""
+    DynamicEcho "For both these commands be sure you run them from the same directory this manager file resides."
 	;;
 esac

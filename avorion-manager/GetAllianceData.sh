@@ -13,13 +13,14 @@ echo "<?php" > $AllianceDataTmp;
 echo "\$AllianceData = array(" >> $AllianceDataTmp;
 for i in {1..5000}
 do
+  find ${DIR}/${GALAXYNAME}/alliances/ -name \*.tmp -delete
   file=${DIR}/${GALAXYNAME}/alliances/alliance_$i.dat.0
   [ -e "$file" ] || continue
   file=$(ls -t ${DIR}/${GALAXYNAME}/alliances/alliance_$i.dat.* | head -1)
   [ -e "$file" ] || continue
-  dd if=$file bs=1 skip=44 of=${file}.tmp > /dev/null 2>&1
-  php -f ${PWD}/avorion-manager/zlib_Uncompress.php "${file}.tmp" "AllianceUncompressed.tmp"
-  rm ${file}.tmp
+  #dd if=$file bs=1 skip=44 of=${file}.tmp > /dev/null 2>&1
+  php -f ${PWD}/avorion-manager/zlib_Uncompress.php "${file}" "AllianceUncompressed.tmp"
+  #rm ${file}.tmp
   OriginalFile=$file
   file=AllianceUncompressed.tmp
   NameStart=$(grep -b -a -o -P 'name' "${file}" | sed 's/:.*//' | head -n1)
@@ -27,7 +28,7 @@ do
     ID=$(echo $OriginalFile | sed -e 's/.*_//g' -e 's/.dat.*//g')
     Name=$(xxd -ps -l 50 -seek "$((${NameStart} + 16 ))" "${file}" | xxd -r -p | head -n1)
     LeaderStart=$(grep -b -a -o -P 'leader' "${file}" | sed 's/:.*//' | head -n1)
-    Leader=$(xxd -ps -l 4 -seek "$((${LeaderStart} + 11 ))" "${file}")
+    Leader=$(xxd -ps -l 4 -seek "$((${LeaderStart} + 14 ))" "${file}")
 
     MoneyStart=$(grep -b -a -o -P 'money64' "${file}" | sed 's/:.*//' | head -n1)
     Money=$(xxd -ps -l 4 -seek "$((${MoneyStart} + 15 ))" "${file}" )

@@ -109,6 +109,10 @@ class ServerConfigController extends CommonController
           'Definition' => 'The role level required to view the Server Memory Usage graph on the graphs page. (0=public)',
           'Type' => 'number',
           'Range' => array('min'=>0,'max'=>99)),
+    'ScriptMemoryGraph' => array(
+          'Definition' => 'The role level required to view the Script Memory Usage graph on the graphs page. (0=public)',
+          'Type' => 'number',
+          'Range' => array('min'=>0,'max'=>99)),
     'ConsoleCommandsAccess' => array(
           'Definition' => 'The role level required to run commands in the console page. (0=public)',
           'Type' => 'number',

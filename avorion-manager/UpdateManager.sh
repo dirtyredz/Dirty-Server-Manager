@@ -19,7 +19,7 @@ if [ "${CurrentVersion}" != "${VERSION}" ]; then
     cp avorion-manager/PHPConfig.ini avorion-manager/PHPConfig.ini.backup
   fi
 
-  tar -xvf UpdateDirtyServerManager.tar.gz --exclude='Database.php' --exclude='avorion-manager/PlayerData.php' --exclude='avorion-manager/SectorData.php' --exclude='avorion-manager/logs'
+  tar -xvf UpdateDirtyServerManager.tar.gz --exclude='Database.php' --exclude='avorion-manager/HighScore.php' --exclude='avorion-manager/PlayerData.php' --exclude='avorion-manager/SectorData.php' --exclude='avorion-manager/logs'
 
   if [ -f manager-config.ini.old ]; then
     sed -i 's/^;.*//g' manager-config.ini.old

@@ -30,7 +30,37 @@ html, body{
   stroke: #e0e0e0;
   fill: #e0e0e0;
 }
+@media (max-width: 600px) {
+  #SideBar{
+    width:5px !important;
+  }
+  #SideBar ul{
+    display: none !important;
+  }
+  #MyUserName{
+    display: none !important;
+  }
+  #OpenMenu{
+    display: block !important;
+  }
+  #SideBar.OpenMenu{
+    width: 220px !important;
+  }
+  #SideBar ul.OpenMenu{
+    display: block !important;
+  }
+  #MyUserName.OpenMenu{
+    display: block !important;
+  }
+  #OpenMenu.OpenMenu{
+    margin-left: 220px !important;
+    margin-top: -5px !important;
+  }
+}
 #SideBar {
+  -webkit-transition: width 0.5s;
+  -o-transition: width 0.5s;
+  transition: width 0.5s;
   font-family: 'Babes', monospace;
   background-color: rgba(14,14,14,1);
   left: 0;
@@ -84,6 +114,20 @@ opacity: 0;
 #SideBar li.SubLi{
   padding-left: 30px;
 }
+#OpenMenu{
+  -webkit-transition: margin-left 0.5s, margin-top 0.5s;
+  -o-transition: margin-left 0.5s, margin-top 0.5s;
+  transition: margin-left 0.5s, margin-top 0.5s;
+  display: none;
+  margin-left: 6px;
+  margin-top: 71px;
+  background: #989090;
+  width: 26px;
+  color: black;
+  height: 25px;
+  padding: 8px;
+  border-radius: 0 0 12px 0;
+}
 #Main {
   overflow-x: auto;
   padding-left: 50px;
@@ -106,7 +150,9 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', e
   margin-left: -50px;
   position: relative;
   display: flex;
-  justify-content: space-between
+  justify-content: space-between;
+  max-height: 50px;
+  overflow: hidden;
 }
 #Main #Top span.Title{
   font-size: 150%;
@@ -119,6 +165,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', e
   text-align: right;
   padding-right: 50px;
   display: inline-flex;
+  max-height: 50px;
 }
 #MyUserName{
   font-size: 75%;

@@ -1,3 +1,19 @@
+1.1.5
+  Fixed HighScore.php being erased on update
+  Added commands enablerestart and disablerestart
+  Added manager options -d, -o, -b, -v
+  Added Mail parsing to player parser
+  Added Mail player page net worth to net worth column
+  Added Mail resources/money to player page
+  Added file detection to zlib decompressor
+  Fixed Session not renewing when the browser is left open for a long period of time
+  Changed display of graphs to include small definitions and better font styles
+  Changed font styles for configuration page
+  Updated help output of manager
+  Changed Alliance Icon
+  Improved zlib decompression script
+  Added Scripts memory graphs
+  
 1.1.4
   Fixed player flags
   Replaced grep command with php for loop in player list of home page
@@ -10,7 +26,7 @@
   Added Alliance To players parser
   Added Alliance Parser to cron job
   Added manager-config options to adjust cronjob times for data parser scripts
-  
+
 1.1.3
   Fixed Variable name in manager for default IPAddress
 

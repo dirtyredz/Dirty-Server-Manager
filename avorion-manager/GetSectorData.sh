@@ -26,9 +26,9 @@ for file in ${DIR}/${GALAXYNAME}/sectors/*v; do
   if [[ $FACTIONINDEX == 200* ]];
   then
     FactionFile=${DIR}/${GALAXYNAME}/factions/faction_${FACTIONINDEX}.dat
-    dd if=$FactionFile bs=1 skip=44 of=${FactionFile}.tmp > /dev/null 2>&1
-    php -f ${PWD}/avorion-manager/zlib_Uncompress.php "${FactionFile}.tmp" "SectorUncompressed.tmp"
-    rm ${FactionFile}.tmp
+    #dd if=$FactionFile bs=1 skip=44 of=${FactionFile}.tmp > /dev/null 2>&1
+    php -f ${PWD}/avorion-manager/zlib_Uncompress.php "${FactionFile}" "SectorUncompressed.tmp"
+    #rm ${FactionFile}.tmp
     FactionFile=SectorUncompressed.tmp
 
     StartingPositionStateForm=$(grep -b -a -o -P 'state_form' ${FactionFile} | sed 's/:.1*//' | head -n1 | awk '{SUM = $1 + 16 } END {print SUM}')

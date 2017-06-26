@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
+      <!--<meta name="viewport" content="width=device-width, initial-scale=1">-->
       <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Source+Sans+Pro" rel="stylesheet">
       <link rel="stylesheet" type="text/css" href="/resources/css/Main.css">
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -68,6 +69,10 @@
             <title>spaceinvaders</title>
             <path d="M29.963 24.982v-5.947h-2.91v5.969h-3.037v2.953h-7.048v-2.975h7.048v-2.972h-14.991v2.973l6.030 0.021v2.973h-6.051v-2.951h-3.036v-6.010h-2.911v5.947h-3.057v-9.004h2.995v-2.891h2.973v-3.057h3.057v-2.994h2.994v3.003l8.983 0.024v-3.027h2.994v3.036h3.057v2.974h2.953v2.973h3.014v8.982h-3.057zM12.019 13.005h-2.994v2.995h2.994v-2.995zM23.996 13.005h-2.994v2.995h2.994v-2.995zM5.968 4.023h3.057v2.994h-3.057v-2.994zM27.053 4.023v2.994h-3.057v-2.994h3.057z"></path>
             </symbol>
+            <symbol id="icon-Flag" viewBox="0 0 32 32">
+            <title>Flag</title>
+            <path d="M29.714 18.661v-11q-3.018 1.625-5.464 1.625-1.464 0-2.589-0.571-1.786-0.875-3.286-1.366t-3.179-0.491q-3.089 0-7.196 2.268v10.696q4.375-2.018 7.732-2.018 0.982 0 1.848 0.134t1.75 0.464 1.375 0.554 1.473 0.705l0.5 0.25q0.786 0.393 1.804 0.393 2.143 0 5.232-1.643zM5.714 4.571q0 0.625-0.313 1.143t-0.83 0.821v22.607q0 0.25-0.161 0.411t-0.411 0.161h-1.143q-0.25 0-0.411-0.161t-0.161-0.411v-22.607q-0.518-0.304-0.83-0.821t-0.313-1.143q0-0.946 0.67-1.616t1.616-0.67 1.616 0.67 0.67 1.616zM32 5.714v13.625q0 0.696-0.625 1.018-0.179 0.089-0.304 0.161-3.893 2.071-6.589 2.071-1.571 0-2.821-0.625l-0.5-0.25q-1.143-0.589-1.768-0.857t-1.625-0.518-2.036-0.25q-1.821 0-4.205 0.786t-4.080 1.821q-0.268 0.161-0.589 0.161-0.286 0-0.571-0.143-0.571-0.339-0.571-1v-13.25q0-0.625 0.554-0.982 0.625-0.375 1.402-0.759t2.036-0.929 2.723-0.884 2.768-0.339q2 0 3.732 0.554t3.732 1.536q0.679 0.339 1.589 0.339 2.179 0 5.536-2 0.393-0.214 0.554-0.304 0.554-0.286 1.107 0.036 0.554 0.357 0.554 0.982z"></path>
+            </symbol>
           </defs>
         </svg>
         <div id="Wrapper">
@@ -87,13 +92,14 @@
                 </div>
               </div>
               <div id="MyUserName"><?php echo $Data['Username']; ?></div>
+              <div id="OpenMenu"><svg class="icon icon-untitled5"><use xlink:href="#icon-untitled5"></use></svg></div>
               <ul>
                 <li id="HomeBtn" class="<?php echo ($Data['DefaultPage'] == 'Home' ? 'Active' : 'NotActive'); ?>"><svg class="icon icon-untitled5"><use xlink:href="#icon-untitled5"></use></svg>HOME</li>
                 <li id="ConsoleBtn" class="<?php echo ($Data['DefaultPage'] == 'Console' ? 'Active' : 'NotActive'); ?> <?php echo $Data['ConsoleAccess']; ?>"><svg class="icon"><use xlink:href="#icon-untitled3"></use></svg>CONSOLE</li>
                 <li id="ServerConfigBtn" class="<?php echo ($Data['DefaultPage'] == 'Config' ? 'Active' : 'NotActive'); ?> <?php echo $Data['AccessServerConfigPage']; ?>"><svg class="icon"><use xlink:href="#icon-cogs"></use></svg>CONFIG</li>
                 <li id="FactionsBtn" class="<?php echo ($Data['DefaultPage'] == 'Factions' ? 'Active' : 'NotActive'); ?> <?php echo $Data['AccessFactionsPage']; ?>"><svg class="icon"><use xlink:href="#icon-earth"></use></svg>FACTIONS</li>
                 <li id="PlayersBtn" class="<?php echo ($Data['DefaultPage'] == 'Players' ? 'Active' : 'NotActive'); ?> <?php echo $Data['AccessPlayerPage']; ?>"><svg class="icon"><use xlink:href="#icon-players"></use></svg>PLAYERS</li>
-                <li id="AlliancesBtn" class="<?php echo ($Data['DefaultPage'] == 'Alliance' ? 'Active' : 'NotActive'); ?> <?php echo $Data['AccessAlliancePage']; ?>"><svg class="icon"><use xlink:href="#icon-players"></use></svg>ALLIANCES</li>
+                <li id="AlliancesBtn" class="<?php echo ($Data['DefaultPage'] == 'Alliance' ? 'Active' : 'NotActive'); ?> <?php echo $Data['AccessAlliancePage']; ?>"><svg class="icon icon-Flag"><use xlink:href="#icon-Flag"></use></svg>ALLIANCES</li>
                 <li id="MapsBtn" class="Notactive"><svg class="icon"><use xlink:href="#icon-map"></use></svg>MAPS</li>
                 <li id="DiscoveredSectorsBtn" class="<?php echo ($Data['DefaultPage'] == 'DiscoveredMap' ? 'Active' : 'NotActive AnimateLi'); ?> SubLi <?php echo $Data['AccessDiscoveredMapPage']; ?>">Discovered Sectors</li>
                 <li id="FactionsMapBtn" class="<?php echo ($Data['DefaultPage'] == 'FactionsMap' ? 'Active' : 'NotActive AnimateLi'); ?> SubLi <?php echo $Data['AccessFactionsMapPage']; ?>">Factions Map</li>
@@ -101,6 +107,7 @@
                 <li id="AccountBtn" class="Notactive <?php echo $Data['LoggedInClass']; ?>"><svg class="icon"><use xlink:href="#icon-user"></use></svg>ACCOUNT</li>
                 <li id="UserManagmentBtn" class="Notactive <?php echo $Data['UserManagmentAccess']; ?>"><svg class="icon"><use xlink:href="#icon-users"></use></svg>USER MNGT</li>
                 <li id="SpaceInvadersBtn" style="font-size:90%;" class="NotActive <?php echo $Data['AccessSpaceInvadersPage']; ?>"><svg class="icon icon-spaceinvaders"><use xlink:href="#icon-spaceinvaders"></use></svg>SPACE INVADERS</li>
+                <li id="ProfileParserBtn" style="font-size:90%;" class="NotActive <?php echo $Data['AccessProfileParserPage']; ?>"><svg class="icon icon-spaceinvaders"><use xlink:href="#icon-spaceinvaders"></use></svg>PROFILE PARSER</li>
                 <?php
                     if($Data['LoggedIn']) {
                         ?>
@@ -212,6 +219,12 @@
              Load("SpaceInvaders");
              console.log("Space Invaders Link Clicked!");
          });
+         $("li#ProfileParserBtn").click(function() {
+             $('li.Active').toggleClass('Active').toggleClass('NotActive');
+             $(this).toggleClass('Active').toggleClass('NotActive');
+             Load("ProfileParser");
+             console.log("ProfilePage Link Clicked!");
+         });
          $("li#ConsoleBtn").click(function() {
              $('li.Active').toggleClass('Active').toggleClass('NotActive');
              $(this).toggleClass('Active').toggleClass('NotActive');
@@ -296,6 +309,11 @@
             $('#'+rand).hide('slide',{direction:'right'},250);
           },20000)
         }
-
+        $('#OpenMenu').click(function(){
+          $(this).toggleClass('OpenMenu');
+          $('#SideBar').toggleClass('OpenMenu');
+          $('#SideBar ul').toggleClass('OpenMenu');
+          $('#MyUserName').toggleClass('OpenMenu');
+        });
     </script>
 </html>

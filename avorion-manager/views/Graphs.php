@@ -1,11 +1,32 @@
+<style>
+  .GraphTitle{
+    width: 100%;
+    text-align: center;
+    font-size: 26px;
+    font-weight: bold;
+  }
+  .GraphTitle span{
+    font-size: 18px;
+    font-weight: normal;
+  }
+</style>
 <div id="Top"><span class="Title"><svg class="icon"><use xlink:href="#icon-untitled2"></use></svg>GRAPHS</span><span class="Time"></span></div>
+</br>
 <div class="OptionsWrapper">
-<input type="range" name="range" min="1" max="13" value="2"><span>Hours/Date Range: </span><span id="HoursRange">6 Hours</span>
+  <span>Hours/Date Range: </span><span id="HoursRange">6 Hours</span>
+</br>
+<input type="range" name="range" min="1" max="13" value="2">
 </div>
 <br/>
 <?php
     if($Data['ServerLoadGraph']) {
         ?>
+        </br>
+        <div class="GraphTitle">
+          Average Server Load
+          </br>
+          <span>(Game servers load %)</span>
+        </div>
         <div id="ServerLoad" style="width: 100%; height: 250px;"><!-- Plotly chart will be drawn inside this DIV --></div>
         <br/>
         <?php
@@ -17,6 +38,11 @@
     }
     if($Data['OnlinePlayersGraph']) {
         ?>
+        </br>
+        <div class="GraphTitle">
+          Players Online
+          </br>
+        </div>
         <div id="PlayersOnline" style="width: 100%; height: 250px;"><!-- Plotly chart will be drawn inside this DIV --></div>
         <br/>
         <?php
@@ -28,6 +54,12 @@
     }
     if($Data['InMemoryGraph']) {
         ?>
+        </br>
+        <div class="GraphTitle">
+          In Memory
+          </br>
+          <span>(Players / Factions / Sector that are currently held in memory)</span>
+        </div>
         <div id="InMemory" style="width: 100%; height: 250px;"><!-- Plotly chart will be drawn inside this DIV --></div>
         <br/>
         <?php
@@ -39,6 +71,12 @@
     }
     if($Data['UpdatesGraph']) {
         ?>
+        </br>
+        <div class="GraphTitle">
+          Update Speed
+          </br>
+          <span>(Avg / Min / Max Update speed)</span>
+        </div>
         <div id="Updates" style="width: 100%; height: 250px;"><!-- Plotly chart will be drawn inside this DIV --></div>
         <br/>
         <?php
@@ -48,8 +86,31 @@
       <br/>
       <?php
     }
+    if($Data['ScriptMemoryGraph']) {
+        ?>
+        </br>
+        <div class="GraphTitle">
+          Script Memory
+          </br>
+          <span>(Lua scripts memory usage size)</span>
+        </div>
+        <div id="ScriptMemory" style="width: 100%; height: 250px;"><!-- Plotly chart will be drawn inside this DIV --></div>
+        <br/>
+        <?php
+    }else{
+      ?>
+      Scripts Memory Graph available when logged in.
+      <br/>
+      <?php
+    }
     if($Data['CpuUsageGraph']) {
         ?>
+        </br>
+        <div class="GraphTitle">
+          CPU Usage
+          </br>
+          <span>(Physical server's CPU Usage)</span>
+        </div>
         <div id="CPU" style="width: 100%; height: 250px;"><!-- Plotly chart will be drawn inside this DIV --></div>
         <br/>
         <?php
@@ -61,6 +122,12 @@
     }
     if($Data['MemoryUsageGraph']) {
         ?>
+        </br>
+        <div class="GraphTitle">
+          Memory Usage
+          </br>
+          <span>(Physical server's memory usage)</span>
+        </div>
         <div id="MemoryUsage" style="width: 100%; height: 250px;"><!-- Plotly chart will be drawn inside this DIV --></div>
         <br/>
         <?php
@@ -137,6 +204,9 @@
         if($Data['CpuUsageGraph']) { ?>LoadCpuLoadGraph();<?php }
       ?>
       <?php
+        if($Data['ScriptMemoryGraph']) { ?>LoadScriptMemoryGraph();<?php }
+      ?>
+      <?php
         if($Data['MemoryUsageGraph']) { ?>LoadMemoryUsageGraph();<?php }
       ?>
   });
@@ -160,6 +230,9 @@
   <?php
     if($Data['MemoryUsageGraph']) { ?>LoadMemoryUsageGraph();<?php }
   ?>
+  <?php
+    if($Data['ScriptMemoryGraph']) { ?>LoadScriptMemoryGraph();<?php }
+  ?>
 
 
   window.PageRefresh = setInterval(function(){
@@ -182,21 +255,30 @@
       <?php
         if($Data['MemoryUsageGraph']) { ?>LoadMemoryUsageGraph();<?php }
       ?>
+      <?php
+        if($Data['ScriptMemoryGraph']) { ?>LoadScriptMemoryGraph();<?php }
+      ?>
     }
   },60000)
+
 
   function LoadCpuLoadGraph(){
     var layout = {
         title: 'Server CPU Usage',
+        titlefont: {
+          family: 'Courier New, monospace',
+          size: 20,
+          color: '#c6bdbd'
+        },
         showlegend: false,
-        paper_bgcolor:'rgba(0,0,0,0)',
-        plot_bgcolor:'rgba(0,0,0,0)',
+        paper_bgcolor:'rgba(0,255,0,0)',
+        plot_bgcolor:'rgba(255,0,0,0)',
         yaxis: {
-          gridcolor: 'rgba(0,0,0,0)',
+          gridcolor: 'rgba(0,0,255,0)',
           range: [0,100]
         },
         xaxis: {
-          gridcolor: 'rgba(0,0,0,0)'
+          gridcolor: 'rgba(50,50,50,0)'
         },
         margin: {
             l: 30,
@@ -209,9 +291,30 @@
       Plotly.newPlot('CPU', RecievedData,layout,{displaylogo: false});
     },"json");
   }
+  function LoadScriptMemoryGraph(){
+    var layout = {
+        showlegend: false,
+        paper_bgcolor:'rgba(0,0,0,0)',
+        plot_bgcolor:'rgba(0,0,0,0)',
+        yaxis: {
+          gridcolor: 'rgba(0,0,0,0)'
+        },
+        xaxis: {
+          gridcolor: 'rgba(0,0,0,0)'
+        },
+        margin: {
+            l: 30,
+            r: 30,
+            t: 30,
+            b: 30
+        },
+    };
+    $.get( "GetData", {function:"GetServerScriptMemoryGraph",Range:$('.OptionsWrapper > input[name="range"]').val()},function(RecievedData) {
+      Plotly.newPlot('ScriptMemory', RecievedData,layout,{displaylogo: false});
+    },"json");
+  }
   function LoadUpdatesGraph(){
     var layout = {
-        title: 'Avg/Min/Max Updates',
         showlegend: false,
         paper_bgcolor:'rgba(0,0,0,0)',
         plot_bgcolor:'rgba(0,0,0,0)',
@@ -234,7 +337,6 @@
   }
   function LoadInMemoryGraph(){
     var layout = {
-        title: 'Players/Factions/Sectors In Memory',
         showlegend: false,
         paper_bgcolor:'rgba(0,0,0,0)',
         plot_bgcolor:'rgba(0,0,0,0)',
@@ -259,7 +361,6 @@
 
   function LoadServerLoadGraph(){
     var layout = {
-        title: 'Average Server Load %',
         showlegend: false,
         paper_bgcolor:'rgba(0,0,0,0)',
         plot_bgcolor:'rgba(0,0,0,0)',
@@ -283,7 +384,6 @@
   }
   function LoadPlayersGraph(){
     var layout = {
-        title: 'Online Players',
         showlegend: false,
         paper_bgcolor:'rgba(0,0,0,0)',
         plot_bgcolor:'rgba(0,0,0,0)',
@@ -307,7 +407,6 @@
   }
   function LoadMemoryUsageGraph(){
     var layout = {
-        title: 'Server Memory Usage',
         showlegend: false,
         paper_bgcolor:'rgba(0,0,0,0)',
         plot_bgcolor:'rgba(0,0,0,0)',

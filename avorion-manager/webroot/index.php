@@ -20,7 +20,6 @@ if (preg_match('/\.(?:png|jpg|jpeg|gif|css|js)$/', $uri_parts['path'])) {
 
       if(isset($_POST['function']) ){
         $Method = $_POST['function'];
-
         if(method_exists($RefreshController,$Method)){
           $RefreshController->$Method();
           return true;
@@ -31,7 +30,6 @@ if (preg_match('/\.(?:png|jpg|jpeg|gif|css|js)$/', $uri_parts['path'])) {
     if($uri_parts['path'] == '/SpaceInvaders'){
       include __DIR__ .'/../core/SpaceInvadersController.php';
       $SpaceInvadersController = new SpaceInvadersController;
-
       if(array_key_exists('query',$uri_parts)){
         $QueryArray = explode('&',$uri_parts['query']);
         $Query = substr(strrchr($QueryArray[0], 'function='), 9 );
@@ -68,12 +66,11 @@ if (preg_match('/\.(?:png|jpg|jpeg|gif|css|js)$/', $uri_parts['path'])) {
         $ViewController->Home();
         return true;
       }
-
     }
+
     if($uri_parts['path'] == '/Account'){
       include __DIR__ .'/../core/AccountController.php';
       $AccountController = new AccountController;
-
       if(array_key_exists('query',$uri_parts)){
         $Query = explode('&',$uri_parts['query']);
         $Query = substr(strrchr($Query[0], 'function='), 9 );
@@ -102,7 +99,6 @@ if (preg_match('/\.(?:png|jpg|jpeg|gif|css|js)$/', $uri_parts['path'])) {
         echo $AccountController->ChangePassword();
         return true;
       }
-
     }
 
     if($uri_parts['path'] == '/rss'){

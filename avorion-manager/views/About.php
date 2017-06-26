@@ -11,6 +11,7 @@
 <div class="Version"><h3>Version: <?php echo $Data['Version']; ?></h3><span><?php echo $Data['UpToDate']; ?></span></div>
 <br/>
 <a target="_blank" href="https://docs.google.com/document/d/1RuysyToh9CTSn7mMwL6VJ0k76VbaGuXLyV74pm0J4ug/edit#">TODO</a>
+<a target="_blank" href="http://www.avorion.net/forum/index.php/topic,3507.0.html">Avorion Forum Post</a>
 <br/>
 <br/>
 <h3>FAQ</h3>
@@ -22,6 +23,22 @@
 <br/>
 <br/>
 <h3>CHANGE LOG:</h3>
+<h4>1.1.5</h4>
+Fixed HighScore.php being erased on update</br>
+Added commands enablerestart and disablerestart</br>
+Added manager options -d, -o, -b, -v</br>
+Added Mail parsing to player parser</br>
+Added Mail player page net worth to net worth column</br>
+Added Mail resources/money to player page</br>
+Added file detection to zlib decompressor</br>
+Fixed Session not renewing when the browser is left open for a long period of time</br>
+Changed display of graphs to include small definitions and better font styles</br>
+Changed font styles for configuration page</br>
+Updated help output of manager</br>
+Changed Alliance Icon</br>
+Improved zlib decompression script</br>
+Added Scripts memory graphs</br>
+</br>
 <h4>1.1.4</h4>
   Fixed player flags</br>
   Replaced grep command with php for loop in player list of home page</br>

@@ -332,6 +332,7 @@ $(document).ready(function() {
           ?>
           $("#Post").submit(function(event){
             event.preventDefault();
+            console.log('Test')
             $.post("GetData", {function:'SendKeys',Message:$("#Input").val()}, function(data) {
                 $("#Input").val("");
             });

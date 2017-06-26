@@ -42,7 +42,7 @@
   }
 
 </style>
-<div id="Top"><span class="Title"><svg class="icon"><use xlink:href="#icon-players"></use></svg>PLAYERS</span><span class="Time"></span></div>
+<div id="Top"><span class="Title"><svg class="icon icon-Flag"><use xlink:href="#icon-Flag"></use></svg>ALLIANCES</span><span class="Time"></span></div>
 <br/>
 <label for="Search">Search Alliances</label>
 <br/>
@@ -82,18 +82,24 @@ Click Column Head to sort.
       echo '<tr>';
 
       echo '<td>'.$value['Name'].'</td>';
-      $Leader = implode('',array_reverse(str_split($value['Leader'],2)));
-      $Leader = base_convert($Leader[0].$Leader[1],16,10);
+      $Leader = base_convert(implode('',array_reverse(str_split($value['Leader'],2))),16,10);
       $NumberOfPlayers = 0;
+      $LeaderName = '';
       foreach ($Data['PlayerData'] as $PlayerArray => $Player) {
         if($Player['ID'] == $Leader){
-          echo '<td>'.$Player['Name'].'</td>';
+          $LeaderName = $Player['Name'];
         }
         $AllianceID = base_convert(implode('',array_reverse(str_split($Player['Alliance'],2))),16,10);
         if($AllianceID == $value['ID']){
           $NumberOfPlayers +=1;
         }
       }
+      if($LeaderName == ''){
+        echo '<td style="color: rgba(255,255,255,0.3);">-'.$Leader.'-</td>';
+      }else{
+        echo '<td>'.$LeaderName.'</td>';
+      }
+      
       echo '<td>'.$NumberOfPlayers.'</td>';
 
       $Money = base_convert(implode('',array_reverse(str_split($value['Money'],2))),16,10);

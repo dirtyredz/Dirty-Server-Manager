@@ -257,6 +257,51 @@ class RefreshModel extends CommonController
   }
 
   /**
+   * Pulls Server script memory from Status.logs and builds graphing data into an array
+   * @method GetServerScriptMemoryGraph
+   * @return array Plotly Graph Data
+   */
+  public function GetServerScriptMemoryGraph()
+  {
+    //If no status.log file exsists return an empty array
+    if(!is_file(dirname(__FILE__).'/../logs/'.date('d-m-Y').'_status.log')){
+      return array();
+    }
+
+    $Time = `grep -h "Memory used by scripts" $(find {$this->Config['LogsDir']}/*_status.log -printf '%T+ %p\n' | sort -n | sed -e 's/.* //g') | tail -n {$this->Range} | sed -e 's/|.*//g' -e 's/-/:/g3' | tr ' ' 'T' | sed -e 's/..$/00/' | awk '{print q $0 q}' ORS=','`;
+    $Data = `grep -h "Memory used by scripts" $(find {$this->Config['LogsDir']}/*_status.log -printf '%T+ %p\n' | sort -n | sed -e 's/.* //g') | tail -n {$this->Range} |  sed -e 's/.*://g' |  tr -d '[:blank:]' | awk '{print q $0 q}' ORS=','`;
+    /** @var array $Time array of each 5 minute /status command ran withen Range of the Timestamp */
+    $Time = explode(',',$Time);
+    /** @var array $Data array of each 5 minute /status command ran withen Range of Server Load */
+    $Data = explode(',',$Data);
+
+    //Remove the last index since awk will always add an additional , at the end
+    array_pop($Time);
+    array_pop($Data);
+    foreach ($Data as $key => $value) {
+      $ident = substr($value, strlen($value)-2);
+      $Data[$key] = substr($value, 0, -2);
+      if($ident == 'GB'){
+        $Data[$key] *= 1024;
+      }
+    }
+    //Fix array inconsistancys with the $Timearray
+    list ($Time, $Data) = $this->RunThoughTimeArray($Time, $Data);
+    //Build Plotly data and return
+
+    $PlotlyData = [[
+      'x' => $Time,
+      'y' => $Data,
+      'type' => 'scatter',
+      'fill' => 'tozeroy',
+      'text' => 'MB',
+      'hoverinfo'=>'x+y+text',
+      'fillcolor' => 'rgba(168, 216, 234, 0.5)'
+    ]];
+    return $PlotlyData;
+  }
+
+  /**
    * Pulls the server(physical) from the status.log's and generates a graph from it
    * @method GetServerMemoryUsageGraph
    * @return array Plotly Graph Data
@@ -666,7 +711,7 @@ class RefreshModel extends CommonController
   {
     //Theres a security risk I need to make sure i check for.
     //Send the message through /send manager
-    shell_exec($this->Config['Manager'].' send PHP "'.addslashes($Message).'"');
+    shell_exec($this->Config['Manager'].' send -o PHP "'.addslashes($Message).'"');
     //Log the message
     $this->LogMessage('Console command entered: '.$Message);
   }
@@ -704,7 +749,7 @@ class RefreshModel extends CommonController
   public function GetConsoleData()
   {
     //Potentall config option to only grab the last x lines instead of everything
-    $Console = `cat {$this->Config['ConsoleLog']} | sed -e 's/</\&lt;/g' -e 's/>/\&gt;/g' -e 's/$/<br\/>/g'`;
+    $Console = `tail -n1000 {$this->Config['ConsoleLog']} | sed -e 's/</\&lt;/g' -e 's/>/\&gt;/g' -e 's/$/<br\/>/g'`;
     return $Console;
   }
 

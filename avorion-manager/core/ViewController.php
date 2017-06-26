@@ -38,6 +38,16 @@ class ViewController extends CommonController
     if(!is_file($this->Config['ConsoleLog'])){
       $this->Data['ERROR'][] = 'Config Option, ConsoleLog: "'.$this->Config['ConsoleLog'].'" Is not a valid file path.';
     }
+
+    $cookie = isset($_COOKIE['rememberme']) ? $_COOKIE['rememberme'] : '';
+    //If we already have a session, Prepare page for a logged in user
+    if(!$this->SessionLoggedIn() && $cookie) {
+      //if we have a cookie, lets validate it
+      require_once __DIR__ . '/AccountModel.php';
+      $AccountModel = new AccountModel;
+      //if the cookie is valid prepare page for a logged in user
+      $AccountModel->CheckCookie($cookie);
+    }
   }
 
   /**
@@ -72,7 +82,7 @@ class ViewController extends CommonController
     $this->Data['AccessFactionsMapPage'] = 'Disabled';
     $this->Data['AccessSpaceInvadersPage'] = 'Disabled';
     $this->Data['AccessAlliancePage'] = 'Disabled';
-
+    $this->Data['AccessProfilePage'] = 'Disabled';
 
     $this->Data['Username'] = '';
     $this->Data['LoggedIn'] = false;
@@ -96,45 +106,40 @@ class ViewController extends CommonController
         $this->Data['LoggedIn'] = true;
       }
     }
+
     //role is required to be greater then config option, otherwise do not display
     if($this->RoleAccess($this->Config['AccessConsolePage'])){//Role required for specific feature
       $this->Data['ConsoleAccess'] = '';
     }
-    //role is required to be greater then config option, otherwise do not display
     if($this->RoleAccess($this->Config['AccessAlliancePage'])){//Role required for specific feature
       $this->Data['AccessAlliancePage'] = '';
     }
-    //role is required to be greater then config option, otherwise do not display
     if($this->RoleAccess($this->Config['AccessServerConfigPage'])){//Role required for specific feature
       $this->Data['AccessServerConfigPage'] = '';
     }
-    //role is required to be greater then config option, otherwise do not display
     if($this->RoleAccess($this->Config['AccessUserManagmentPage'])){//Role required for specific feature
       $this->Data['UserManagmentAccess'] = '';
     }
-    //role is required to be greater then config option, otherwise do not display
     if($this->RoleAccess($this->Config['AccessPlayerPage'])){//Role required for specific feature
       $this->Data['AccessPlayerPage'] = '';
     }
-    //role is required to be greater then config option, otherwise do not display
     if($this->RoleAccess($this->Config['AccessFactionsPage'])){//Role required for specific feature
       $this->Data['AccessFactionsPage'] = '';
     }
-    //role is required to be greater then config option, otherwise do not display
     if($this->RoleAccess($this->Config['AccessGraphsPage'])){//Role required for specific feature
       $this->Data['AccessGraphsPage'] = '';
     }
-    //role is required to be greater then config option, otherwise do not display
     if($this->RoleAccess($this->Config['AccessDiscoveredMapPage'])){//Role required for specific feature
       $this->Data['AccessDiscoveredMapPage'] = '';
     }
-    //role is required to be greater then config option, otherwise do not display
     if($this->RoleAccess($this->Config['AccessFactionsMapPage'])){//Role required for specific feature
       $this->Data['AccessFactionsMapPage'] = '';
     }
-    //role is required to be greater then config option, otherwise do not display
     if($this->RoleAccess($this->Config['AccessSpaceInvadersPage'])){//Role required for specific feature
       $this->Data['AccessSpaceInvadersPage'] = '';
+    }
+    if($this->RoleAccess($this->Config['AccessProfilePage'])){//Role required for specific feature
+      $this->Data['AccessProfilePage'] = '';
     }
     //Prepare additional data to put on the page and load the page
     $this->Data['IPAddress'] = $this->ManagerConfig['IPAddress'];
@@ -358,6 +363,18 @@ class ViewController extends CommonController
       array('name' => 'PHPPORT',
             'Definition' => 'The port the web interface will listen to.',
             'Type' => 'input'),
+      array('name' => 'IPAddress',
+            'Definition' => 'IP Address to be used for the web interface.',
+            'Type' => 'input'),
+      array('name' => 'GetSectorDataInterval',
+            'Definition' => 'String added to the Hour section of the cronjob for the sector parser.',
+            'Type' => 'input'),
+      array('name' => 'GetPlayerDataInterval',
+            'Definition' => 'String added to the Minute section of the cronjob for the player parser.',
+            'Type' => 'input'),
+      array('name' => 'GetAllianceDataInterval',
+            'Definition' => 'String added to the Minute section of the cronjob for the alliance parser.',
+            'Type' => 'input'),
     );
     $this->Data['PHPConfig'] = $ServerConfigController->GetPHPConfig();
     //need to move to config controller
@@ -477,9 +494,14 @@ class ViewController extends CommonController
     $this->Data['UpdatesGraph'] = false;
     $this->Data['CpuUsageGraph'] = false;
     $this->Data['MemoryUsageGraph'] = false;
+    $this->Data['ScriptMemoryGraph'] = false;
     //role is required to be greater then config option, otherwise do not display
     if($this->RoleAccess($this->Config['ServerLoadGraph'])){//Role required for specific feature
       $this->Data['ServerLoadGraph'] = true;
+    }
+    //role is required to be greater then config option, otherwise do not display
+    if($this->RoleAccess($this->Config['ScriptMemoryGraph'])){//Role required for specific feature
+      $this->Data['ScriptMemoryGraph'] = true;
     }
     //role is required to be greater then config option, otherwise do not display
     if($this->RoleAccess($this->Config['OnlinePlayersGraph'])){//Role required for specific feature
@@ -711,5 +733,69 @@ class ViewController extends CommonController
     $this->Data['IPAddress'] = $this->getUserIP();
     //Load the page
     $this->LoadView('SpaceInvaders');
+  }
+
+
+  private function getBetweenChar($string,$start,$end)
+  {
+    $string = ' ' . $string;
+    $ini = strpos($string, $start);
+    if ($ini == 0) return '0';
+    $ini += strlen($start);
+    $len = strpos($string, $end, $ini) - $ini;
+    $between = substr($string, $ini, $len);
+    //$deleted = substr($string, stripos($string,$between.$end) + strlen($between.$end));
+    return $between;//array($between,$deleted);
+  }
+
+
+  /**
+   * Loads Profiling parsed page
+   * @method ProfilePage
+   * @return void
+   */
+  public function ProfileParser()
+  {
+    //If page access is not available, redirect to home page
+    $this->RoleRequired($this->Config['AccessProfilePage']);
+
+    include __DIR__ .'/../core/ProfileParser.php';
+    $ProfileParser = new ProfileParser('/home/avorion/serverfiles/profiling_stats.txt');
+
+    $Sectors = explode('########################################################', strstr($ProfileParser->ParsedData,'########################################################'));
+    $Galaxy = [];
+    foreach ($Sectors as $key => $sector) {
+      $Original = $sector;
+      $coords = $this->getBetweenChar($Original,'(',')');
+      if($coords != '0'){
+        $Galaxy[$SectorCoords]['coords'] = $coords;
+        $Galaxy[$SectorCoords]['players'] = $this->getBetweenChar($Original,') (',' players');
+        $Galaxy[$SectorCoords]['entities'] = $this->getBetweenChar($Original,'Entities: ',',');
+        $Galaxy[$SectorCoords]['awake'] = $this->getBetweenChar($Original,', awake: ',PHP_EOL);
+        $Galaxy[$SectorCoords]['none'] = $this->getBetweenChar($Original,'None: ',PHP_EOL);
+        $Galaxy[$SectorCoords]['ship'] = $this->getBetweenChar($Original,'Ship: ',PHP_EOL);
+        $Galaxy[$SectorCoords]['turret'] = $this->getBetweenChar($Original,'Turet: ',PHP_EOL);
+        $Galaxy[$SectorCoords]['asteroid'] = $this->getBetweenChar($Original,'Asteroid: ',PHP_EOL);
+        $Galaxy[$SectorCoords]['wreckage'] = $this->getBetweenChar($Original,'Wreckage: ',PHP_EOL);
+        $Galaxy[$SectorCoords]['loot'] = $this->getBetweenChar($Original,'Loot: ',PHP_EOL);
+        $Galaxy[$SectorCoords]['wormhole'] = $this->getBetweenChar($Original,'Wormhole: ',PHP_EOL);
+        $Galaxy[$SectorCoords]['fighter'] = $this->getBetweenChar($Original,'Fighter: ',PHP_EOL);
+        $Galaxy[$SectorCoords]['station'] = $this->getBetweenChar($Original,'Station: ',PHP_EOL);
+
+
+        foreach ($Galaxy[$SectorCoords] as $key3 => $value3) {
+          echo $key3.':  '.$value3.'</br>';
+        }
+          echo '</br>';
+        echo preg_match('Profiling.*Last ## long', $sector );
+        foreach (explode(PHP_EOL,$Original) as $key2 => $value2) {
+          echo $value2.'</br>';
+        }
+        echo '</br>'.'</br>'.'</br>';
+      }
+    }
+
+    //Load the page
+    $this->LoadView('ProfileParser');
   }
 }
