@@ -1,3 +1,17 @@
+1.1.6
+  Moved player count/list to server log
+  Added cronjob to refresh server log every 30seconds
+  Moved home chat to server log
+  Added toggle to console page to switch between console.log and server.log
+  Moved ServerINI and ManagerConfig Descriptions to ServerConfigController
+  `./manager stop` now uses server log instead of console log
+  Added server log location option in PHPConfig
+  Updated UpdateManager.sh to not reset or delete previous options in config file_put_contents
+  Updated ApacheInstaller to reflect IP address
+  Added Profile Parser page, witch parses through profiling_stats.txt
+  Added mpm_itk support to ApacheInstall
+  
+
 1.1.5
   Fixed HighScore.php being erased on update
   Added commands enablerestart and disablerestart
@@ -13,7 +27,7 @@
   Changed Alliance Icon
   Improved zlib decompression script
   Added Scripts memory graphs
-  
+
 1.1.4
   Fixed player flags
   Replaced grep command with php for loop in player list of home page

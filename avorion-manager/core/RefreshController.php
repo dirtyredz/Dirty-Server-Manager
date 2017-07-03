@@ -42,6 +42,21 @@ class RefreshController extends CommonController
   }
 
   /**
+   * Returns Serverdata if logged in users role is high enough
+   * @method GetServerData
+   * @return string
+   */
+  public function GetServerData()
+  {
+    //checks logged in users role against config options
+    if($this->RoleAccess($this->Config['AccessConsolePage'])){
+      //Retrieve ServerData from model
+      //Is it neccasary to use a module?
+      echo $this->RefreshModel->GetServerData();
+    }
+  }
+
+  /**
    * Returns chatlog if logged in user has a high enough role
    * @method GetChatLog
    * @return string
@@ -128,8 +143,7 @@ class RefreshController extends CommonController
         //send the message to the module
         //I DEFFINETLY should be cleaning and verifing the data here
         //BAD ME
-        $this->RefreshModel->SendKeys($_POST["Message"]);
-        $return['success'] = true;
+        $return['success'] = $this->RefreshModel->SendKeys($_POST["Message"]);
       //Assume the message started with /stop
       }else{
         $return['success'] = false;

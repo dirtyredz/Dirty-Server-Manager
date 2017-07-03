@@ -5,9 +5,8 @@ SCRIPT=$(readlink -f "$0")
 # Absolute path this script is in, thus /home/user/bin
 SCRIPTPATH=$(dirname "$SCRIPT")
 #http://stackoverflow.com/questions/242538/unix-shell-script-find-out-which-directory-the-script-file-resides
-
 #Pull values from config INI
-source <(grep = manager-config.ini)
+source <(grep = ${SCRIPTPATH}/manager-config.ini)
 #sed "s/;/#/g" manager-config.ini | source /dev/stdin
 MAX_PLAYERS=`echo ${MAX_PLAYERS} | sed -e 's/\r//g'`
 GALAXY=`echo ${GALAXY} | sed -e 's/\r//g'`
@@ -23,10 +22,6 @@ GetSectorDataInterval=`echo ${GetSectorDataInterval} | sed -e 's/\r//g'`
 GetPlayerDataInterval=`echo ${GetPlayerDataInterval} | sed -e 's/\r//g'`
 GetAllianceDataInterval=`echo ${GetAllianceDataInterval} | sed -e 's/\r//g'`
 
-# Standard Config - Dont touch
-TMUX_SESSION=${GALAXY}_Tmux
-INSTALL_DIR=$SCRIPTPATH/serverfiles
-STEAM_DIR=$SCRIPTPATH/steamcmd
 # Colors
 WHITE='\033[1;37m'
 RED='\033[1;31m'
@@ -35,17 +30,21 @@ YELLOW='\033[1;33m'
 PURPLE='\033[1;35m'
 NOCOLOR='\033[0m'
 # Static - Dont change these
-VERSION=1.1.4
+VERSION=1.1.6
 APPID=565060
-SERVER=AvorionServer
+SERVER=${GALAXY}_Server
+TMUX_SESSION=${GALAXY}_Tmux
+INSTALL_DIR=$SCRIPTPATH/serverfiles
+STEAM_DIR=$SCRIPTPATH/steamcmd
 T='tmux send-keys -t '${TMUX_SESSION}':0.0'
 # Auto Restart
 CRONJOB='0,5,10,15,20,25,30,35,40,45,50,55 * * * * '${SCRIPTPATH}'/manager status -o CRON >> '${SCRIPTPATH}'/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_status.log'
-CRONDAILYRESTART_15='41 11,23 * * * '${SCRIPTPATH}'/manager send -o CRON "/say Restarting server in 15 Minutes!"'
-CRONDAILYRESTART_10='46 11,23 * * * '${SCRIPTPATH}'/manager send -o CRON "/say Restarting server in 10 Minutes!"'
-CRONDAILYRESTART_5='51 11,23 * * * '${SCRIPTPATH}'/manager send -o RON "/say Restarting server in 5 Minutes!"'
-CRONDAILYRESTART_1='55 11,23 * * * '${SCRIPTPATH}'/manager send -o CRON "/say Restarting server in 1 Minute!"'
+CRONDAILYRESTART_15='41 11,23 * * * '${SCRIPTPATH}'/manager send -o CRON "/say [SERVER] Restarting server in 15 Minutes!"'
+CRONDAILYRESTART_10='46 11,23 * * * '${SCRIPTPATH}'/manager send -o CRON "/say [SERVER] Restarting server in 10 Minutes!"'
+CRONDAILYRESTART_5='51 11,23 * * * '${SCRIPTPATH}'/manager send -o RON "/say [SERVER] Restarting server in 5 Minutes!"'
+CRONDAILYRESTART_1='55 11,23 * * * '${SCRIPTPATH}'/manager send -o CRON "/say [SERVER] Restarting server in 1 Minute!"'
 CRONDAILYRESTART_NOW='56 11,23 * * * '${SCRIPTPATH}'/manager restart -o CRON >> '${SCRIPTPATH}'/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_status.log'
+UpdateServerLog='* * * * * '${SCRIPTPATH}'/manager proc -o CRON'
 CRONSECTORDATA='nice -n 10 '${SCRIPTPATH}'/avorion-manager/GetSectorData.sh '${HOME}'/.avorion/galaxies'
 CRONPLAYERDATA='nice -n 15 '${SCRIPTPATH}'/avorion-manager/GetPlayerData.sh '${HOME}'/.avorion/galaxies'
 CRONALLIANCEDATA='nice -n 15 '${SCRIPTPATH}'/avorion-manager/GetAllianceData.sh '${HOME}'/.avorion/galaxies'
@@ -57,6 +56,7 @@ delay=''
 
 DynamicEcho() {
   # Second Argument used to detect who were echoing too.
+
   if [ "$output" = "CRON" ]; then
       if [ "$2" != "DONTLOG" ]; then
           echo -e -n $(date +"%F %H-%M-00| "); echo -e '[Manager]: '$1 | sed -r 's/'$(echo -e "\033")'\[[0-9]{1,2}(;([0-9]{1,2})?)?[mK]//g'
@@ -70,7 +70,7 @@ DynamicEcho() {
   fi
 }
 GenerateBrowser(){
-  OnlineCount=$(netstat -tlunp 2>/dev/null | grep -iv ':270'|grep -i avorion|wc -l)
+  OnlineCount=$(netstat -tlunp 2>/dev/null | grep -iv ':27'|grep -i $(pidof ${SERVER})|wc -l)
   OnlinePlayers="$OnlineCount/$MAX_PLAYERS"
   php -f ${SCRIPTPATH}/avorion-manager/BannerGenerator.php "$1" "${IPAddress}" "${GALAXY}" "${OnlinePlayers}"
 }
@@ -86,7 +86,7 @@ CreateCronJobs(){
     (crontab -l ; echo "${CRONDAILYRESTART_1}") | crontab -
     (crontab -l ; echo "${CRONDAILYRESTART_NOW}") | crontab -
   fi
-
+  (crontab -l ; echo "${UpdateServerLog}") | crontab -
   (crontab -l ; echo "0 ${GetSectorDataInterval} * * * ${CRONSECTORDATA}") | crontab -
   (crontab -l ; echo "${GetPlayerDataInterval} * * * * ${CRONPLAYERDATA}") | crontab -
   (crontab -l ; echo "${GetAllianceDataInterval} * * * * ${CRONALLIANCEDATA}") | crontab -
@@ -118,7 +118,7 @@ if [ ! -z "$broadcast" ]; then
     DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Broadcasting message: $broadcast, will append delay time if \-d is used"
   fi
   if [ -z "$delay" ]; then
-    $T '/say '"${broadcast}" C-m
+    $T '/say [SERVER] '"${broadcast}" C-m
   fi
 fi
 
@@ -138,7 +138,7 @@ if [ ! -z "$delay" ]; then
     if [ ! -z "$broadcast" ]; then
       if pidof ${SERVER} > /dev/null
   		then
-        $T '/say '"${broadcast}"' in '"${minutes}"' minutes.' C-m
+        $T '/say [SERVER] '"${broadcast}"' in '"${minutes}"' minutes.' C-m
       else
         if [ "$verbose" = true ] ; then
           DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} is not running!"
@@ -157,15 +157,14 @@ case $RequiredCommand in
     LogToManagerLog "Ran Start command.";
     # remove the cron job just incase
     DeleteCronJobs;
+
     cp serverfiles/linux64/steamclient.so serverfiles/steamclient.so
-    #if [ ! -f bin/${SERVER} ]; then
-      #cp serverfiles/bin/AvorionServer serverfiles/bin/${SERVER}
-    #fi
+    if [ ! -f bin/${SERVER} ]; then
+      cp serverfiles/bin/AvorionServer serverfiles/bin/${SERVER}
+    fi
 		if tmux new -d -c ${INSTALL_DIR} -s ${TMUX_SESSION} bin/${SERVER} --port ${PORT} --galaxy-name ${GALAXY} --max-players ${MAX_PLAYERS}  ${PARAMS} 2> /dev/null
 		then
-      if [ ! -f ${SCRIPTPATH}'/console.log' ]; then
-        touch ${SCRIPTPATH}'/console.log'
-      fi
+      touch ${SCRIPTPATH}'/console.log' ${SCRIPTPATH}'/server.log'
       cat ${SCRIPTPATH}'/console.log' | grep '^<.*>' | grep -v '^<Rusty>' >> ${SCRIPTPATH}/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_playerchat.log
       #Start loging console into console.log.
       tmux pipe-pane -o -t ${TMUX_SESSION} "cat > ${SCRIPTPATH}/console.log"
@@ -207,9 +206,9 @@ case $RequiredCommand in
       $T '/echo '"${D}" C-m
       $T /save C-m
       time=0
-      while [ $time -lt 60 ]; do
 
-        PlayerMemory=$(cat ${SCRIPTPATH}'/console.log' | awk "/${D}/,/All sectors saved successfully/" | grep 'All sectors saved successfully')
+      while [ $time -lt 60 ]; do
+        PlayerMemory=$(awk "/${D}/,/All sectors saved successfully/" /proc/`pidof ${SERVER}`/fd/3 | grep 'All sectors saved successfully')
         if [ "${PlayerMemory}" ]; then
           break;
         fi
@@ -225,7 +224,7 @@ case $RequiredCommand in
 			$T /stop C-m
       time=0
       while [ $time -lt 120 ]; do
-        SHUTDOWN=$(cat ${SCRIPTPATH}'/console.log' | awk "/${D}/,/Server shutdown successful/" | grep 'Server shutdown successful')
+        SHUTDOWN=$(awk "/${D}/,/Server shutdown successful/" /proc/`pidof ${SERVER}`/fd/3 | grep 'Server shutdown successful')
         if [ "${SHUTDOWN}" ] || [ "$( ps ax | grep ${SERVER} | grep -v grep | grep tmux | wc -l)" ]; then
           DynamicEcho "\r" "DONTLOG"
           DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} has been stopped."
@@ -252,13 +251,8 @@ case $RequiredCommand in
     LogToManagerLog "Ran Send command.";
 		if pidof ${SERVER} > /dev/null
 		then
-      if [ -z ${3+x} ]; then
-        echo $2
-        $T "$2" C-m
-      else
-        echo $3
-        $T "$3" C-m
-      fi
+      echo $1
+      $T "$1" C-m
 		else
 			DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} is not running!"
 		fi
@@ -303,11 +297,17 @@ case $RequiredCommand in
 		DynamicEcho "restarting ${PURPLE}${SERVER}${NOCOLOR}..."
     OLDPID=$(pidof ${SERVER})
 		$0 stop
-    sleep 90
+    sleep 120
 		$0 start
     NEWPID=$(pidof ${SERVER})
-    if [ pidof ${SERVER} > /dev/null ] && [ OLDPID != NEWPID ]; then
-      DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} has successfully restarted!"
+    if pidof ${SERVER} > /dev/null
+    then
+      if [ OLDPID != NEWPID ]; then
+        DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} has successfully restarted!"
+      else
+        DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} has successfully restarted with same pid. Did the server restart?"
+      fi
+
     else
       DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} attempting restart of the server."
     fi
@@ -436,6 +436,8 @@ case $RequiredCommand in
 
             #Generate data for the browser
             GenerateBrowser 'Online';
+
+            cat /proc/`pidof ${SERVER}`/fd/3 > ${SCRIPTPATH}/server.log
     else
       GenerateBrowser 'Offline';
       if [ "$output" = "CRON" ]; then
@@ -449,6 +451,11 @@ case $RequiredCommand in
       fi
     fi
 	;;
+  "proc")
+    cat /proc/`pidof ${SERVER}`/fd/3 > ${SCRIPTPATH}/server.log
+    sleep 30
+    cat /proc/`pidof ${SERVER}`/fd/3 > ${SCRIPTPATH}/server.log
+  ;;
 	"update")
     LogToManagerLog "Ran Update command.";
 		if pidof ${SERVER} > /dev/null
@@ -456,6 +463,7 @@ case $RequiredCommand in
 			DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} should not be running while updating."
 		else
 			DynamicEcho "steamcmd will now perform an update."
+      rm ${INSTALL_DIR}/bin/*
       case $BETA in
         (true)    DynamicEcho "Updating with Beta version...";;
         (false)   DynamicEcho "Updating with Normal version...";;
@@ -468,11 +476,10 @@ case $RequiredCommand in
 	;;
   "start-web")
     LogToManagerLog "Ran Start-web command.";
-    if tmux new-session -d -s php 'php -S '"${IPAddress}"':'"${WEBPORT}"' -t '${SCRIPTPATH}'/avorion-manager/webroot '${SCRIPTPATH}'/avorion-manager/webroot/index.php' 2> /dev/null
+    if tmux new-session -d -s ${GALAXY}_php 'php -S '"${IPAddress}"':'"${WEBPORT}"' -t '${SCRIPTPATH}'/avorion-manager/webroot '${SCRIPTPATH}'/avorion-manager/webroot/index.php' 2> /dev/null
     then
       DynamicEcho "starting PHP Server"
-
-      if pidof php > /dev/null;
+      if pidof ${GALAXY}_php > /dev/null;
       then
         DynamicEcho "PHP Server started on server: http://${IPAddress}"':'"${WEBPORT}"
       else
@@ -480,16 +487,26 @@ case $RequiredCommand in
       fi
     else
       DynamicEcho "PHP Server Already started"
-
     fi
 	;;
   "stop-web")
     LogToManagerLog "Ran Stop-web command.";
-    tmux kill-session -t php
+    tmux kill-session -t ${GALAXY}_php
     DynamicEcho "PHP Server Stoped"
-    if pidof php > /dev/null;
+    if pidof ${GALAXY}_php > /dev/null;
     then
-      kill $(pidof php)
+      kill $(pidof ${GALAXY}_php)
+    fi
+	;;
+  "attach-web")
+    LogToManagerLog "Ran Attach-web command.";
+    if pidof ${SERVER} > /dev/null
+    then
+      DynamicEcho "press ${RED}Ctrl+B${NOCOLOR} then ${RED}D${NOCOLOR} to detach. Confirm to continue..."
+      read -n 1 -s
+      tmux a -t ${GALAXY}_php
+    else
+      DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} is not running!"
     fi
 	;;
   "version")
@@ -609,20 +626,23 @@ case $RequiredCommand in
     echo "BETA=${BetaInput}" >> manager-config.ini
     echo "WEBPORT=8080" >> manager-config.ini
     echo "IPAddress=${IPAddressInput}" >> manager-config.ini
+    echo 'GetSectorDataInterval="0,12"' >> manager-config.ini
+    echo 'GetPlayerDataInterval="0,30"' >> manager-config.ini
+    echo 'GetAllianceDataInterval="5,35"' >> manager-config.ini
 
     mkdir -p $STEAM_DIR
     wget https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz
     tar -zxvf steamcmd_linux.tar.gz -C $STEAM_DIR
     $0 update
 	;;
-    *)
+  *)
 		DynamicEcho "available commands:\n           ${GREEN}start${NOCOLOR} server,\n           ${GREEN}stop${NOCOLOR} server,\n           ${GREEN}restart${NOCOLOR} server,\n           check server's ${GREEN}status${NOCOLOR},\n           check for ${GREEN}update${NOCOLOR}s,\n           ${GREEN}attach${NOCOLOR} to console,\n           show this ${GREEN}help${NOCOLOR},\n           ${GREEN}install${NOCOLOR} steamcmd,\n           ${GREEN}start-web${NOCOLOR} starts php server\n           ${GREEN}stop-web${NOCOLOR} Stops PHP server\n           ${GREEN}enablerestart${NOCOLOR} Adds restart cron jobs\n           ${GREEN}disablerestart${NOCOLOR} Removes restart cron jobs"
     echo ""
-    DynamicEcho "available options:\n           -d #              --Delay time in minutes\n           -b \"Message\"      --Broadcast message\n           -v                --verbose output\n           -o [CRON/PHP]              --Displays message without coloring"
+    DynamicEcho "available options:\n           ${GREEN}-d${NOCOLOR} #              --Delay time in minutes\n           ${GREEN}-b${NOCOLOR} \"Message\"      --Broadcast message\n           ${GREEN}-v${NOCOLOR}               --verbose output\n           ${GREEN}-o${NOCOLOR} [CRON/PHP]              --Displays message without coloring"
     echo ""
-    DynamicEcho "To update Dirty-Server-Manager itself run this command:\n           avorion-manager/UpdateManager.sh"
+    DynamicEcho "To update Dirty-Server-Manager itself run this command:\n           ${GREEN}avorion-manager/UpdateManager.sh${NOCOLOR}"
     echo ""
-    DynamicEcho "To install apache server run this command:\n           ./ApacheInstall.sh"
+    DynamicEcho "To install apache server run this command:\n           ${GREEN}./ApacheInstall.sh${NOCOLOR}"
     echo ""
     DynamicEcho "For both these commands be sure you run them from the same directory this manager file resides."
 	;;

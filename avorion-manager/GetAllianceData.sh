@@ -44,11 +44,12 @@ do
     Avorion=$(xxd -ps -l 4 -seek "$((${StartingPosition} + 211 ))" "${file}" )
     echo  "array(\"ID\" => \"$ID\",\"Name\" => \"$Name\",\"Leader\" => \"$Leader\",\"Money\" => \"$Money\",\"Iron\" => \"$Iron\",\"Titanium\" => \"$Titanium\",\"Naonite\" => \"$Naonite\",\"Trinium\" => \"$Trinium\",\"Xanion\" => \"$Xanion\",\"Ogonite\" => \"$Ogonite\",\"Avorion\" => \"$Avorion\")," >> $AllianceDataTmp;
   fi
+  [ -e "$file" ] && rm $file
 done
 echo ");" >> $AllianceDataTmp;
 [ -e ${PWD}/avorion-manager/AllianceData.php ] && rm ${PWD}/avorion-manager/AllianceData.php
 cp $AllianceDataTmp ${PWD}/avorion-manager/AllianceData.php
 rm $AllianceDataTmp
-rm $file
+
 echo -e -n $(date +"%F %H-%M-00| ") >> ${PWD}/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_manager.log
 echo -e '[Manager]: Completed GetAllianceData()' >> ${PWD}/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_manager.log

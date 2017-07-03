@@ -10,6 +10,8 @@ source <(grep = manager-config.ini)
 WEBPORT=`echo ${WEBPORT} | sed -e 's/\r//g'`
 GALAXY=`echo ${GALAXY} | sed -e 's/\r//g'`
 IPAddress=`echo ${IPAddress} | sed -e 's/\r//g'`
+WhoAmI=$(whoami)
+WhoGroup=$(id -g -n)
 
 ApachePortsConf=/etc/apache2/ports.conf
 AvorionConf=/etc/apache2/sites-available/${GALAXY}_avorion.conf
@@ -44,7 +46,7 @@ echo ""
 
 echo "Creating virtual host..."
 
-echo "<VirtualHost *:${WEBPORT}>" > $AvorionConf
+echo "<VirtualHost ${IPAddress}:${WEBPORT}>" > $AvorionConf
 echo "    ServerName ${IPAddress}:${WEBPORT}" >> $AvorionConf
 echo "    ServerAdmin webmaster@localhost" >> $AvorionConf
 echo "    DocumentRoot ${PWD}/avorion-manager/webroot" >> $AvorionConf
@@ -53,6 +55,9 @@ echo "    CustomLog ${PWD}/avorion-manager/webroot/access.log combined" >> $Avor
 if [ "$SSLEnable" == "true" ]; then
   echo "    Redirect permanent \"/\" \"https://${IPAddress}/\"" >> $AvorionConf
 fi
+echo "    <ifmodule mpm_itk_module>" >> $AvorionConf
+echo "        AssignUserID ${WhoAmI} ${WhoGroup}" >> $AvorionConf
+echo "    </ifmodule>" >> $AvorionConf
 echo "    <Directory ${PWD}/avorion-manager/webroot>" >> $AvorionConf
 echo "        AllowOverride All" >> $AvorionConf
 echo "        Options Indexes FollowSymLinks MultiViews" >> $AvorionConf
@@ -65,10 +70,12 @@ echo "" >> $AvorionConf
 echo "# vim: syntax=apache ts=4 sw=4 sts=4 sr noet" >> $AvorionConf
 
 echo "Disabling apache's Default site, and Enabling our sites virtual host."
-sudo a2ensite -q avorion.conf
+sudo a2ensite -q ${GALAXY}_avorion.conf
 sudo a2dissite -q 000-default.conf
 sudo service apache2 reload
 sudo a2enmod -q rewrite
+#sudo a2dismod mpm_prefork
+sudo a2enmod mpm_itk
 echo "Restarting Apache please wait..."
 sudo service apache2 restart
 

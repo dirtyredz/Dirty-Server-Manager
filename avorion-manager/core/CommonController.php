@@ -21,6 +21,7 @@ class CommonController
     //prepend these config options to reflect current directory in relation to PHPConfig.ini and not this file
     $this->Config['GalaxiesDir'] = __DIR__.'/..'.$this->Config['GalaxiesDir'];
     $this->Config['ConsoleLog'] = __DIR__.'/..'.$this->Config['ConsoleLog'];
+    $this->Config['ServerLog'] = __DIR__.'/..'.$this->Config['ServerLog'];
     $this->Config['Manager'] = __DIR__.'/..'.$this->Config['Manager'];
     $this->Config['ManagerConfig'] = __DIR__.'/..'.$this->Config['ManagerConfig'];
     $this->Config['LogsDir'] = __DIR__.'/..'.$this->Config['LogsDir'];
@@ -178,4 +179,24 @@ class CommonController
      file_put_contents(dirname(__FILE__).'/../logs/'.date('d-m-Y').'_manager.log', date('Y-m-d H-i-s').'|[PHP]: '.$this->getUserIP().': '.$str."\r\n");
    }
  }
+
+/**
+ * Runs pifof on running process (galaxyname_server)
+ * @method returnPid
+ * @return string current running process pid number
+ */
+ public function returnPid(){
+   $ServerProcess = $this->Data['GalaxyName'].'_Server';
+   return `pidof {$ServerProcess} | tr -d '\n'`;
+ }
+
+ /**
+  * gets the online/offline status of the process
+  * @method onlineStatus
+  * @return string online/offline
+  */
+  public function onlineStatus(){
+    $PID = $this->returnPid();
+    return  `if [ {$PID} > /dev/null ]; then echo 'Online'; else echo 'Offline'; fi  | tr -d '[:space:]'`;
+  }
 }

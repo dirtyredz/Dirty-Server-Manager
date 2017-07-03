@@ -38,6 +38,10 @@ class ViewController extends CommonController
     if(!is_file($this->Config['ConsoleLog'])){
       $this->Data['ERROR'][] = 'Config Option, ConsoleLog: "'.$this->Config['ConsoleLog'].'" Is not a valid file path.';
     }
+    //is this config option an actuall file on the server?
+    if(!is_file($this->Config['ServerLog'])){
+      $this->Data['ERROR'][] = 'Config Option, ServerLog: "'.$this->Config['ServerLog'].'" Is not a valid file path.';
+    }
 
     $cookie = isset($_COOKIE['rememberme']) ? $_COOKIE['rememberme'] : '';
     //If we already have a session, Prepare page for a logged in user
@@ -82,7 +86,7 @@ class ViewController extends CommonController
     $this->Data['AccessFactionsMapPage'] = 'Disabled';
     $this->Data['AccessSpaceInvadersPage'] = 'Disabled';
     $this->Data['AccessAlliancePage'] = 'Disabled';
-    $this->Data['AccessProfilePage'] = 'Disabled';
+    $this->Data['AccessProfileParserPage'] = 'Disabled';
 
     $this->Data['Username'] = '';
     $this->Data['LoggedIn'] = false;
@@ -139,7 +143,7 @@ class ViewController extends CommonController
       $this->Data['AccessSpaceInvadersPage'] = '';
     }
     if($this->RoleAccess($this->Config['AccessProfilePage'])){//Role required for specific feature
-      $this->Data['AccessProfilePage'] = '';
+      $this->Data['AccessProfileParserPage'] = '';
     }
     //Prepare additional data to put on the page and load the page
     $this->Data['IPAddress'] = $this->ManagerConfig['IPAddress'];
@@ -163,6 +167,7 @@ class ViewController extends CommonController
     $AvailableVersion = `wget -O - -o /dev/null https://api.github.com/repos/dirtyredz/Dirty-Server-Manager/releases/latest | grep tag_name | sed -e 's/.*://g' -e 's/"//g' -e 's/,//g' | tr -d '[:blank:]'`;
     //Get the installed version from the manager
     $InstalledVersion = `{$this->Config['Manager']} version`;//`grep VERSION {$this->Config['Manager']} | head -n1 | sed -e 's/.*=//g'`;
+
     //Load the installed version to the page
     $this->Data['Version'] = $InstalledVersion;
     //Compare the versions and display the appropriate message
@@ -203,179 +208,14 @@ class ViewController extends CommonController
     $ServerConfigController = new ServerConfigController();
     //Grab all INI configuration files data
     $this->Data['ServerINI'] = $ServerConfigController->GetServerINI();
-    $this->Data['ServerINIDetails'] = array(
-      array('name' => 'Seed',
-            'Definition' => 'seed of the server',
-            'Type' => 'input'),
-      array('name' => 'Difficulity',
-            'Definition' => 'difficulty of the server, allowed values are: -3, -2, -1, 0, 1, 2, 3 Default: 0',
-            'Type' => 'select',
-            'Values' => array('Beginner'=>'-3','Easy'=>'-2','Normal'=>'-1','Veteran'=>'0','Difficult'=>'1','Hard'=>'2','Insane'=>'3')),
-      array('name' => 'InfiniteResources',
-            'Definition' => 'enable infinite resources for all players',
-            'Type' => 'select',
-            'Values' => array('True'=>'true','False'=>'false')),
-      array('name' => 'CollisionDamage',
-            'Definition' => 'amount of damage done to an object on collision, from 0 to 1. 0: no damage, 1: full damage. default: 1',
-            'Type' => 'input'),
-      array('name' => 'SafePlayerInput ',
-            'Definition' => 'Unkown',
-            'Type' => 'select',
-            'Values' => array('True'=>'true','False'=>'false')),
-      array('name' => 'BigWreckageDespawnTime',
-            'Definition' => 'Time for wrecks with 10 or more blocks to despawn.',
-            'Type' => 'input'),
-      array('name' => 'SmallWreckageDespawnTime',
-            'Definition' => 'Time for wrecks with less then 10 blocks to despawn.',
-            'Type' => 'input'),
-      array('name' => 'LootDiminishingFactor',
-            'Definition' => 'Amount of loot dropped from mining/salvaging, higher equals less material.',
-            'Type' => 'input'),
-      array('name' => 'ResourceDropChance',
-            'Definition' => 'Effect unknown (chance of resources dropping from destroyed wreckage pieces?)',
-            'Type' => 'input'),
-      array('name' => 'TurretDropChanceFromTurret',
-            'Definition' => 'The chance that a turret will drop from an NPC space craft when the turret is destroyed',
-            'Type' => 'input'),
-      array('name' => 'TurretDropChanceFromCraft',
-            'Definition' => 'The chance that a turret will drop from an NPC space craft when the craft is destroyed',
-            'Type' => 'input'),
-      array('name' => 'TurretDropChanceFromBlock',
-            'Definition' => 'The chance that a turret will drop from a block of wreckage when it is destroyed',
-            'Type' => 'input'),
-      array('name' => 'SystemDropChanceFromCraft',
-            'Definition' => 'The chance that a ship system will drop from an NPC space craft when the craft is destroyed	',
-            'Type' => 'input'),
-      array('name' => 'SystemDropChanceFromBlock',
-            'Definition' => 'The chance that a ship system will drop from a block of wreckage when it is destroyed',
-            'Type' => 'input'),
-      array('name' => 'ColorDropChanceFromCraft',
-            'Definition' => 'The chance that a color will drop from a space craft when the craft is destroyed',
-            'Type' => 'input'),
-      array('name' => 'ColorDropChanceFromBlock',
-            'Definition' => 'The chance that a color will drop from a block of wreckage when it is destroyed',
-            'Type' => 'input'),
-      array('name' => 'sameStartSector',
-            'Definition' => 'Indicates if all players should start in the same sector. If false, a random empty sector on the outer rim is populated and used as the home sector for each new player.',
-            'Type' => 'select',
-            'Values' => array('True'=>'true','False'=>'false')),
-      array('name' => 'startUpScript',
-            'Definition' => 'Specifies a Lua script to run on server startup.',
-            'Type' => 'input'),
-      array('name' => 'startSectorScript',
-            'Definition' => 'Specifies a Lua script to run when generating a start sector for a player.',
-            'Type' => 'input'),
-      array('name' => 'saveInterval',
-            'Definition' => 'The time between server saves, in seconds.',
-            'Type' => 'input'),
-      array('name' => 'sectorUpdateTimeLimit',
-            'Definition' => 'This is the time in seconds (by default 300, ie. 5 minutes) that the server will update a sector once it detects that no players are present. (including connected players through gates/wormholes)',
-            'Type' => 'input'),
-      array('name' => 'emptySectorUpdateInterval',
-            'Definition' => 'Update interval in seconds that will be used for sectors without players. (lower value equals faster simulation/lower performance)',
-            'Type' => 'input'),
-      array('name' => 'workerThreads',
-            'Definition' => 'Number of threads handling normal updates accross all active sectors.',
-            'Type' => 'input'),
-      array('name' => 'generatorThreads',
-            'Definition' => 'Number of threads handling sector generation. ie When calculating a jump or in a sector with wormholes/gates. (These are temporary/unlimited and run at full load to perform computations quickly.)',
-            'Type' => 'input'),
-      array('name' => 'aliveSectorsPerPlayer',
-            'Definition' => 'Number of sectors for each player to keep alive, based on a ranking system.(the more ships/stations of yours, the higher the priority)',
-            'Type' => 'input'),
-      array('name' => 'weakUpdate',
-            'Definition' => 'When enabled sectors that have no players are updated in a more lightweight and simplified way, without huge physics calculations, which saves performance.',
-            'Type' => 'select',
-            'Values' => array('True'=>'true','False'=>'false')),
-      array('name' => 'profiling',
-            'Definition' => 'Analysis of last 20 frames is printed out when profiling is enabled and /status command is used. (Profiling measures time for actions to complete.)',
-            'Type' => 'select',
-            'Values' => array('True'=>'true','False'=>'false')),
-      array('name' => 'port',
-            'Definition' => 'The default port to access the server on. Does not affect the TCP/UDP game traffic port or the query ports.',
-            'Type' => 'input'),
-      array('name' => 'broadcastInterval',
-            'Definition' => 'The time between server activity broadcasts (in seconds?)',
-            'Type' => 'input'),
-      array('name' => 'isPublic',
-            'Definition' => 'indicate if the server should allow other players to join',
-            'Type' => 'select',
-            'Values' => array('True'=>'true','False'=>'false')),
-      array('name' => 'isListed',
-            'Definition' => 'indicate if the server should show up on public server lists',
-            'Type' => 'select',
-            'Values' => array('True'=>'true','False'=>'false')),
-      array('name' => 'isAuthenticated',
-            'Definition' => 'Effect unknown. (Presumably identical to the ingame setting "Authenticate Users" which toggles steam authentication)',
-            'Type' => 'select',
-            'Values' => array('True'=>'true','False'=>'false')),
-      array('name' => 'useSteam',
-            'Definition' => 'Determines whether the server can be joined via Steam, using options like "join game".',
-            'Type' => 'select',
-            'Values' => array('True'=>'true','False'=>'false')),
-      array('name' => 'maxPlayers',
-            'Definition' => 'The max number of players allowed on the server at one time',
-            'Type' => 'input'),
-      array('name' => 'name',
-            'Definition' => 'The name of the server, shown in the server list.',
-            'Type' => 'input'),
-      array('name' => 'description',
-            'Definition' => 'A description for the server, shown in the server list.',
-            'Type' => 'input'),
-      array('name' => 'password',
-            'Definition' => 'Password requirment for the server.',
-            'Type' => 'input'),
-      array('name' => 'accessListMode',
-            'Definition' => 'Determines whether the server uses a blacklist or a whitelist to restrict access.',
-            'Type' => 'select',
-            'Values' => array('Blacklist'=>'Blacklist','Whitelist'=>'Whitelist')),
-    );
+    $this->Data['ServerINIDetails'] = $ServerConfigController::ServerINIOptions;
+
+
     $this->Data['ManagerConfig'] = $ServerConfigController->GetManagerConfig();
     //Need to move to config controller
-    $this->Data['ManagerConfigDetails'] = array(
-      array('name' => 'MAX_PLAYERS',
-            'Definition' => 'Max number of players on the server at once. Used here so the manager has easy access to this value.',
-            'Type' => 'input'),
-      array('name' => 'GALAXY',
-            'Definition' => 'Name of the Galaxy, needed here aswell so the manager and the web interface knows which galaxy directory were working with.',
-            'Type' => 'input'),
-      array('name' => 'PARAMS',
-            'Definition' => 'The parameters used to start the server.',
-            'Type' => 'input'),
-      array('name' => 'PORT',
-            'Definition' => 'The port the server listens to.',
-            'Type' => 'input'),
-      array('name' => 'LOG_ROTATION',
-            'Definition' => 'The number of days to maintain manager logs.',
-            'Type' => 'input'),
-      array('name' => 'AutoRestart',
-            'Definition' => 'If enabled will attempt to restart the server if a crash is detected.',
-            'Type' => 'select',
-            'Values' => array('True'=>'true','False'=>'false')),
-      array('name' => 'DailyRestart',
-            'Definition' => 'If enabled will restart the server twice a day at midnight and noon server time, Time configurations to come soon.',
-            'Type' => 'select',
-            'Values' => array('True'=>'true','False'=>'false')),
-      array('name' => 'BETA',
-            'Definition' => 'If enabled will install/update the server with the Beta version of the game.',
-            'Type' => 'select',
-            'Values' => array('True'=>'true','False'=>'false')),
-      array('name' => 'PHPPORT',
-            'Definition' => 'The port the web interface will listen to.',
-            'Type' => 'input'),
-      array('name' => 'IPAddress',
-            'Definition' => 'IP Address to be used for the web interface.',
-            'Type' => 'input'),
-      array('name' => 'GetSectorDataInterval',
-            'Definition' => 'String added to the Hour section of the cronjob for the sector parser.',
-            'Type' => 'input'),
-      array('name' => 'GetPlayerDataInterval',
-            'Definition' => 'String added to the Minute section of the cronjob for the player parser.',
-            'Type' => 'input'),
-      array('name' => 'GetAllianceDataInterval',
-            'Definition' => 'String added to the Minute section of the cronjob for the alliance parser.',
-            'Type' => 'input'),
-    );
+    $this->Data['ManagerConfigDetails'] = $ServerConfigController::ManagerConfigOptions;
+
+
     $this->Data['PHPConfig'] = $ServerConfigController->GetPHPConfig();
     //need to move to config controller
     $this->Data['PHPConfigDetails'] = $ServerConfigController::PHPConfigDetails;
@@ -566,48 +406,65 @@ class ViewController extends CommonController
     $this->Data['CustomMessageFour'] = $this->Config['HomeCustomMessageFour'];
     $this->Data['GalaxyName'] = $this->ManagerConfig['GALAXY'];
     //Check if pid status is available, display online if pid is available
-    $this->Data['OnlineStatus'] = `if [ $(pidof $(grep SERVER= {$this->Config['Manager']} | sed -e 's/.*=//g')) > /dev/null ]; then echo 'Online'; else echo 'Offline'; fi  | tr -d '[:space:]'`;
+    $ServerProcess = $this->Data['GalaxyName'].'_Server';
+    $this->Data['OnlineStatus'] = $this->onlineStatus();
     if($this->Data['ShowDiskUsage']){
       $this->Data['DiskUsage'] = `df -h --total | awk '{print $5}' | tail -n 1 | sed -e 's/%//g'`;
     }
-    if($this->Data['ShowOnlinePlayers'] && $this->Data['OnlineStatus'] == "Online"){
-      //Grab last Online Players report
-      $OnlinePlayers = explode(", ",`tac {$this->Config['ConsoleLog']} | grep 'online players (' | head -n 1 | sed -e 's/.*://g' -e 's/^.//g' -e 's/.$//g'`);
-      $NewOnlinePlayers = array();
-      $PID = `pidof $(grep SERVER= {$this->Config['Manager']} | sed -e 's/.*=//g') | tr -d '\n'`;
-      //Grab all Player IP's connected to server during this uptime of server
-      $ConnectionList = `awk "/Connection accepted from/,/joined the galaxy/" /proc/"{$PID}"/fd/3 | grep 'accepted\|joined' | sed -e 's/.*> //g' -e 's/ joined.*//g' -e 's/.*from //g' -e 's/:.*//g'`;
-      $ConnectionList = explode(PHP_EOL, $ConnectionList);
+
+    if($this->Data['OnlineStatus'] == "Online"){
+      //if online get the players list
+      $OnlinePlayers = `tac {$this->Config['ServerLog']} | grep 'online players (' | head -n 1 | sed -e 's/.*://g' -e 's/^.//g'`;
+      $OnlinePlayers = explode(", ",$OnlinePlayers);
+      //if there are players online
 
       if(strlen($OnlinePlayers[0]) > 1){
-        //assign Online Players to IP address and connect with geoplugin to detect country status
-        foreach ($OnlinePlayers as $key => $value) {
-          $Name = str_replace("\n", '', $value);
-          //$TempName = quotemeta(str_replace("\n", '', $value));
-          //$IP = `echo "{$ConnectionList}" | grep -B1 -e "{$TempName}" | head -n1 | tr -d '\n'`;
-          foreach ($ConnectionList as $key => $value) {
-            if($Name == $value){
-              //error_log($Name.' - '.$ConnectionList[$key-1]);
-              $IP = $ConnectionList[$key-1];
+        //we have players do we want to list them?
+        if($this->Data['ShowOnlinePlayers']){
+          $NewOnlinePlayers = array();
+          //Grab all Player IP's connected to server during this uptime of server
+          $ConnectionList = `awk "/Connection accepted from/,/joined the galaxy/" {$this->Config['ServerLog']} | grep 'accepted\|joined' | sed -e 's/.*> //g' -e 's/ joined.*//g' -e 's/.*from //g' -e 's/:.*//g'`;
+          $ConnectionList = explode(PHP_EOL, $ConnectionList);
+          //assign Online Players to IP address and connect with geoplugin to detect country status
+          foreach ($OnlinePlayers as $key => $value) {
+            $Name = str_replace("\n", '', $value);
+            foreach ($ConnectionList as $key => $value) {
+              if($Name == $value){
+                //error_log($Name.' - '.$ConnectionList[$key-1]);
+                $IP = $ConnectionList[$key-1];
+              }
+            }
+            $NewOnlinePlayers[$Name]['IP'] = $IP;
+            $GEO = unserialize(file_get_contents('http://www.geoplugin.net/php.gp?ip='.$IP));
+            if($GEO['geoplugin_status'] == '404'){
+              $NewOnlinePlayers[$Name]['CountryCode'] = '';
+              $NewOnlinePlayers[$Name]['CountryName'] = '';
+            }else{
+              $NewOnlinePlayers[$Name]['CountryCode'] = 'flag flag-'.strtolower($GEO['geoplugin_countryCode']);
+              $NewOnlinePlayers[$Name]['CountryName'] = strtolower($GEO['geoplugin_countryName']);
             }
           }
-          $NewOnlinePlayers[$Name]['IP'] = $IP;
-          $GEO = unserialize(file_get_contents('http://www.geoplugin.net/php.gp?ip='.$IP));
-          if($GEO['geoplugin_status'] == '404'){
-            $NewOnlinePlayers[$Name]['CountryCode'] = '';
-            $NewOnlinePlayers[$Name]['CountryName'] = '';
-          }else{
-            $NewOnlinePlayers[$Name]['CountryCode'] = 'flag flag-'.strtolower($GEO['geoplugin_countryCode']);
-            $NewOnlinePlayers[$Name]['CountryName'] = strtolower($GEO['geoplugin_countryName']);
-          }
+          $this->Data['OnlinePlayers']  = $NewOnlinePlayers;
         }
-        $this->Data['OnlinePlayers']  = $NewOnlinePlayers;
+        //we have players do we want to show the count?
+        if($this->Config['ShowOnlinePlayerCount']){
+          $this->Data['MaxPlayers'] = $this->ManagerConfig['MAX_PLAYERS'];//`grep MAX {$this->Config['ManagerConfig']} | sed -e 's/.*=//g'`;
+          $this->Data['OnlinePlayerCount'] = sizeof($OnlinePlayers);//`netstat -tlunp 2> /dev/null | grep -iv ':270' | grep -i "[0-9]/Avorion" | wc -l | tr -d "[:space:]"`;
+        }
+      }else{
+        if($this->Config['ShowOnlinePlayerCount']){
+          $this->Data['MaxPlayers'] = $this->ManagerConfig['MAX_PLAYERS'];//`grep MAX {$this->Config['ManagerConfig']} | sed -e 's/.*=//g'`;
+          $this->Data['OnlinePlayerCount'] = 0;//`netstat -tlunp 2> /dev/null | grep -iv ':270' | grep -i "[0-9]/Avorion" | wc -l | tr -d "[:space:]"`;
+        }
+      }
+    }else{
+      if($this->Config['ShowOnlinePlayerCount']){
+        $this->Data['MaxPlayers'] = $this->ManagerConfig['MAX_PLAYERS'];//`grep MAX {$this->Config['ManagerConfig']} | sed -e 's/.*=//g'`;
+        $this->Data['OnlinePlayerCount'] = 0;//`netstat -tlunp 2> /dev/null | grep -iv ':270' | grep -i "[0-9]/Avorion" | wc -l | tr -d "[:space:]"`;
       }
     }
-    if($this->Config['ShowOnlinePlayerCount']){
-      $this->Data['MaxPlayers'] = $this->ManagerConfig['MAX_PLAYERS'];//`grep MAX {$this->Config['ManagerConfig']} | sed -e 's/.*=//g'`;
-      $this->Data['OnlinePlayerCount'] = `netstat -tlunp 2> /dev/null | grep -iv ':270' | grep -i "[0-9]/Avorion" | wc -l | tr -d "[:space:]"`;
-    }
+
+
     $this->Data['IPAddress'] = $this->ManagerConfig['IPAddress'];
     //Loads page
     $this->LoadView('Home');
@@ -708,13 +565,32 @@ class ViewController extends CommonController
       $this->Data['ServerLoad'] = $RefreshModel->GetCurrentServerLoad();
       $this->Data['IPAddress'] = $this->ManagerConfig['IPAddress'];
       $this->Data['GalaxyName'] = $this->ManagerConfig['GALAXY'];//`grep GALAXY {$this->Config['ManagerConfig']} | sed -e 's/.*=//g'`;
-      $this->Data['OnlineStatus'] = `if [ $(pidof $(grep SERVER= {$this->Config['Manager']} | sed -e 's/.*=//g')) > /dev/null ]; then echo 'Online'; else echo 'Offline'; fi`;
+      $ServerProcess =   $this->Data['GalaxyName'].'_Server';
+      $this->Data['OnlineStatus'] = $this->onlineStatus();
       $this->Data['ShowOnlinePlayerCount'] = $this->Config['ShowOnlinePlayerCount'];
       //if the config allows showing online player count
       if($this->Config['ShowOnlinePlayerCount']){
-        $this->Data['MaxPlayers'] = $this->ManagerConfig['MAX_PLAYERS'];//`grep MAX {$this->Config['ManagerConfig']} | sed -e 's/.*=//g'`;
-        $this->Data['OnlinePlayerCount'] = `netstat -tlunp 2> /dev/null | grep -iv ':270'|grep -i avorion|wc -l|tr -d "[:space:]"`;
+        if($this->Data['OnlineStatus'] == "Online"){
+          //if online get the players list
+          $OnlinePlayers = `tac {$this->Config['ConsoleLog']} | grep 'online players (' | head -n 1 | sed -e 's/.*://g' -e 's/^.//g' -e 's/.$//g'`;
+          $OnlinePlayers = explode(", ",$OnlinePlayers);
+          //if there are players online
+          if(strlen($OnlinePlayers[0]) > 1){
+            //we have players do we want to show the count?
+            if($this->Config['ShowOnlinePlayerCount']){
+              $this->Data['MaxPlayers'] = $this->ManagerConfig['MAX_PLAYERS'];//`grep MAX {$this->Config['ManagerConfig']} | sed -e 's/.*=//g'`;
+              $this->Data['OnlinePlayerCount'] = sizeof($OnlinePlayers);//`netstat -tlunp 2> /dev/null | grep -iv ':270' | grep -i "[0-9]/Avorion" | wc -l | tr -d "[:space:]"`;
+            }
+          }
+        }else{
+          if($this->Config['ShowOnlinePlayerCount']){
+            $this->Data['MaxPlayers'] = $this->ManagerConfig['MAX_PLAYERS'];//`grep MAX {$this->Config['ManagerConfig']} | sed -e 's/.*=//g'`;
+            $this->Data['OnlinePlayerCount'] = 0;//`netstat -tlunp 2> /dev/null | grep -iv ':270' | grep -i "[0-9]/Avorion" | wc -l | tr -d "[:space:]"`;
+          }
+        }
       }
+
+
       //display rss page
       $this->LoadView('rss');
     }
@@ -764,37 +640,55 @@ class ViewController extends CommonController
 
     $Sectors = explode('########################################################', strstr($ProfileParser->ParsedData,'########################################################'));
     $Galaxy = [];
+    function rootSort($a,$b){
+      if ($a['root'] == $b['root']) {
+        return 0;
+      }
+      return ($a['root'] > $b['root']) ? -1 : 1;
+    };
     foreach ($Sectors as $key => $sector) {
       $Original = $sector;
       $coords = $this->getBetweenChar($Original,'(',')');
       if($coords != '0'){
-        $Galaxy[$SectorCoords]['coords'] = $coords;
-        $Galaxy[$SectorCoords]['players'] = $this->getBetweenChar($Original,') (',' players');
-        $Galaxy[$SectorCoords]['entities'] = $this->getBetweenChar($Original,'Entities: ',',');
-        $Galaxy[$SectorCoords]['awake'] = $this->getBetweenChar($Original,', awake: ',PHP_EOL);
-        $Galaxy[$SectorCoords]['none'] = $this->getBetweenChar($Original,'None: ',PHP_EOL);
-        $Galaxy[$SectorCoords]['ship'] = $this->getBetweenChar($Original,'Ship: ',PHP_EOL);
-        $Galaxy[$SectorCoords]['turret'] = $this->getBetweenChar($Original,'Turet: ',PHP_EOL);
-        $Galaxy[$SectorCoords]['asteroid'] = $this->getBetweenChar($Original,'Asteroid: ',PHP_EOL);
-        $Galaxy[$SectorCoords]['wreckage'] = $this->getBetweenChar($Original,'Wreckage: ',PHP_EOL);
-        $Galaxy[$SectorCoords]['loot'] = $this->getBetweenChar($Original,'Loot: ',PHP_EOL);
-        $Galaxy[$SectorCoords]['wormhole'] = $this->getBetweenChar($Original,'Wormhole: ',PHP_EOL);
-        $Galaxy[$SectorCoords]['fighter'] = $this->getBetweenChar($Original,'Fighter: ',PHP_EOL);
-        $Galaxy[$SectorCoords]['station'] = $this->getBetweenChar($Original,'Station: ',PHP_EOL);
-
-
-        foreach ($Galaxy[$SectorCoords] as $key3 => $value3) {
-          echo $key3.':  '.$value3.'</br>';
-        }
-          echo '</br>';
-        echo preg_match('Profiling.*Last ## long', $sector );
+        $Galaxy[$coords]['coords'] = preg_replace('/:/', ' : ', $coords);
+        $Galaxy[$coords]['players'] = $this->getBetweenChar($Original,') (',' players');
+        $Galaxy[$coords]['entities'] = $this->getBetweenChar($Original,'Entities: ',',');
+        $Galaxy[$coords]['awake'] = $this->getBetweenChar($Original,', awake: ',PHP_EOL);
+        $Galaxy[$coords]['none'] = $this->getBetweenChar($Original,'None: ',PHP_EOL);
+        $Galaxy[$coords]['ship'] = $this->getBetweenChar($Original,'Ship: ',PHP_EOL);
+        $Galaxy[$coords]['turret'] = $this->getBetweenChar($Original,'Turet: ',PHP_EOL);
+        $Galaxy[$coords]['asteroid'] = $this->getBetweenChar($Original,'Asteroid: ',PHP_EOL);
+        $Galaxy[$coords]['wreckage'] = $this->getBetweenChar($Original,'Wreckage: ',PHP_EOL);
+        $Galaxy[$coords]['loot'] = $this->getBetweenChar($Original,'Loot: ',PHP_EOL);
+        $Galaxy[$coords]['wormhole'] = $this->getBetweenChar($Original,'Wormhole: ',PHP_EOL);
+        $Galaxy[$coords]['fighter'] = $this->getBetweenChar($Original,'Fighter: ',PHP_EOL);
+        $Galaxy[$coords]['station'] = $this->getBetweenChar($Original,'Station: ',PHP_EOL);
+        $Galaxy[$coords]['rootArrays'] = array();
+        $Root = false;
+        $RootIndex = 0;
         foreach (explode(PHP_EOL,$Original) as $key2 => $value2) {
-          echo $value2.'</br>';
+          //if root assign new array
+          if(preg_match('/(root:)/', $value2)){
+            $Galaxy[$coords]['rootArrays'][$RootIndex]['root']=$this->getBetweenChar($value2,': ',' ms');
+            $Root = true;
+          }elseif($Root && $value2 != ''){
+            $Galaxy[$coords]['rootArrays'][$RootIndex][]=$value2;
+          }elseif($Root){
+            $RootIndex += 1;
+            $Root = false;
+          }
         }
-        echo '</br>'.'</br>'.'</br>';
+        usort($Galaxy[$coords]['rootArrays'],'rootSort');
       }
     }
-
+    function sortAll($a,$b){
+      if ($a['rootArrays'][0]['root'] == $b['rootArrays'][0]['root']) {
+        return 0;
+      }
+      return ($a['rootArrays'][0]['root'] > $b['rootArrays'][0]['root']) ? -1 : 1;
+    };
+    usort($Galaxy,'sortAll');
+    $this->Data['ParsedData'] = $Galaxy;
     //Load the page
     $this->LoadView('ProfileParser');
   }

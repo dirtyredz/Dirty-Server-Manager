@@ -711,9 +711,10 @@ class RefreshModel extends CommonController
   {
     //Theres a security risk I need to make sure i check for.
     //Send the message through /send manager
-    shell_exec($this->Config['Manager'].' send -o PHP "'.addslashes($Message).'"');
+    shell_exec($this->Config['Manager'].' send "'.addslashes($Message).'" -o PHP');
     //Log the message
     $this->LogMessage('Console command entered: '.$Message);
+    return true;
   }
 
   /**
@@ -754,6 +755,18 @@ class RefreshModel extends CommonController
   }
 
   /**
+   * Grabs the entire Server Log from Server.log, replaced <> special charectors and adds </br> for each line
+   * @method GetServerData
+   * @return string
+   */
+  public function GetServerData()
+  {
+    //Potentall config option to only grab the last x lines instead of everything
+    $Server = `tail -n1000 {$this->Config['ServerLog']} | sed -e 's/</\&lt;/g' -e 's/>/\&gt;/g' -e 's/$/<br\/>/g'`;
+    return $Server;
+  }
+
+  /**
    * Returns the last 24 hours worth of Chat log,
    * replaced <> special charectors and adds </br> for each line
    * also wraps every line into a span, so we can style each line seperatly
@@ -763,8 +776,10 @@ class RefreshModel extends CommonController
   public function GetChatLog()
   {
     //Potentall config option to only grab the last x lines instead of everything
-    $PID = `pidof $(grep SERVER= {$this->Config['Manager']} | sed -e 's/.*=//g') | tr -d '\n'`;
-    $ChatLog = `grep -e '^....-..-.. ..-..-..| <..*>' -e '^....-..-.. ..-..-..| <> \[.*\]' /proc/"{$PID}"/fd/3 | tac | grep -v '| <Rusty>' | sed -e 's/</\&lt;/g' -e 's/>/\&gt;/g'  -e 's/^/<span>/g' -e 's/$/<\/span>/g' -e 's/<span>....-..-.. /<span>/g'`;
+    $ChatLog = `grep -e '^....-..-.. ..-..-..| <..*>' -e '^....-..-.. ..-..-..| <> \[.*\]' {$this->Config['ServerLog']} | tac |  sed -e 's/</\&lt;/g' -e 's/>/\&gt;/g'  -e 's/^/<span>/g' -e 's/$/<\/span>/g' -e 's/<span>....-..-.. /<span>/g'`;
+
+    //<Rusty> Nesatorix joined the galaxy
+    //<> Restarting server in 17 minutes
     $ChatLog .= `grep '^<.*>' $(find {$this->Config['LogsDir']}/*_playerchat.log -mtime -1 ) | tac | grep -v '^<Rusty>' | sed -e 's/.*</\&lt;/g' -e 's/>/\&gt;/g'  -e 's/^/<span>/g' -e 's/$/<\/span>/g'`;
     return $ChatLog;
   }

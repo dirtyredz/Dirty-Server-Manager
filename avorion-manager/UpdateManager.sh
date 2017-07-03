@@ -11,42 +11,44 @@ if [ "${CurrentVersion}" != "${VERSION}" ]; then
   echo Installing $VERSION
 
   if [ -f manager-config.ini ]; then
-    cp manager-config.ini manager-config.ini.old
     cp manager-config.ini manager-config.ini.backup
   fi
   if [ -f avorion-manager/PHPConfig.ini ]; then
-    cp avorion-manager/PHPConfig.ini avorion-manager/PHPConfig.ini.old
     cp avorion-manager/PHPConfig.ini avorion-manager/PHPConfig.ini.backup
   fi
 
   tar -xvf UpdateDirtyServerManager.tar.gz --exclude='Database.php' --exclude='avorion-manager/HighScore.php' --exclude='avorion-manager/PlayerData.php' --exclude='avorion-manager/SectorData.php' --exclude='avorion-manager/logs'
 
-  if [ -f manager-config.ini.old ]; then
-    sed -i 's/^;.*//g' manager-config.ini.old
-    input="manager-config.ini.old"
-    while IFS= read -r var
-    do
-      if [ ! -z "$var" ]; then
-        OldLineConfigName=$(echo $var | sed -e '0,/=.*/s///')
-        replaceEscaped=$(sed 's/[&/\]/\\&/g' <<<"$var")
-        sed -i "s~${OldLineConfigName}.*~${replaceEscaped}~" manager-config.ini
-      fi
-    done < "$input"
-    rm manager-config.ini.old
+  if [ -f manager-config.ini.backup ]; then
+    diff --unchanged-line-format='%L' --old-line-format='%L' --new-line-format='+%L' manager-config.ini.backup manager-config.ini > manager-config.ini.diff
+    grep ^+ manager-config.ini.diff | while read -r line ; do
+        Addition=$(echo $line | sed -e 's/^+//' -e 's/=.*//g')
+        echo $Addition
+        if grep -q "^$Addition" manager-config.ini.diff; then
+            sed -i "/+$Addition.*/d" manager-config.ini.diff
+       else
+            Remove=$(echo $line | sed 's/^.//g')
+            sed -i "s/^$line/$Remove/g" manager-config.ini.diff
+       fi
+    done
+    rm manager-config.ini
+    mv manager-config.ini.diff manager-config.ini
   fi
 
-  if [ -f avorion-manager/PHPConfig.ini.old ]; then
-    sed -i 's/^;.*//g' avorion-manager/PHPConfig.ini.old
-    input="avorion-manager/PHPConfig.ini.old"
-    while IFS= read -r var
-    do
-      if [ ! -z "$var" ]; then
-        OldLineConfigName=$(echo $var | sed -e '0,/=.*/s///')
-        replaceEscaped=$(sed 's/[&/\]/\\&/g' <<<"$var")
-        sed -i "s~${OldLineConfigName}=.*~${replaceEscaped}~" avorion-manager/PHPConfig.ini
-      fi
-    done < "$input"
-    rm avorion-manager/PHPConfig.ini.old
+  if [ -f avorion-manager/PHPConfig.ini.backup ]; then
+    diff --unchanged-line-format='%L' --old-line-format='%L' --new-line-format='+%L' PHPConfig.ini.backup PHPConfig.ini > PHPConfig.ini.diff
+    grep ^+ PHPConfig.ini.diff | while read -r line ; do
+        Addition=$(echo $line | sed -e 's/^+//' -e 's/=.*//g')
+        echo $Addition
+        if grep -q "^$Addition" PHPConfig.ini.diff; then
+            sed -i "/+$Addition.*/d" PHPConfig.ini.diff
+       else
+            Remove=$(echo $line | sed 's/^.//g')
+            sed -i "s/^$line/$Remove/g" PHPConfig.ini.diff
+       fi
+    done
+    rm PHPConfig.ini
+    mv PHPConfig.ini.diff PHPConfig.ini
   fi
 
   rm UpdateDirtyServerManager.tar.gz

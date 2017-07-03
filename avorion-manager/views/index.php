@@ -73,6 +73,10 @@
             <title>Flag</title>
             <path d="M29.714 18.661v-11q-3.018 1.625-5.464 1.625-1.464 0-2.589-0.571-1.786-0.875-3.286-1.366t-3.179-0.491q-3.089 0-7.196 2.268v10.696q4.375-2.018 7.732-2.018 0.982 0 1.848 0.134t1.75 0.464 1.375 0.554 1.473 0.705l0.5 0.25q0.786 0.393 1.804 0.393 2.143 0 5.232-1.643zM5.714 4.571q0 0.625-0.313 1.143t-0.83 0.821v22.607q0 0.25-0.161 0.411t-0.411 0.161h-1.143q-0.25 0-0.411-0.161t-0.161-0.411v-22.607q-0.518-0.304-0.83-0.821t-0.313-1.143q0-0.946 0.67-1.616t1.616-0.67 1.616 0.67 0.67 1.616zM32 5.714v13.625q0 0.696-0.625 1.018-0.179 0.089-0.304 0.161-3.893 2.071-6.589 2.071-1.571 0-2.821-0.625l-0.5-0.25q-1.143-0.589-1.768-0.857t-1.625-0.518-2.036-0.25q-1.821 0-4.205 0.786t-4.080 1.821q-0.268 0.161-0.589 0.161-0.286 0-0.571-0.143-0.571-0.339-0.571-1v-13.25q0-0.625 0.554-0.982 0.625-0.375 1.402-0.759t2.036-0.929 2.723-0.884 2.768-0.339q2 0 3.732 0.554t3.732 1.536q0.679 0.339 1.589 0.339 2.179 0 5.536-2 0.393-0.214 0.554-0.304 0.554-0.286 1.107 0.036 0.554 0.357 0.554 0.982z"></path>
             </symbol>
+            <symbol id="icon-document-text" viewBox="0 0 32 32">
+            <title>document-text</title>
+            <path d="M19.5 3h0.5l6 7v18.009c0 1.093-0.894 1.991-1.997 1.991h-15.005c-1.107 0-1.997-0.899-1.997-2.007v-22.985c0-1.109 0.897-2.007 2.003-2.007h10.497zM19 4h-10.004c-0.55 0-0.996 0.455-0.996 0.995v23.009c0 0.55 0.455 0.995 1 0.995h15c0.552 0 1-0.445 1-0.993v-17.007h-4.002c-1.103 0-1.998-0.887-1.998-2.006v-4.994zM20 4.5v4.491c0 0.557 0.451 1.009 0.997 1.009h3.703l-4.7-5.5zM10 10v1h7v-1h-7zM10 7v1h7v-1h-7zM10 13v1h13v-1h-13zM10 16v1h13v-1h-13zM10 19v1h13v-1h-13zM10 22v1h13v-1h-13zM10 25v1h13v-1h-13z"></path>
+            </symbol>
           </defs>
         </svg>
         <div id="Wrapper">
@@ -107,7 +111,7 @@
                 <li id="AccountBtn" class="Notactive <?php echo $Data['LoggedInClass']; ?>"><svg class="icon"><use xlink:href="#icon-user"></use></svg>ACCOUNT</li>
                 <li id="UserManagmentBtn" class="Notactive <?php echo $Data['UserManagmentAccess']; ?>"><svg class="icon"><use xlink:href="#icon-users"></use></svg>USER MNGT</li>
                 <li id="SpaceInvadersBtn" style="font-size:90%;" class="NotActive <?php echo $Data['AccessSpaceInvadersPage']; ?>"><svg class="icon icon-spaceinvaders"><use xlink:href="#icon-spaceinvaders"></use></svg>SPACE INVADERS</li>
-                <li id="ProfileParserBtn" style="font-size:90%;" class="NotActive <?php echo $Data['AccessProfileParserPage']; ?>"><svg class="icon icon-spaceinvaders"><use xlink:href="#icon-spaceinvaders"></use></svg>PROFILE PARSER</li>
+                <li id="ProfileParserBtn" style="font-size:90%;" class="NotActive <?php echo $Data['AccessProfileParserPage']; ?>"><svg class="icon icon-document-text"><use xlink:href="#icon-document-text"></use></svg>PROFILE PARSER</li>
                 <?php
                     if($Data['LoggedIn']) {
                         ?>

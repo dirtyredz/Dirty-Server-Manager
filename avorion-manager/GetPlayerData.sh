@@ -171,11 +171,11 @@ do
     PlayTime=$(xxd -ps -l 4 -seek "$((${StartingPosition} + 17 ))" "${file}" )
     echo  "array(\"ID\" => \"$ID\",\"Name\" => \"$Name\",\"Alliance\" => \"$Alliance\",\"LastSeen\" => \"$LastSeen\",\"Group\" => \"$Group\",\"SteamID\" => \"$SteamID\",\"PlayTime\" => \"$PlayTime\",\"Money\" => \"$Money\",\"Iron\" => \"$Iron\",\"Titanium\" => \"$Titanium\",\"Naonite\" => \"$Naonite\",\"Trinium\" => \"$Trinium\",\"Xanion\" => \"$Xanion\",\"Ogonite\" => \"$Ogonite\",\"Avorion\" => \"$Avorion\",\"MailCount\" => \"$MailCount\",\"MailMoney\" => $MailMoney,\"MailIron\" => $MailIron,\"MailTitanium\" => $MailTitanium,\"MailNaonite\" => $MailNaonite,\"MailTrinium\" => $MailTrinium,\"MailXanion\" => $MailXanion,\"MailOgonite\" => $MailOgonite,\"MailAvorion\" => $MailAvorion)," >> $PlayerDataTmp;
   fi
+  [ -e "$file" ] && rm $file
 done
 echo ");" >> $PlayerDataTmp;
 [ -e ${PWD}/avorion-manager/PlayerData.php ] && rm ${PWD}/avorion-manager/PlayerData.php
 cp $PlayerDataTmp ${PWD}/avorion-manager/PlayerData.php
 rm $PlayerDataTmp
-rm $file
 echo -e -n $(date +"%F %H-%M-00| ") >> ${PWD}/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_manager.log
 echo -e '[Manager]: Completed GetPlayerData()' >> ${PWD}/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_manager.log

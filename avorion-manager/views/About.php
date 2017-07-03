@@ -39,6 +39,35 @@ Changed Alliance Icon</br>
 Improved zlib decompression script</br>
 Added Scripts memory graphs</br>
 </br>
+<h4>1.1.6</h4>
+  Moved player count/list to server log</br>
+  Added cronjob to refresh server log every 30seconds</br>
+  Moved home chat to server log</br>
+  Added toggle to console page to switch between console.log and server.log</br>
+  Moved ServerINI and ManagerConfig Descriptions to ServerConfigController</br>
+  `./manager stop` now uses server log instead of console log</br>
+  Added server log location option in PHPConfig</br>
+  Updated UpdateManager.sh to not reset or delete previous options in config file_put_contents</br>
+  Updated ApacheInstaller to reflect IP address</br>
+  Added Profile Parser page, witch parses through profiling_stats.txt</br>
+  Added mpm_itk support to ApacheInstall</br>
+  </br>
+<h4>1.1.5</h4>
+  Fixed HighScore.php being erased on update</br>
+  Added commands enablerestart and disablerestart</br>
+  Added manager options -d, -o, -b, -v</br>
+  Added Mail parsing to player parser</br>
+  Added Mail player page net worth to net worth column</br>
+  Added Mail resources/money to player page</br>
+  Added file detection to zlib decompressor</br>
+  Fixed Session not renewing when the browser is left open for a long period of time</br>
+  Changed display of graphs to include small definitions and better font styles</br>
+  Changed font styles for configuration page</br>
+  Updated help output of manager</br>
+  Changed Alliance Icon</br>
+  Improved zlib decompression script</br>
+  Added Scripts memory graphs</br>
+  </br>
 <h4>1.1.4</h4>
   Fixed player flags</br>
   Replaced grep command with php for loop in player list of home page</br>
