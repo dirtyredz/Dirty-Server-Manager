@@ -29,6 +29,7 @@
   Updated ApacheInstaller to ask for user/group, prior was setting it to root. witch would make the site inaccessible</br>
   Added option to manager-config to keep backups of the player/alliance data. OFF by default.</br>
   Added dropdown for viewing backups of Player data.</br>
+  Fixed (i hope) UpdateManager script</br>
   </br>
 <h4>1.1.6</h4>
   Moved player count/list to server log</br>

@@ -315,48 +315,81 @@ class ServerConfigController extends CommonController
 
   /** @var array ManagerConfigOptions Contains all the deffinitions and input type info */
   const ManagerConfigOptions = array(
-    array('name' => 'MAX_PLAYERS',
+    'MAX_PLAYERS' => array(
           'Definition' => 'Max number of players on the server at once. Used here so the manager has easy access to this value.',
-          'Type' => 'input'),
-    array('name' => 'GALAXY',
+          'Type' => 'number',
+          'Range' => array('min'=>1,'max'=>9999)),
+    'GALAXY' => array(
           'Definition' => 'Name of the Galaxy, needed here aswell so the manager and the web interface knows which galaxy directory were working with.',
-          'Type' => 'input'),
-    array('name' => 'PARAMS',
+          'Type' => 'text'),
+    'PARAMS' => array(
           'Definition' => 'The parameters used to start the server.',
-          'Type' => 'input'),
-    array('name' => 'PORT',
+          'Type' => 'text'),
+    'PORT' => array(
           'Definition' => 'The port the server listens to.',
-          'Type' => 'input'),
-    array('name' => 'LOG_ROTATION',
+          'Type' => 'text'),
+    'LOG_ROTATION' => array(
           'Definition' => 'The number of days to maintain manager logs.',
-          'Type' => 'input'),
-    array('name' => 'AutoRestart',
+          'Type' => 'number',
+          'Range' => array('min'=>1,'max'=>10)),
+    'AutoRestart' => array(
           'Definition' => 'If enabled will attempt to restart the server if a crash is detected.',
           'Type' => 'select',
           'Values' => array('True'=>'true','False'=>'false')),
-    array('name' => 'DailyRestart',
+    'DailyRestart' => array(
           'Definition' => 'If enabled will restart the server twice a day at midnight and noon server time, Time configurations to come soon.',
           'Type' => 'select',
           'Values' => array('True'=>'true','False'=>'false')),
-    array('name' => 'BETA',
+    'BETA' => array(
           'Definition' => 'If enabled will install/update the server with the Beta version of the game.',
           'Type' => 'select',
           'Values' => array('True'=>'true','False'=>'false')),
-    array('name' => 'PHPPORT',
+    'WEBPORT' => array(
           'Definition' => 'The port the web interface will listen to.',
-          'Type' => 'input'),
-    array('name' => 'IPAddress',
+          'Type' => 'text'),
+    'IPAddress' => array(
           'Definition' => 'IP Address to be used for the web interface.',
-          'Type' => 'input'),
-    array('name' => 'GetSectorDataInterval',
+          'Type' => 'text'),
+    'GetSectorDataInterval' => array(
           'Definition' => 'String added to the Hour section of the cronjob for the sector parser.',
-          'Type' => 'input'),
-    array('name' => 'GetPlayerDataInterval',
+          'Type' => 'text'),
+    'GetPlayerDataInterval' => array(
           'Definition' => 'String added to the Minute section of the cronjob for the player parser.',
-          'Type' => 'input'),
-    array('name' => 'GetAllianceDataInterval',
+          'Type' => 'text'),
+    'GetAllianceDataInterval' => array(
           'Definition' => 'String added to the Minute section of the cronjob for the alliance parser.',
-          'Type' => 'input'),
+          'Type' => 'text'),
+    'CustomCronjob_1' => array(
+          'Definition' => 'Custom Cronjob to be started/stopped with the server.',
+          'Type' => 'text'),
+    'CustomCronjob_2' => array(
+          'Definition' => 'Custom Cronjob to be started/stopped with the server.',
+          'Type' => 'text'),
+    'CustomCronjob_3' => array(
+          'Definition' => 'Custom Cronjob to be started/stopped with the server.',
+          'Type' => 'text'),
+    'CustomCronjob_4' => array(
+          'Definition' => 'Custom Cronjob to be started/stopped with the server.',
+          'Type' => 'text'),
+    'CustomCronjob_5' => array(
+          'Definition' => 'Custom Cronjob to be started/stopped with the server.',
+          'Type' => 'text'),
+    'KeepDataFiles' => array(
+          'Definition' => 'Optional feature to store the parsed data files into a seperate direcctory, to later be reviewed by the web interface. (This is not a players.dat backup feature)',
+          'Type' => 'select',
+          'Values' => array('True'=>'true','False'=>'false')),
+    'KeepDataFilesDays' => array(
+          'Definition' => 'How many days of backed up Parsed data to keep',
+          'Type' => 'number',
+          'Range' => array('min'=>1,'max'=>10)),
+    'KeepDataFilesPlayers' => array(
+          'Definition' => 'To back up the parsed player file. KeepDataFiles - needs to be true',
+          'Type' => 'select',
+          'Values' => array('True'=>'true','False'=>'false')),
+    'KeepDataFilesAlliances' => array(
+          'Definition' => 'To back up the parsed alliance file. KeepDataFiles - needs to be true',
+          'Type' => 'select',
+          'Values' => array('True'=>'true','False'=>'false')),
   );
   /**
    * Settup class and requires ConfigParser.php

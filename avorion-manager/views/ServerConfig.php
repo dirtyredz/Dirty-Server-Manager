@@ -163,16 +163,16 @@
           <div class="ConfigOption">
             <span><?php echo $key; ?></span>
             <br/>
-            <span class="Definition"><?php echo $Data['ManagerConfigDetails'][$Count]['Definition']; ?></span>
+            <span class="Definition"><?php echo $Data['ManagerConfigDetails'][$key]['Definition']; ?></span>
           </div>
           <div class="ConfigInput">
             <?php
               if($Data['ChangeManagerConfigINI']){
-                if($Data['ManagerConfigDetails'][$Count]['Type'] == 'input'){
+                if($Data['ManagerConfigDetails'][$key]['Type'] == 'text'){
                   echo '<input class="" type="text" name="'.$key.'" value="'.$value.'"></input>';
-                }elseif($Data['ManagerConfigDetails'][$Count]['Type'] == 'select'){
-                  echo '<select>';
-                    foreach ($Data['ManagerConfigDetails'][$Count]['Values'] as $SelectKey => $SelectValue) {
+                }elseif($Data['ManagerConfigDetails'][$key]['Type'] == 'select'){
+                  echo '<select name="'.$key.'">';
+                    foreach ($Data['ManagerConfigDetails'][$key]['Values'] as $SelectKey => $SelectValue) {
                       if($value == $SelectValue){
                         echo '<option value="'.$SelectValue.'" selected>'.$SelectKey.'</option>';
                       }else{
@@ -180,6 +180,8 @@
                       }
                     }
                   echo '</select>';
+                }elseif($Data['ManagerConfigDetails'][$key]['Type'] == 'number'){
+                  echo '<input type="number" name="'.$key.'" min="'.$Data['ManagerConfigDetails'][$key]['Range']['min'].'" max="'.$Data['ManagerConfigDetails'][$key]['Range']['max'].'" value="'.$value.'">';
                 }
               }
               echo '&nbsp;&nbsp;&nbsp;'.$value;
