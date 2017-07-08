@@ -30,6 +30,7 @@
   Added option to manager-config to keep backups of the player/alliance data. OFF by default.</br>
   Added dropdown for viewing backups of Player data.</br>
   Fixed (i hope) UpdateManager script</br>
+  optimized manager-config tab on server config page</br>
   </br>
 <h4>1.1.6</h4>
   Moved player count/list to server log</br>
