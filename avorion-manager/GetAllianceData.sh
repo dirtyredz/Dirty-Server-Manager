@@ -8,7 +8,12 @@ echo -e '[Manager]: Starting GetAllianceData()' >> ${PWD}/avorion-manager/logs/$
 AllianceDataTmp=${PWD}/avorion-manager/AllianceData.tmp
 DIR="$1"
 #COUNT=0
-GALAXYNAME=$(grep GALAXY ${PWD}/manager-config.ini | sed -e 's/.*=//g' -e 's/\r//g')
+source <(grep = ${PWD}/manager-config.ini)
+GALAXYNAME=`echo ${GALAXY} | sed -e 's/\r//g'`
+KeepDataFiles=`echo ${KeepDataFiles} | sed -e 's/\r//g'`
+KeepDataFilesDays=`echo ${KeepDataFilesDays} | sed -e 's/\r//g'`
+KeepDataFilesAlliances=`echo ${KeepDataFilesAlliances} | sed -e 's/\r//g'`
+
 echo "<?php" > $AllianceDataTmp;
 echo "\$AllianceData = array(" >> $AllianceDataTmp;
 for i in {1..5000}
@@ -50,6 +55,17 @@ echo ");" >> $AllianceDataTmp;
 [ -e ${PWD}/avorion-manager/AllianceData.php ] && rm ${PWD}/avorion-manager/AllianceData.php
 cp $AllianceDataTmp ${PWD}/avorion-manager/AllianceData.php
 rm $AllianceDataTmp
+
+if [ "${KeepDataFiles}" = true ]; then
+  [ ! -e "${PWD}/avorion-manager/databackups" ] && mkdir "${PWD}/avorion-manager/databackups"
+  if [ "${KeepDataFilesAlliances}" = true ]; then
+    [ ! -e "${PWD}/avorion-manager/databackups/alliances" ] && mkdir "${PWD}/avorion-manager/databackups/alliances"
+    echo -e -n $(date +"%F %H-%M-00| ") >> ${PWD}/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_manager.log
+    echo -e '[Manager]: Storing AllianceData' >> ${PWD}/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_manager.log
+    cp ${PWD}/avorion-manager/AllianceData.php ${PWD}/avorion-manager/databackups/alliances/AllianceData_$(/bin/date +\%d-\%m-\%Y_\%H-\%M-00).php
+    find ${PWD}/avorion-manager/databackups/alliances/AllianceData_* -mtime +${KeepDataFilesDays} -type f -delete 2> /dev/null
+  fi
+fi
 
 echo -e -n $(date +"%F %H-%M-00| ") >> ${PWD}/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_manager.log
 echo -e '[Manager]: Completed GetAllianceData()' >> ${PWD}/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_manager.log

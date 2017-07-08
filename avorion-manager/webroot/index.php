@@ -54,11 +54,19 @@ if (preg_match('/\.(?:png|jpg|jpeg|gif|css|js)$/', $uri_parts['path'])) {
 
     if($uri_parts['path'] == '/View'){
       include __DIR__ .'/../core/ViewController.php';
+      $Argument = null;
+      if(isset($_POST['arg'])){
+        $Argument = htmlspecialchars($_POST['arg']);
+      }
       if(isset($_POST['view'])){
         $View = htmlspecialchars($_POST['view']);
         $ViewController = new ViewController;
         if(method_exists($ViewController,$View)){
-          $ViewController->$View();
+          if($Argument){
+            $ViewController->$View($Argument);
+          }else{
+            $ViewController->$View();
+          }
           return true;
         }
       }else{

@@ -23,6 +23,26 @@
 <br/>
 <br/>
 <h3>CHANGE LOG:</h3>
+<h4>1.1.7</h4>
+  Added custom cronjob config options to manager-config.ini</br>
+  removed old not working restart announcment and changed cronjob restart command to announce every 1minute for 15 minutes</br>
+  Updated ApacheInstaller to ask for user/group, prior was setting it to root. witch would make the site inaccessible</br>
+  Added option to manager-config to keep backups of the player/alliance data. OFF by default.</br>
+  Added dropdown for viewing backups of Player data.</br>
+  </br>
+<h4>1.1.6</h4>
+  Moved player count/list to server log</br>
+  Added cronjob to refresh server log every 30seconds</br>
+  Moved home chat to server log</br>
+  Added toggle to console page to switch between console.log and server.log</br>
+  Moved ServerINI and ManagerConfig Descriptions to ServerConfigController</br>
+  `./manager stop` now uses server log instead of console log</br>
+  Added server log location option in PHPConfig</br>
+  Updated UpdateManager.sh to not reset or delete previous options in config file_put_contents</br>
+  Updated ApacheInstaller to reflect IP address</br>
+  Added Profile Parser page, witch parses through profiling_stats.txt</br>
+  Added mpm_itk support to ApacheInstall</br>
+  </br>
 <h4>1.1.5</h4>
 Fixed HighScore.php being erased on update</br>
 Added commands enablerestart and disablerestart</br>

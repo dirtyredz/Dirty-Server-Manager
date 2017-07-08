@@ -8,7 +8,12 @@ echo -e '[Manager]: Starting GetPlayerData()' >> ${PWD}/avorion-manager/logs/$(/
 PlayerDataTmp=${PWD}/avorion-manager/PlayerData.tmp
 DIR="$1"
 #COUNT=0
-GALAXYNAME=$(grep GALAXY ${PWD}/manager-config.ini | sed -e 's/.*=//g' -e 's/\r//g')
+source <(grep = ${PWD}/manager-config.ini)
+GALAXYNAME=`echo ${GALAXY} | sed -e 's/\r//g'`
+KeepDataFiles=`echo ${KeepDataFiles} | sed -e 's/\r//g'`
+KeepDataFilesDays=`echo ${KeepDataFilesDays} | sed -e 's/\r//g'`
+KeepDataFilesPlayers=`echo ${KeepDataFilesPlayers} | sed -e 's/\r//g'`
+
 echo "<?php" > $PlayerDataTmp;
 echo "\$PlayerData = array(" >> $PlayerDataTmp;
 for i in {1..10000}
@@ -26,7 +31,7 @@ do
   StartingPositionName=$(grep -b -a -o -P 'name' "${file}" | sed 's/:.*//' | head -n1 | awk '{SUM = $1 + 13 } END {print SUM}')
   if [ "${StartingPositionName}" ]; then
     ID=$(echo $OriginalFile | sed -e 's/.*_//g' -e 's/.dat.*//g')
-    Name=$(xxd -ps -l 50 -seek ${StartingPositionName} "${file}" | xxd -r -p | head -n1 )
+    Name=$(xxd -ps -l 50 -seek ${StartingPositionName} "${file}" | xxd -r -p | head -n1 | sed -e 's/\$/\\$/g' )
     Group=$(avorion-manager/XMLParser.sh "${Name}")
     LastSeenConsole=$(grep -m 1 -e "${Name} joined" console.log)
     LastSeen='Unkown'
@@ -174,8 +179,21 @@ do
   [ -e "$file" ] && rm $file
 done
 echo ");" >> $PlayerDataTmp;
+
 [ -e ${PWD}/avorion-manager/PlayerData.php ] && rm ${PWD}/avorion-manager/PlayerData.php
 cp $PlayerDataTmp ${PWD}/avorion-manager/PlayerData.php
 rm $PlayerDataTmp
+
+if [ "${KeepDataFiles}" = true ]; then
+  [ ! -e "${PWD}/avorion-manager/databackups" ] && mkdir "${PWD}/avorion-manager/databackups"
+  if [ "${KeepDataFilesPlayers}" = true ]; then
+    [ ! -e "${PWD}/avorion-manager/databackups/players" ] && mkdir "${PWD}/avorion-manager/databackups/players"
+    echo -e -n $(date +"%F %H-%M-00| ") >> ${PWD}/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_manager.log
+    echo -e '[Manager]: Storing PlayerData' >> ${PWD}/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_manager.log
+    cp ${PWD}/avorion-manager/PlayerData.php ${PWD}/avorion-manager/databackups/players/PlayerData_$(/bin/date +\%d-\%m-\%Y_\%H-\%M-00).php
+    find ${PWD}/avorion-manager/databackups/players/PlayerData_* -mtime +${KeepDataFilesDays} -type f -delete 2> /dev/null
+  fi
+fi
+
 echo -e -n $(date +"%F %H-%M-00| ") >> ${PWD}/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_manager.log
 echo -e '[Manager]: Completed GetPlayerData()' >> ${PWD}/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_manager.log

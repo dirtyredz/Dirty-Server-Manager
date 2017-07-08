@@ -501,8 +501,44 @@ class ViewController extends CommonController
    * @method Players
    * @return void
    */
-  public function Players()
+  public function Players($PHPFile = null)
   {
+    if(is_dir(__DIR__ ."/../databackups/players")){
+      $dir    = __DIR__ ."/../databackups/players";
+      $files1 = scandir($dir);
+      foreach ($files1 as $key => $value) {
+        if($value == '.' || $value == '..'){
+          unset($files1[$key]);
+        }
+      }
+      $files1 = array_values($files1);
+      array_unshift($files1, 'Current');
+      $NewArr = array();
+      foreach ($files1 as $key => $value) {
+
+        if($value == 'Current'){
+          if($PHPFile){
+            $NewArr[] = array('FileName' => $value,'Date'=> date('d-m-Y_H-i-00'),'Selected' => false);
+          }else{
+            $NewArr[] = array('FileName' => $value,'Date'=> date('d-m-Y_H-i-00'),'Selected' => true);
+          }
+        }else{
+          if($PHPFile && ($PHPFile.'.php') == $value){
+            $NewArr[] = array('FileName' => preg_replace('/.php/','',$value),'Date'=> preg_replace('/PlayerData_|.php/','',$value),'Selected' => true);
+          }else{
+            $NewArr[] = array('FileName' => preg_replace('/.php/','',$value),'Date'=> preg_replace('/PlayerData_|.php/','',$value),'Selected' => false);
+          }
+        }
+
+      }
+      function date_compare($a, $b)
+      {
+          return date_timestamp_get(date_create_from_format('d-m-Y_H-i-s', $a['Date'])) < date_timestamp_get(date_create_from_format('d-m-Y_H-i-s', $b['Date']));
+      }
+      usort($NewArr, 'date_compare');
+    }
+
+    $this->Data['DataList'] = $NewArr;
     //Role required in comparison to the config, if not redirect
     $this->RoleRequired($this->Config['AccessPlayerPage']);
     //if config option is accessible via config
@@ -514,8 +550,21 @@ class ViewController extends CommonController
       $this->Data['AccessGranted'] = false;
     }
     //Includes the PlayerData.php page, and pass to the page
-    include __DIR__ ."/../PlayerData.php";
-    $this->Data['PlayerData'] = $PlayerData;
+    if($PHPFile){
+      if(is_file(__DIR__ ."/../databackups/players/".$PHPFile.".php")){
+        //echo 'Loaded: '.$PHPFile;
+        include __DIR__ ."/../databackups/players/".$PHPFile.".php";
+        $this->Data['PlayerData'] = $PlayerData;
+      }else{
+        //echo 'Error Loading: '.$PHPFile;
+        include __DIR__ ."/../PlayerData.php";
+        $this->Data['PlayerData'] = $PlayerData;
+      }
+    }else{
+      //echo 'Loaded: PlayerData.php';
+      include __DIR__ ."/../PlayerData.php";
+      $this->Data['PlayerData'] = $PlayerData;
+    }
     //Includes the AllianceData.php page, and pass to the page
     include __DIR__ ."/../AllianceData.php";
     $this->Data['AllianceData'] = $AllianceData;

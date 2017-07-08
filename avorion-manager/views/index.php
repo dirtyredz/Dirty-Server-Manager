@@ -163,7 +163,7 @@
           GetTime();
         }, 60000);
 
-        function Load(File){
+        function Load(File,Arg){
           $Main = $("#Main");
           $("#Loading").show();
           clearInterval(window.HomeRefresh);
@@ -174,7 +174,7 @@
           }
 
           $Main.animate({opacity: 0},250,function(){
-            $Main.load('View',{view:File},function(){
+            $Main.load('View',{view:File,arg:Arg},function(){
               $Main.animate({opacity: 1},250);
               $("#Loading").hide();
               GetTime();

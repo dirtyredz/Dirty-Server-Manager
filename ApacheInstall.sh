@@ -10,8 +10,6 @@ source <(grep = manager-config.ini)
 WEBPORT=`echo ${WEBPORT} | sed -e 's/\r//g'`
 GALAXY=`echo ${GALAXY} | sed -e 's/\r//g'`
 IPAddress=`echo ${IPAddress} | sed -e 's/\r//g'`
-WhoAmI=$(whoami)
-WhoGroup=$(id -g -n)
 
 ApachePortsConf=/etc/apache2/ports.conf
 AvorionConf=/etc/apache2/sites-available/${GALAXY}_avorion.conf
@@ -22,6 +20,26 @@ echo "Stopping PHP Web Server incase its running..."
 ./manager stop-web
 
 echo "Mdoifying Apache's ports.conf to reflect chosen port number..."
+echo ''
+read -p "User name to set apache to use for this website (Needs to be same user who owns the manager file) [default avorion]"  UserNameInput
+UserNameInput=${UserNameInput}
+if [ -z "$UserNameInput" ]; then
+  UserNameInput="avorion"
+else
+  UserNameInput="${UserNameInput}"
+fi
+echo User name for this website will be: $UserNameInput
+echo ''
+read -p "Group name to set apache to use for this website (Needs to be same group who owns the manager file) [default avorion]"  GroupNameInput
+GroupNameInput=${GroupNameInput}
+if [ -z "$GroupNameInput" ]; then
+  GroupNameInput="avorion"
+else
+  GroupNameInput="${GroupNameInput}"
+fi
+echo Group name for this website will be: $GroupNameInput
+echo ''
+
 echo "Listen 80" >> $ApachePortsConf
 echo "Listen ${WEBPORT}" > $ApachePortsConf
 echo "<IfModule ssl_module>" >> $ApachePortsConf
@@ -56,7 +74,7 @@ if [ "$SSLEnable" == "true" ]; then
   echo "    Redirect permanent \"/\" \"https://${IPAddress}/\"" >> $AvorionConf
 fi
 echo "    <ifmodule mpm_itk_module>" >> $AvorionConf
-echo "        AssignUserID ${WhoAmI} ${WhoGroup}" >> $AvorionConf
+echo "        AssignUserID ${UserNameInput} ${GroupNameInput}" >> $AvorionConf
 echo "    </ifmodule>" >> $AvorionConf
 echo "    <Directory ${PWD}/avorion-manager/webroot>" >> $AvorionConf
 echo "        AllowOverride All" >> $AvorionConf

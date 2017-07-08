@@ -40,13 +40,35 @@
     padding: 5px;
     font-size: 25px;
   }
-
+  .error{
+    color: red;
+  }
 </style>
 <div id="Top"><span class="Title"><svg class="icon"><use xlink:href="#icon-players"></use></svg>PLAYERS</span><span class="Time"></span></div>
 <br/>
 <label for="Search">Search Factions</label>
 <br/>
 <input id="SearchFaction" type="text">
+<br/>
+<br/>
+<?php
+if($Data['AccessGranted']) {?>
+<select id="FileNames">
+  <?php
+  foreach ($Data['DataList'] as $key => $value) {
+    if($value['Selected']){
+      echo '<option value="'.$value['FileName'].'" selected>'.$value['FileName'].'</option>';
+    }else{
+      echo '<option value="'.$value['FileName'].'">'.$value['FileName'].'</option>';
+    }
+  }
+   ?>
+</select>
+<?php
+}?>
+<br/>
+<br/>
+<span class="error">* Warning due to a bug introduced into 12.4 of avorion, the Last-Seen might not update properly.</span>
 <br/>
 <br/>
 Click Column Head to sort.
@@ -190,6 +212,9 @@ Click Column Head to sort.
   </tbody>
 </table>
 <script type="text/javascript">
+  $('#FileNames').change(function () {
+      Load("Players",$('#FileNames :selected').text());
+  });
   $('#SearchFaction').on('input',function(){
     var input, filter, table, tr, td, i;
     input = document.getElementById("SearchFaction");
