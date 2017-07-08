@@ -23,7 +23,6 @@ if [ "${CurrentVersion}" != "${VERSION}" ]; then
     diff --unchanged-line-format='%L' --old-line-format='%L' --new-line-format='+%L' manager-config.ini.backup manager-config.ini > manager-config.ini.diff
     grep ^+ manager-config.ini.diff | while read -r line ; do
         Addition=$(echo $line | sed -e 's/^+//' -e 's/=.*//g')
-        echo $Addition
         if grep -q "^$Addition" manager-config.ini.diff; then
             sed -i "/+$Addition.*/d" manager-config.ini.diff
        else
@@ -36,19 +35,18 @@ if [ "${CurrentVersion}" != "${VERSION}" ]; then
   fi
 
   if [ -f avorion-manager/PHPConfig.ini.backup ]; then
-    diff --unchanged-line-format='%L' --old-line-format='%L' --new-line-format='+%L' PHPConfig.ini.backup PHPConfig.ini > PHPConfig.ini.diff
-    grep ^+ PHPConfig.ini.diff | while read -r line ; do
+    diff --unchanged-line-format='%L' --old-line-format='%L' --new-line-format='+%L' avorion-manager/PHPConfig.ini.backup avorion-manager/PHPConfig.ini > avorion-manager/PHPConfig.ini.diff
+    grep ^+ avorion-manager/PHPConfig.ini.diff | while read -r line ; do
         Addition=$(echo $line | sed -e 's/^+//' -e 's/=.*//g')
-        echo $Addition
-        if grep -q "^$Addition" PHPConfig.ini.diff; then
-            sed -i "/+$Addition.*/d" PHPConfig.ini.diff
+        if grep -q "^$Addition" avorion-manager/PHPConfig.ini.diff; then
+            sed -i "/+$Addition.*/d" avorion-manager/PHPConfig.ini.diff
        else
             Remove=$(echo $line | sed 's/^.//g')
-            sed -i "s/^$line/$Remove/g" PHPConfig.ini.diff
+            sed -i "s/^$line/$Remove/g" avorion-manager/PHPConfig.ini.diff
        fi
     done
-    rm PHPConfig.ini
-    mv PHPConfig.ini.diff PHPConfig.ini
+    rm avorion-manager/PHPConfig.ini
+    mv avorion-manager/PHPConfig.ini.diff avorion-manager/PHPConfig.ini
   fi
 
   rm UpdateDirtyServerManager.tar.gz
