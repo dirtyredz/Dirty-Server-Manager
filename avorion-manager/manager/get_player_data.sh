@@ -23,25 +23,20 @@ DynamicEcho "Starting GetPlayerData()"
 PlayerDataTmp=${SCRIPTPATH}/avorion-manager/PlayerData.tmp
 DIR="${SCRIPTPATH}/.avorion/galaxies"
 #COUNT=0
-source <(grep = ${SCRIPTPATH}/manager-config.ini)
-GALAXYNAME=`echo ${GALAXY} | sed -e 's/\r//g'`
-KeepDataFiles=`echo ${KeepDataFiles} | sed -e 's/\r//g'`
-KeepDataFilesDays=`echo ${KeepDataFilesDays} | sed -e 's/\r//g'`
-KeepDataFilesPlayers=`echo ${KeepDataFilesPlayers} | sed -e 's/\r//g'`
 
 echo "<?php" > $PlayerDataTmp;
 echo "\$PlayerData = array(" >> $PlayerDataTmp;
-numFiles=$(ls -1q "${DIR}/${GALAXYNAME}/players/" | wc -l | sed -e 's/\r//g')
+numFiles=$(ls -1q "${DIR}/${GALAXY}/players/" | wc -l | sed -e 's/\r//g')
 if [ "$verbose" = true ]; then
   DynamicEcho "Found ${numFiles}, player files. (There are multiple copies of each player file, only parsing 1 for each player.)"
 fi
 #for i in {1..$numFiles}
 #do
 for i in $(seq 1 $numFiles); do
-  find ${DIR}/${GALAXYNAME}/players/ -name \*.tmp -delete
-  file=${DIR}/${GALAXYNAME}/players/player_$i.dat.0
+  find ${DIR}/${GALAXY}/players/ -name \*.tmp -delete
+  file=${DIR}/${GALAXY}/players/player_$i.dat.0
   [ -e "$file" ] || continue
-  file=$(ls -t ${DIR}/${GALAXYNAME}/players/player_$i.dat.* | head -1)
+  file=$(ls -t ${DIR}/${GALAXY}/players/player_$i.dat.* | head -1)
   [ -e "$file" ] || continue
   if [ "$verbose" = true ]; then
     DynamicEcho "\rParsing file: ${file}" "DONTLOG"
@@ -54,8 +49,9 @@ for i in $(seq 1 $numFiles); do
   StartingPositionName=$(grep -b -a -o -P 'name' "${file}" | sed 's/:.*//' | head -n1 | awk '{SUM = $1 + 13 } END {print SUM}')
   if [ "${StartingPositionName}" ]; then
     ID=$(echo $OriginalFile | sed -e 's/.*_//g' -e 's/.dat.*//g')
-    Name=$(xxd -ps -l 50 -seek ${StartingPositionName} "${file}" | xxd -r -p | head -n1 | sed -e 's/\$/\\$/g' )
-    Group=$(avorion-manager/XMLParser.sh "${Name}")
+    Name=$(xxd -ps -l 50 -seek ${StartingPositionName} "${file}" | xxd -r -p | head -n1 | sed -e 's/\$/\\$/g' -e 's/\"/\\"/g' )
+    LoadFile "admin_parser.sh" "${Name}"
+    Group="$GroupName"
     LastSeenConsole=$(grep -m 1 -e "${Name} joined" console.log)
     LastSeen='Unkown'
     #If they arnt seen in the consle
