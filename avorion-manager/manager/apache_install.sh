@@ -1,5 +1,26 @@
 #!/bin/bash
-#Pull values from config INI
+# Project: Dirty Server Manager
+# Author: Dirtyredz | David McCLain
+# License: MIT License, Copyright (c) 2017 David McCLain
+# Purpose: Avorion Server Management Script and web interface
+# Documentation: https://github.com/dirtyredz/Dirty-Server-Manager
+# Website: https://github.com/dirtyredz/Dirty-Server-Manager
+
+COMMAND_NAME="apache_install"
+COMMAND_DESCRIPTION="installs apache configurations with default setting."
+
+if [ "${DisplayDescription}" == "true" ]; then
+  DynamicEcho "$COMMAND_NAME"
+  DynamicEcho "$COMMAND_DESCRIPTION"
+  LoadFile "core_exit.sh"
+fi
+
+# Only Root, were using sudo commands for apache
+if [[ $EUID -ne 0 ]]; then
+   DynamicEcho "This function must be run as root" 1>&2
+   LoadFile "core_exit.sh"
+fi
+
 echo ""
 echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 echo "++++++++++++++++++++++++++++++++++  Apache 2.4 Installation  ++++++++++++++++++++++++++++++++++"
@@ -19,7 +40,6 @@ SSLParams=/etc/apache2/conf-available/ssl-params.conf
 echo "Stopping PHP Web Server incase its running..."
 ./manager stop-web
 
-echo "Mdoifying Apache's ports.conf to reflect chosen port number..."
 echo ''
 read -p "User name to set apache to use for this website (Needs to be same user who owns the manager file) [default avorion]"  UserNameInput
 UserNameInput=${UserNameInput}
@@ -40,6 +60,7 @@ fi
 echo Group name for this website will be: $GroupNameInput
 echo ''
 
+echo "Mdoifying Apache's ports.conf to reflect chosen port number..."
 echo "Listen 80" >> $ApachePortsConf
 echo "Listen ${WEBPORT}" > $ApachePortsConf
 echo "<IfModule ssl_module>" >> $ApachePortsConf
@@ -151,6 +172,10 @@ if [ "$SSLEnable" == "true" ]; then
   echo "                               nokeepalive ssl-unclean-shutdown \\" >> $AvorionSSLConf
   echo "                               downgrade-1.0 force-response-1.0" >> $AvorionSSLConf
   echo "" >> $AvorionSSLConf
+  echo "               <ifmodule mpm_itk_module>" >> $AvorionSSLConf
+  echo "                    AssignUserID ${UserNameInput} ${GroupNameInput}" >> $AvorionSSLConf
+  echo "               </ifmodule>" >> $AvorionSSLConf
+    echo "" >> $AvorionSSLConf
   echo "                <Directory ${PWD}/avorion-manager/webroot>" >> $AvorionSSLConf
   echo "                    AllowOverride All" >> $AvorionSSLConf
   echo "                    Options Indexes FollowSymLinks MultiViews" >> $AvorionSSLConf
@@ -165,7 +190,7 @@ if [ "$SSLEnable" == "true" ]; then
   sudo a2enmod -q ssl
   sudo a2enmod -q headers
   echo "Enabling SSL VirtualHost..."
-  sudo a2ensite -q avorionssl
+  sudo a2ensite -q ${GALAXY}_avorionssl.conf
   OS=$(lsb_release -si)
   if [ "$OS" == "Ubuntu" ]; then
     echo "Loading SSL Params..."

@@ -10,7 +10,8 @@
 <h2>The Unofficial Avorion Linux Server Manager.</h2>
 <div class="Version"><h3>Version: <?php echo $Data['Version']; ?></h3><span><?php echo $Data['UpToDate']; ?></span></div>
 <br/>
-<a target="_blank" href="https://docs.google.com/document/d/1RuysyToh9CTSn7mMwL6VJ0k76VbaGuXLyV74pm0J4ug/edit#">TODO</a>
+<a target="_blank" href="https://github.com/dirtyredz/Dirty-Server-Manager/issues">TODO</a>
+</br>
 <a target="_blank" href="http://www.avorion.net/forum/index.php/topic,3507.0.html">Avorion Forum Post</a>
 <br/>
 <br/>

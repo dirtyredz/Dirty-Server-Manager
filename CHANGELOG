@@ -1,3 +1,12 @@
+1.2.0
+  Moves apache installer to avorion-manager/manager
+  seperated commands from manager and added to avorion-manager/manager
+  updated todo link on about page to direct to github issues
+  fixed grep error when runing status command with an offline server.
+  send command now checks if a /command was sent ie /say or /stop
+  Added Parser scripts to manager commands
+  Added parser verbose output when manually running scripts
+  
 1.1.7
   Added custom cronjob config options to manager-config.ini
   removed old not working restart announcment and changed cronjob restart command to announce every 1minute for 15 minutes

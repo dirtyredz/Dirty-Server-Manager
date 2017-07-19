@@ -1,30 +1,49 @@
 #!/bin/bash
-cd "${0%/*}"
-cd ".."
+# Project: Dirty Server Manager
+# Author: Dirtyredz | David McCLain
+# License: MIT License, Copyright (c) 2017 David McCLain
+# Purpose: Avorion Server Management Script and web interface
+# Documentation: https://github.com/dirtyredz/Dirty-Server-Manager
+# Website: https://github.com/dirtyredz/Dirty-Server-Manager
+
+COMMAND_NAME="get_alliance_data"
+COMMAND_DESCRIPTION="Parses through all alliance files."
+
+if [ "${DisplayDescription}" == "true" ]; then
+  DynamicEcho "$COMMAND_NAME"
+  DynamicEcho "$COMMAND_DESCRIPTION"
+  LoadFile "core_exit.sh"
+fi
+
 #Log to manager.log
-echo -e -n $(date +"%F %H-%M-00| ") >> ${PWD}/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_manager.log
-echo -e '[Manager]: Starting GetAllianceData()' >> ${PWD}/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_manager.log
+LogToManagerLog "Starting GetAllianceData()"
+DynamicEcho "Starting GetAllianceData()"
 #Settup TMP file
-AllianceDataTmp=${PWD}/avorion-manager/AllianceData.tmp
-DIR="$1"
+AllianceDataTmp=${SCRIPTPATH}/avorion-manager/AllianceData.tmp
+DIR="${SCRIPTPATH}/.avorion/galaxies"
 #COUNT=0
-source <(grep = ${PWD}/manager-config.ini)
+source <(grep = ${SCRIPTPATH}/manager-config.ini)
 GALAXYNAME=`echo ${GALAXY} | sed -e 's/\r//g'`
 KeepDataFiles=`echo ${KeepDataFiles} | sed -e 's/\r//g'`
 KeepDataFilesDays=`echo ${KeepDataFilesDays} | sed -e 's/\r//g'`
 KeepDataFilesAlliances=`echo ${KeepDataFilesAlliances} | sed -e 's/\r//g'`
-
+numFiles=$(ls -1q "${DIR}/${GALAXYNAME}/alliances/" | wc -l | sed -e 's/\r//g')
+if [ "$verbose" = true ]; then
+  DynamicEcho "Found ${numFiles}, alliance files. (There are multiple copies of each alliance file, only parsing 1 for each alliance.)"
+fi
 echo "<?php" > $AllianceDataTmp;
 echo "\$AllianceData = array(" >> $AllianceDataTmp;
-for i in {1..5000}
-do
+for i in $(seq 1 $numFiles); do
   find ${DIR}/${GALAXYNAME}/alliances/ -name \*.tmp -delete
   file=${DIR}/${GALAXYNAME}/alliances/alliance_$i.dat.0
   [ -e "$file" ] || continue
   file=$(ls -t ${DIR}/${GALAXYNAME}/alliances/alliance_$i.dat.* | head -1)
   [ -e "$file" ] || continue
+  if [ "$verbose" = true ]; then
+    DynamicEcho "\rParsing file: ${file}" "DONTLOG"
+  fi
   #dd if=$file bs=1 skip=44 of=${file}.tmp > /dev/null 2>&1
-  php -f ${PWD}/avorion-manager/zlib_Uncompress.php "${file}" "AllianceUncompressed.tmp"
+  php -f ${SCRIPTPATH}/avorion-manager/zlib_Uncompress.php "${file}" "AllianceUncompressed.tmp"
   #rm ${file}.tmp
   OriginalFile=$file
   file=AllianceUncompressed.tmp
@@ -52,20 +71,21 @@ do
   [ -e "$file" ] && rm $file
 done
 echo ");" >> $AllianceDataTmp;
-[ -e ${PWD}/avorion-manager/AllianceData.php ] && rm ${PWD}/avorion-manager/AllianceData.php
-cp $AllianceDataTmp ${PWD}/avorion-manager/AllianceData.php
+[ -e ${SCRIPTPATH}/avorion-manager/AllianceData.php ] && rm ${SCRIPTPATH}/avorion-manager/AllianceData.php
+cp $AllianceDataTmp ${SCRIPTPATH}/avorion-manager/AllianceData.php
 rm $AllianceDataTmp
 
 if [ "${KeepDataFiles}" = true ]; then
-  [ ! -e "${PWD}/avorion-manager/databackups" ] && mkdir "${PWD}/avorion-manager/databackups"
+  [ ! -e "${SCRIPTPATH}/avorion-manager/databackups" ] && mkdir "${SCRIPTPATH}/avorion-manager/databackups"
   if [ "${KeepDataFilesAlliances}" = true ]; then
-    [ ! -e "${PWD}/avorion-manager/databackups/alliances" ] && mkdir "${PWD}/avorion-manager/databackups/alliances"
-    echo -e -n $(date +"%F %H-%M-00| ") >> ${PWD}/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_manager.log
-    echo -e '[Manager]: Storing AllianceData' >> ${PWD}/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_manager.log
-    cp ${PWD}/avorion-manager/AllianceData.php ${PWD}/avorion-manager/databackups/alliances/AllianceData_$(/bin/date +\%d-\%m-\%Y_\%H-\%M-00).php
-    find ${PWD}/avorion-manager/databackups/alliances/AllianceData_* -mtime +${KeepDataFilesDays} -type f -delete 2> /dev/null
+    [ ! -e "${SCRIPTPATH}/avorion-manager/databackups/alliances" ] && mkdir "${SCRIPTPATH}/avorion-manager/databackups/alliances"
+    LogToManagerLog "Storing AllianceData"
+    DynamicEcho "Storing AllianceData"
+    cp ${SCRIPTPATH}/avorion-manager/AllianceData.php ${SCRIPTPATH}/avorion-manager/databackups/alliances/AllianceData_$(/bin/date +\%d-\%m-\%Y_\%H-\%M-00).php
+    find ${SCRIPTPATH}/avorion-manager/databackups/alliances/AllianceData_* -mtime +${KeepDataFilesDays} -type f -delete 2> /dev/null
   fi
 fi
 
-echo -e -n $(date +"%F %H-%M-00| ") >> ${PWD}/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_manager.log
-echo -e '[Manager]: Completed GetAllianceData()' >> ${PWD}/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_manager.log
+LogToManagerLog "Completed GetAllianceData()"
+DynamicEcho "\r" "DONTLOG"
+DynamicEcho "Completed GetAllianceData()"

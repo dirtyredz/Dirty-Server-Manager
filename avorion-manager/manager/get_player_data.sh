@@ -1,14 +1,29 @@
 #!/bin/bash
-cd "${0%/*}"
-cd ".."
+# Project: Dirty Server Manager
+# Author: Dirtyredz | David McCLain
+# License: MIT License, Copyright (c) 2017 David McCLain
+# Purpose: Avorion Server Management Script and web interface
+# Documentation: https://github.com/dirtyredz/Dirty-Server-Manager
+# Website: https://github.com/dirtyredz/Dirty-Server-Manager
+
+COMMAND_NAME="get_player_data"
+COMMAND_DESCRIPTION="Parses through all player files."
+
+if [ "${DisplayDescription}" == "true" ]; then
+  DynamicEcho "$COMMAND_NAME"
+  DynamicEcho "$COMMAND_DESCRIPTION"
+  LoadFile "core_exit.sh"
+fi
+
 #Log to manager.log
-echo -e -n $(date +"%F %H-%M-00| ") >> ${PWD}/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_manager.log
-echo -e '[Manager]: Starting GetPlayerData()' >> ${PWD}/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_manager.log
+LogToManagerLog "Starting GetPlayerData()"
+DynamicEcho "Starting GetPlayerData()"
+
 #Settup TMP file
-PlayerDataTmp=${PWD}/avorion-manager/PlayerData.tmp
-DIR="$1"
+PlayerDataTmp=${SCRIPTPATH}/avorion-manager/PlayerData.tmp
+DIR="${SCRIPTPATH}/.avorion/galaxies"
 #COUNT=0
-source <(grep = ${PWD}/manager-config.ini)
+source <(grep = ${SCRIPTPATH}/manager-config.ini)
 GALAXYNAME=`echo ${GALAXY} | sed -e 's/\r//g'`
 KeepDataFiles=`echo ${KeepDataFiles} | sed -e 's/\r//g'`
 KeepDataFilesDays=`echo ${KeepDataFilesDays} | sed -e 's/\r//g'`
@@ -16,15 +31,23 @@ KeepDataFilesPlayers=`echo ${KeepDataFilesPlayers} | sed -e 's/\r//g'`
 
 echo "<?php" > $PlayerDataTmp;
 echo "\$PlayerData = array(" >> $PlayerDataTmp;
-for i in {1..10000}
-do
+numFiles=$(ls -1q "${DIR}/${GALAXYNAME}/players/" | wc -l | sed -e 's/\r//g')
+if [ "$verbose" = true ]; then
+  DynamicEcho "Found ${numFiles}, player files. (There are multiple copies of each player file, only parsing 1 for each player.)"
+fi
+#for i in {1..$numFiles}
+#do
+for i in $(seq 1 $numFiles); do
   find ${DIR}/${GALAXYNAME}/players/ -name \*.tmp -delete
   file=${DIR}/${GALAXYNAME}/players/player_$i.dat.0
   [ -e "$file" ] || continue
   file=$(ls -t ${DIR}/${GALAXYNAME}/players/player_$i.dat.* | head -1)
   [ -e "$file" ] || continue
+  if [ "$verbose" = true ]; then
+    DynamicEcho "\rParsing file: ${file}" "DONTLOG"
+  fi
   #dd if=$file bs=1 skip=44 of=${file}.tmp > /dev/null 2>&1
-  php -f ${PWD}/avorion-manager/zlib_Uncompress.php "${file}" "PlayerUncompressed.tmp"
+  php -f ${SCRIPTPATH}/avorion-manager/zlib_Uncompress.php "${file}" "PlayerUncompressed.tmp"
   #rm ${file}.tmp
   OriginalFile=$file
   file=PlayerUncompressed.tmp
@@ -38,22 +61,22 @@ do
     #If they arnt seen in the consle
     if [ -z "$LastSeenConsole" ]; then
       #If PlayerData.php exsists
-      if [ -e ${PWD}/avorion-manager/PlayerData.php ]; then
+      if [ -e ${SCRIPTPATH}/avorion-manager/PlayerData.php ]; then
         #If the old file has LastSeen init
-        PastPlayerData=$(grep -e "LastSeen" ${PWD}/avorion-manager/PlayerData.php)
+        PastPlayerData=$(grep -e "LastSeen" ${SCRIPTPATH}/avorion-manager/PlayerData.php)
         if [ "${PastPlayerData}" ]; then
           #Grab users LastSeen from the previous file
-          LastSeenPast=$(grep -e "Name\" => \"${Name}\"" ${PWD}/avorion-manager/PlayerData.php | sed -e 's/.*LastSeen\" => \"//g' -e 's/\".*//g')
+          LastSeenPast=$(grep -e "Name\" => \"${Name}\"" ${SCRIPTPATH}/avorion-manager/PlayerData.php | sed -e 's/.*LastSeen\" => \"//g' -e 's/\".*//g')
           #If its Unknown or empty then search logs
           if [ "$LastSeenPast" == "Unkown" ] || [ -z "$LastSeenPast" ]; then
-            LastSeen=$(grep -h -m 1 -e "${Name}" $(find ${PWD}/avorion-manager/logs/*_status.log -printf '%T+ %p\n' | sort -n | sed -e 's/.* //g') | tail -n1 | sed -e 's/ .*//g')
+            LastSeen=$(grep -h -m 1 -e "${Name}" $(find ${SCRIPTPATH}/avorion-manager/logs/*_status.log -printf '%T+ %p\n' | sort -n | sed -e 's/.* //g') | tail -n1 | sed -e 's/ .*//g')
           else
             LastSeen=$LastSeenPast
           fi
         fi
       else
         #If it doesnt exsist then try and find there info in the logs
-        LastSeen=$(grep -h -m 1 -e "${Name}" $(find ${PWD}/avorion-manager/logs/*_status.log -printf '%T+ %p\n' | sort -n | sed -e 's/.* //g') | tail -n1 | sed -e 's/ .*//g')
+        LastSeen=$(grep -h -m 1 -e "${Name}" $(find ${SCRIPTPATH}/avorion-manager/logs/*_status.log -printf '%T+ %p\n' | sort -n | sed -e 's/.* //g') | tail -n1 | sed -e 's/ .*//g')
       fi
     else
       #Were seen in console add today
@@ -180,20 +203,22 @@ do
 done
 echo ");" >> $PlayerDataTmp;
 
-[ -e ${PWD}/avorion-manager/PlayerData.php ] && rm ${PWD}/avorion-manager/PlayerData.php
-cp $PlayerDataTmp ${PWD}/avorion-manager/PlayerData.php
+
+[ -e ${SCRIPTPATH}/avorion-manager/PlayerData.php ] && rm ${SCRIPTPATH}/avorion-manager/PlayerData.php
+cp $PlayerDataTmp ${SCRIPTPATH}/avorion-manager/PlayerData.php
 rm $PlayerDataTmp
 
 if [ "${KeepDataFiles}" = true ]; then
-  [ ! -e "${PWD}/avorion-manager/databackups" ] && mkdir "${PWD}/avorion-manager/databackups"
+  [ ! -e "${SCRIPTPATH}/avorion-manager/databackups" ] && mkdir "${SCRIPTPATH}/avorion-manager/databackups"
   if [ "${KeepDataFilesPlayers}" = true ]; then
-    [ ! -e "${PWD}/avorion-manager/databackups/players" ] && mkdir "${PWD}/avorion-manager/databackups/players"
-    echo -e -n $(date +"%F %H-%M-00| ") >> ${PWD}/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_manager.log
-    echo -e '[Manager]: Storing PlayerData' >> ${PWD}/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_manager.log
-    cp ${PWD}/avorion-manager/PlayerData.php ${PWD}/avorion-manager/databackups/players/PlayerData_$(/bin/date +\%d-\%m-\%Y_\%H-\%M-00).php
-    find ${PWD}/avorion-manager/databackups/players/PlayerData_* -mtime +${KeepDataFilesDays} -type f -delete 2> /dev/null
+    [ ! -e "${SCRIPTPATH}/avorion-manager/databackups/players" ] && mkdir "${SCRIPTPATH}/avorion-manager/databackups/players"
+    LogToManagerLog "Storing PlayerData"
+    DynamicEcho "Storing PlayerData"
+    cp ${SCRIPTPATH}/avorion-manager/PlayerData.php ${SCRIPTPATH}/avorion-manager/databackups/players/PlayerData_$(/bin/date +\%d-\%m-\%Y_\%H-\%M-00).php
+    find ${SCRIPTPATH}/avorion-manager/databackups/players/PlayerData_* -mtime +${KeepDataFilesDays} -type f -delete 2> /dev/null
   fi
 fi
 
-echo -e -n $(date +"%F %H-%M-00| ") >> ${PWD}/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_manager.log
-echo -e '[Manager]: Completed GetPlayerData()' >> ${PWD}/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_manager.log
+LogToManagerLog "Completed GetPlayerData()"
+DynamicEcho "\r" "DONTLOG"
+DynamicEcho "Completed GetPlayerData()"
