@@ -302,7 +302,11 @@ $(document).ready(function() {
   <label class="Standard" for="Title">To:</label>
   <input class="MailInput Title" type="text" name="Title"></input>
   <select class="js-example-basic-single" name="Name">
+    <option value="NA">N/A</option>
     <?php
+    foreach ($Data['GroupsList'] as $key => $value) {
+      echo '<option value="Group_'.$value.'">'.$value.'</option>';
+    }
     foreach ($Data['PlayerData'] as $key => $value) {
       echo '<option value="'.$value['ID'].'">'.$value['Name'].'</option>';
     }
@@ -445,35 +449,74 @@ $('.switch > input:checkbox').change(function () {
             $("#sendone").click(function(event){
               event.preventDefault();
               console.log('Sendone');
-              $.ajax({
-                'url': 'GetData',
-                'type': 'POST',
-                'dataType': 'json',
-                'data': {
-                  'function':'SendMail',
-                  'Title': $('input[name="Title"]').val(),
-                  'Name': $('select[name="Name"]').val(),
-                  'Subject': $('input[name="Subject"]').val(),
-                  'Message': $('textarea[name="Message"]').val(),
-                  'Credits': $('input[name="Credits"]').val(),
-                  'Iron': $('input[name="Iron"]').val(),
-                  'Titanium': $('input[name="Titanium"]').val(),
-                  'Naonite': $('input[name="Naonite"]').val(),
-                  'Trinium': $('input[name="Trinium"]').val(),
-                  'Xanion': $('input[name="Xanion"]').val(),
-                  'Ogonite': $('input[name="Ogonite"]').val(),
-                  'Avorion': $('input[name="Avorion"]').val(),
-                },
-                'success': function(data) {
-                  console.log(data);
-                  if(data['success']) {
-                    console.log('Success');
-                    AddNotification(data['message']);
-                  } else {
-                    AddNotification(data['message']);
+              if($('select[name="Name"]').val().match("^Group_")){
+                var PlayerData = <?php echo json_encode($Data['PlayerData']) ?>;
+                var GroupName = $('select[name="Name"]').val()
+                GroupName = GroupName.replace("Group_", "");
+                for (i = 0; i < PlayerData.length; i++) {
+                  if(PlayerData[i]['Group'].match(GroupName)){
+                    $.ajax({
+                      'url': 'GetData',
+                      'type': 'POST',
+                      'dataType': 'json',
+                      'data': {
+                        'function':'SendMail',
+                        'Title': $('input[name="Title"]').val(),
+                        'Name': PlayerData[i]['ID'],
+                        'Subject': $('input[name="Subject"]').val(),
+                        'Message': $('textarea[name="Message"]').val(),
+                        'Credits': $('input[name="Credits"]').val(),
+                        'Iron': $('input[name="Iron"]').val(),
+                        'Titanium': $('input[name="Titanium"]').val(),
+                        'Naonite': $('input[name="Naonite"]').val(),
+                        'Trinium': $('input[name="Trinium"]').val(),
+                        'Xanion': $('input[name="Xanion"]').val(),
+                        'Ogonite': $('input[name="Ogonite"]').val(),
+                        'Avorion': $('input[name="Avorion"]').val(),
+                      },
+                      'success': function(data) {
+                        console.log(data);
+                        if(data['success']) {
+                          console.log('Success');
+                          AddNotification(data['message']);
+                        } else {
+                          AddNotification(data['message']);
+                        }
+                      }
+                    });
                   }
                 }
-              });
+              }else{
+                $.ajax({
+                  'url': 'GetData',
+                  'type': 'POST',
+                  'dataType': 'json',
+                  'data': {
+                    'function':'SendMail',
+                    'Title': $('input[name="Title"]').val(),
+                    'Name': $('select[name="Name"]').val(),
+                    'Subject': $('input[name="Subject"]').val(),
+                    'Message': $('textarea[name="Message"]').val(),
+                    'Credits': $('input[name="Credits"]').val(),
+                    'Iron': $('input[name="Iron"]').val(),
+                    'Titanium': $('input[name="Titanium"]').val(),
+                    'Naonite': $('input[name="Naonite"]').val(),
+                    'Trinium': $('input[name="Trinium"]').val(),
+                    'Xanion': $('input[name="Xanion"]').val(),
+                    'Ogonite': $('input[name="Ogonite"]').val(),
+                    'Avorion': $('input[name="Avorion"]').val(),
+                  },
+                  'success': function(data) {
+                    console.log(data);
+                    if(data['success']) {
+                      console.log('Success');
+                      AddNotification(data['message']);
+                    } else {
+                      AddNotification(data['message']);
+                    }
+                  }
+                });
+              }
             });
             $("#sendall").click(function(event){
               event.preventDefault();

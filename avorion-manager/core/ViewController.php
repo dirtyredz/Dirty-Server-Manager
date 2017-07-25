@@ -267,6 +267,8 @@ class ViewController extends CommonController
     include __DIR__ ."/../PlayerData.php";
     //Load page
     $this->Data['PlayerData'] = $PlayerData;
+    $this->Data['GroupsList'] = explode(",", shell_exec($this->Config['Manager'].' get_groups -o PHP'));
+    print_r($this->Data['GroupsList']);
     $this->LoadView('Console');
   }
 
