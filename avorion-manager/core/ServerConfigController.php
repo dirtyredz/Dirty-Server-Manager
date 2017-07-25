@@ -29,6 +29,12 @@ class ServerConfigController extends CommonController
     'BannerCustomMessageThree' => array(
           'Definition' => 'Custom message for the banner, can accept plain text only. 13 charectors max length.',
           'Type' => 'text'),
+    'BannerNameOne' => array(
+          'Definition' => 'Custom name for the banner (Top Left), can accept plain text only. Default blank = Galaxy Name',
+          'Type' => 'text'),
+    'BannerNameTwo' => array(
+          'Definition' => 'Custom name for the banner (Bottom Left), can accept plain text only. Default blank = IP Address',
+          'Type' => 'text'),
     'ShowOnlinePlayerCount' => array(
           'Definition' => 'If enabled will show the online players count on the home page.',
           'Type' => 'select',
@@ -85,6 +91,10 @@ class ServerConfigController extends CommonController
           'Definition' => 'The role level required to view the Players list on the home page. (0=public)',
           'Type' => 'number',
           'Range' => array('min'=>0,'max'=>99)),
+    'HomeSortPlayerList' => array(
+          'Definition' => 'Sorts the players list on the home page. (Name/Flag)',
+          'Type' => 'select',
+          'Values' => array('Name'=>'Name','Flag'=>'Flag')),
     'HomeDiskUsage' => array(
           'Definition' => 'The role level required to view the Disk Usage on the home page. (0=public)',
           'Type' => 'number',

@@ -446,6 +446,17 @@ class ViewController extends CommonController
               $NewOnlinePlayers[$Name]['CountryName'] = strtolower($GEO['geoplugin_countryName']);
             }
           }
+
+          if($this->Config['HomeSortPlayerList'] == 'Name'){
+            uksort($NewOnlinePlayers, function($a, $b) {
+              return strtolower($a['Name']) <=> strtolower($b['Name']);
+            });
+          }elseif($this->Config['HomeSortPlayerList'] == 'Flag'){
+            uasort($NewOnlinePlayers, function($a, $b) {
+              return $a['CountryName'] <=> $b['CountryName'];
+            });
+          }
+          
           $this->Data['OnlinePlayers']  = $NewOnlinePlayers;
         }
         //we have players do we want to show the count?
