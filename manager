@@ -1,5 +1,6 @@
 #!/bin/bash
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
 # Absolute path to this script, e.g. /home/user/bin/foo.sh
 SCRIPT=$(readlink -f "$0")
 # Absolute path this script is in, thus /home/user/bin
@@ -26,6 +27,10 @@ CustomCronjob_2=`echo ${CustomCronjob_2} | sed -e 's/\r//g'`
 CustomCronjob_3=`echo ${CustomCronjob_3} | sed -e 's/\r//g'`
 CustomCronjob_4=`echo ${CustomCronjob_4} | sed -e 's/\r//g'`
 CustomCronjob_5=`echo ${CustomCronjob_5} | sed -e 's/\r//g'`
+KeepDataFiles=`echo ${KeepDataFiles} | sed -e 's/\r//g'`
+KeepDataFilesDays=`echo ${KeepDataFilesDays} | sed -e 's/\r//g'`
+KeepDataFilesPlayers=`echo ${KeepDataFilesPlayers} | sed -e 's/\r//g'`
+KeepDataFilesAlliances=`echo ${KeepDataFilesAlliances} | sed -e 's/\r//g'`
 
 # Colors
 WHITE='\033[1;37m'

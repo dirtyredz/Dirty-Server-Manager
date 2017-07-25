@@ -47,9 +47,9 @@ for i in $(seq 1 $numFiles); do
   if [ "$verbose" = true ]; then
     DynamicEcho "\rParsing file: ${file}" "DONTLOG"
   fi
-  #dd if=$file bs=1 skip=44 of=${file}.tmp > /dev/null 2>&1
-  php -f ${SCRIPTPATH}/avorion-manager/zlib_Uncompress.php "${file}" "PlayerUncompressed.tmp"
-  #rm ${file}.tmp
+
+  php -f ${SCRIPTPATH}/avorion-manager/manager/zlib_Uncompress.php "${file}" "PlayerUncompressed.tmp"
+
   OriginalFile=$file
   file=PlayerUncompressed.tmp
   StartingPositionName=$(grep -b -a -o -P 'name' "${file}" | sed 's/:.*//' | head -n1 | awk '{SUM = $1 + 13 } END {print SUM}')

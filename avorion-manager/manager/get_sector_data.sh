@@ -50,7 +50,7 @@ for file in ${DIR}/${GALAXYNAME}/sectors/*v; do
   then
     FactionFile=${DIR}/${GALAXYNAME}/factions/faction_${FACTIONINDEX}.dat
     #dd if=$FactionFile bs=1 skip=44 of=${FactionFile}.tmp > /dev/null 2>&1
-    php -f ${SCRIPTPATH}/avorion-manager/zlib_Uncompress.php "${FactionFile}" "SectorUncompressed.tmp"
+    php -f ${SCRIPTPATH}/avorion-manager/manager/zlib_Uncompress.php "${FactionFile}" "SectorUncompressed.tmp"
     #rm ${FactionFile}.tmp
     FactionFile=SectorUncompressed.tmp
 

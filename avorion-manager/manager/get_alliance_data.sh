@@ -43,7 +43,7 @@ for i in $(seq 1 $numFiles); do
     DynamicEcho "\rParsing file: ${file}" "DONTLOG"
   fi
   #dd if=$file bs=1 skip=44 of=${file}.tmp > /dev/null 2>&1
-  php -f ${SCRIPTPATH}/avorion-manager/zlib_Uncompress.php "${file}" "AllianceUncompressed.tmp"
+  php -f ${SCRIPTPATH}/avorion-manager/manager/zlib_Uncompress.php "${file}" "AllianceUncompressed.tmp"
   #rm ${file}.tmp
   OriginalFile=$file
   file=AllianceUncompressed.tmp

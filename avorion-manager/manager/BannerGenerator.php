@@ -8,8 +8,8 @@ $IPAddress = $argv[2];
 $GalaxyName = $argv[3];
 $OnlinePlayers = $argv[4];
 
-require_once __DIR__ .'/core/CommonController.php';
-require_once  __DIR__ .'/core/ServerConfigController.php';
+require_once __DIR__ .'/../core/CommonController.php';
+require_once  __DIR__ .'/../core/ServerConfigController.php';
 $ServerConfigController = new ServerConfigController();
 $TempConfig = $ServerConfigController->GetPHPConfig();
 
@@ -26,7 +26,7 @@ if(empty($BannerNameTwo)){
   $BannerNameTwo = $IPAddress;
 }
 
-$Dir = dirname(__FILE__)."/webroot/banner/";
+$Dir = __DIR__ ."/../webroot/banner/";
 $originalFile = $Dir."BannerImgTemplate.jpg";
 $im = @imagecreatefromjpeg($originalFile)
     or die("Cannot Initialize new GD image stream");
