@@ -27,10 +27,6 @@ echo "++++++++++++++++++++++++++++++++++  Apache 2.4 Installation  +++++++++++++
 echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 echo ""
 echo "Grabbing Web Port settings and IP address...."
-source <(grep = manager-config.ini)
-WEBPORT=`echo ${WEBPORT} | sed -e 's/\r//g'`
-GALAXY=`echo ${GALAXY} | sed -e 's/\r//g'`
-IPAddress=`echo ${IPAddress} | sed -e 's/\r//g'`
 
 ApachePortsConf=/etc/apache2/ports.conf
 AvorionConf=/etc/apache2/sites-available/${GALAXY}_avorion.conf

@@ -1,15 +1,19 @@
 1.2.0
   Moves apache installer to avorion-manager/manager
-  seperated commands from manager and added to avorion-manager/manager
+  separated commands from manager and added to avorion-manager/manager
   updated todo link on about page to direct to github issues
-  fixed grep error when runing status command with an offline server.
-  send command now checks if a /command was sent ie /say or /stop
+  fixed grep error when running status command with an offline server.
+  send command now checks if a `/command` was sent ie `/say` or `/stop`
   Added Parser scripts to manager commands
   Added parser verbose output when manually running scripts
-  
+  Added verbose output for start command, will display additional info if server cant start, and more
+  Added (help)  `-h` optional parameter, will display name/description of function
+  Added optional paramter `-f` to force specific features, like running update with -f will ignore current version checks, and reinstall
+
+
 1.1.7
   Added custom cronjob config options to manager-config.ini
-  removed old not working restart announcment and changed cronjob restart command to announce every 1minute for 15 minutes
+  removed old not working restart announcement and changed cronjob restart command to announce every 1minute for 15 minutes
   Updated ApacheInstaller to ask for user/group, prior was setting it to root. witch would make the site inaccessible
   Added option to manager-config to keep backups of the player/alliance data. OFF by default.
   Added dropdown for viewing backups of Player data.

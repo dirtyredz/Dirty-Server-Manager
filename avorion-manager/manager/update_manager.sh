@@ -2,11 +2,11 @@
 Latest=$(wget -O - -o /dev/null https://api.github.com/repos/dirtyredz/Dirty-Server-Manager/releases/latest)
 LatestVERSION=$(echo ${Latest}  | tr -d '[:blank:]' | sed -e 's/.*tag_name":"//g' -e 's/".*//g')
 
-if [ "${VERSION}" != "${LatestVERSION}" ]; then
-  echo Dirty Server Manager is NOT Up To Date!
-  echo downloading update for Dirty Server Manager
+if [ "${VERSION}" != "${LatestVERSION}" ] || [ "${force}" == "true" ]; then
+  DynamicEcho "Dirty Server Manager is NOT Up To Date!"
+  DynamicEcho "downloading update for Dirty Server Manager"
   wget -O UpdateDirtyServerManager.tar.gz https://github.com/dirtyredz/Dirty-Server-Manager/releases/download/${LatestVERSION}/DirtyServerManager.tar.gz
-  echo Installing $LatestVERSION
+  DynamicEcho "Installing $LatestVERSION"
 
   if [ -f manager-config.ini ]; then
     cp manager-config.ini manager-config.ini.backup
@@ -48,7 +48,7 @@ if [ "${VERSION}" != "${LatestVERSION}" ]; then
   fi
 
   rm UpdateDirtyServerManager.tar.gz
-  echo Update complete.
+  DynamicEcho "Update complete."
 else
-  echo "Current Version: ${VERSION}, Dirty Server Manager is Up To Date!"
+  DynamicEcho "Current Version: ${VERSION}, Dirty Server Manager is Up To Date!"
 fi

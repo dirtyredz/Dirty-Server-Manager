@@ -15,8 +15,8 @@ then
 
   D='Server Time is: '"$(date +"%F %H-%M-%S")"
   #Send commands to the console
-  $T '/echo '"${D}" C-m
-  $T /save C-m
+  $Tmux_SendKeys '/echo '"${D}" C-m
+  $Tmux_SendKeys /save C-m
   time=0
 
   while [ $time -lt 60 ]; do
@@ -33,7 +33,7 @@ then
   DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Has been saved."
   DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Stopping...."
   sleep 30
-  $T /stop C-m
+  $Tmux_SendKeys /stop C-m
   time=0
   while [ $time -lt 120 ]; do
     SHUTDOWN=$(awk "/${D}/,/Server shutdown successful/" /proc/`pidof ${SERVER}`/fd/3 | grep 'Server shutdown successful')

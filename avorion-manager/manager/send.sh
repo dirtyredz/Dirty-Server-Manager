@@ -6,6 +6,20 @@
 # Documentation: https://github.com/dirtyredz/Dirty-Server-Manager
 # Website: https://github.com/dirtyredz/Dirty-Server-Manager
 
+COMMAND_NAME="send"
+COMMAND_DESCRIPTION="sends string directly into the servers console"
+
+if [ "${DisplayDescription}" == "true" ]; then
+  DynamicEcho "$COMMAND_NAME"
+  DynamicEcho "$COMMAND_DESCRIPTION"
+  LoadFile "core_exit.sh"
+fi
+
+if [ -z "$SecondCommand" ]; then
+  DynamicEcho "Second paremeter required, expeted command string."
+  LoadFile "core_exit.sh"
+fi
+
 # if server is offline
 LoadFile "core_status.sh"
 if [ "${status}" == "0" ]; then
@@ -20,4 +34,4 @@ if [ ${SecondCommand:0:1} != '/' ]; then
 fi
 
 DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Sending command: ${SecondCommand}"
-$T "${SecondCommand}" C-m
+$Tmux_SendKeys "${SecondCommand}" C-m

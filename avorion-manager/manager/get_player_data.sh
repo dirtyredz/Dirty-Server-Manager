@@ -19,10 +19,16 @@ fi
 LogToManagerLog "Starting GetPlayerData()"
 DynamicEcho "Starting GetPlayerData()"
 
+
+
 #Settup TMP file
 PlayerDataTmp=${SCRIPTPATH}/avorion-manager/PlayerData.tmp
 DIR="${SCRIPTPATH}/.avorion/galaxies"
 #COUNT=0
+
+if [ "$verbose" = true ]; then
+  DynamicEcho "Searching for player files in: ${DIR}/${GALAXY}/players/"
+fi
 
 echo "<?php" > $PlayerDataTmp;
 echo "\$PlayerData = array(" >> $PlayerDataTmp;

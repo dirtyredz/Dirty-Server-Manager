@@ -41,7 +41,7 @@ SERVER=${GALAXY}_Server
 TMUX_SESSION=${GALAXY}_Tmux
 INSTALL_DIR=$SCRIPTPATH/serverfiles
 STEAM_DIR=$SCRIPTPATH/steamcmd
-T='tmux send-keys -t '${TMUX_SESSION}':0.0'
+Tmux_SendKeys='tmux send-keys -t '${TMUX_SESSION}':0.0'
 # Auto Restart
 CRONJOB='0,5,10,15,20,25,30,35,40,45,50,55 * * * * '${SCRIPTPATH}'/manager status -o CRON >> '${SCRIPTPATH}'/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_status.log'
 CRONDAILYRESTART_NOW='41 11,23 * * * '${SCRIPTPATH}'/manager restart -o CRON -d 15 -b "Restarting Server" >> '${SCRIPTPATH}'/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_status.log'
@@ -85,7 +85,7 @@ if [ ! -z "$broadcast" ]; then
     DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Broadcasting message: $broadcast, will append delay time if \-d is used"
   fi
   if [ -z "$delay" ]; then
-    $T '/say [SERVER] '"${broadcast}" C-m
+    $Tmux_SendKeys '/say [SERVER] '"${broadcast}" C-m
   fi
 fi
 
@@ -105,7 +105,7 @@ if [ ! -z "$delay" ]; then
     if [ ! -z "$broadcast" ]; then
       if pidof ${SERVER} > /dev/null
   		then
-        $T '/say [SERVER] '"${broadcast}"' in '"${minutes}"' minutes.' C-m
+        $Tmux_SendKeys '/say [SERVER] '"${broadcast}"' in '"${minutes}"' minutes.' C-m
       else
         if [ "$verbose" = true ] ; then
           DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} is not running!"

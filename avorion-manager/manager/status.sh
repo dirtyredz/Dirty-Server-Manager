@@ -42,9 +42,9 @@ fi
 # Generate date for a unique grep search
 D='Server Time is: '"$(date +"%F %H-%M-%S")"
 #Send commands to the console
-$T '/echo '"${D}" C-m
-$T /players C-m
-$T /status C-m
+$Tmux_SendKeys '/echo '"${D}" C-m
+$Tmux_SendKeys /players C-m
+$Tmux_SendKeys /status C-m
 time=0
 success=false
 
@@ -66,9 +66,9 @@ if [ "${success}" = false ]; then
   DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Unable to retrieve a status update from the server. Trying again..."
   D='Server Time is: '"$(date +"%F %H-%M-%S")"
   #Send commands to the console
-  $T '/echo '"${D}" C-m
-  $T /players C-m
-  $T /status C-m
+  $Tmux_SendKeys '/echo '"${D}" C-m
+  $Tmux_SendKeys /players C-m
+  $Tmux_SendKeys /status C-m
   time=0
   while [ $time -lt 20 ]; do
     PlayerMemory=$(cat /proc/`pidof ${SERVER}`/fd/3 | awk "/${D}/,/min. update/" | grep 'players in memory')
@@ -88,8 +88,8 @@ if [ "${success}" = false ]; then
   DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Unable to retrieve a status update from the server. Saving..."
   D='Server Time is: '"$(date +"%F %H-%M-%S")"
   #Send commands to the console
-  $T '/echo '"${D}" C-m
-  $T /save C-m
+  $Tmux_SendKeys '/echo '"${D}" C-m
+  $Tmux_SendKeys /save C-m
   time=0
   while [ $time -lt 60 ]; do
     PlayerMemory=$(cat ${SCRIPTPATH}'/console.log' | awk "/${D}/,/Triggered saving of all server data/" | grep 'Triggered saving of all server data')
