@@ -96,6 +96,9 @@ cp linux64/steamclient.so .
 Q: Installation/update is stuck in a loop!
 A: Press Ctrl+C to stop it, then check for errors. If you can't solve them try posting them here.
 
+Q: How do I first login into the Web Interface?
+A: username: admin  password: admin   (make sure you change it.)
+
 
 Credit:
 I want to give some credit to Aki
