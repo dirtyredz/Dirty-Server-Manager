@@ -5,7 +5,8 @@ LogToManagerLog "Ran Stop command.";
 # remove the cron job just incase
 DeleteCronJobs;
 #Generate Offline jpg
-GenerateBrowser 'Offline';
+#GenerateBrowser 'Offline';
+LoadFile "generate_banner.sh"
 
 if pidof ${SERVER} > /dev/null
 then

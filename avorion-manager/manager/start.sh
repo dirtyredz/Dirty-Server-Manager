@@ -87,6 +87,9 @@ if [ "${VER}" != "${VERSION}" ]; then
 else
   DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Dirty Server Manager is Up To Date!"
 fi
+
+PlayersCount='0'
 #Generate jpg
-GenerateBrowser 'Online';
+#GenerateBrowser 'Online';
+LoadFile "generate_banner.sh"
 CreateCronJobs;

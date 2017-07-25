@@ -50,11 +50,12 @@ CRONSECTORDATA='nice -n 10 '${SCRIPTPATH}'/manager get_sector_data -o CRON'
 CRONPLAYERDATA='nice -n 15 '${SCRIPTPATH}'/manager get_player_data -o CRON'
 CRONALLIANCEDATA='nice -n 15 '${SCRIPTPATH}'/manager get_alliance_data -o CRON'
 RequiredCommand=$1
-SecondCommand=$2
+SecondCommand=''
 verbose='false'
 output=''
 broadcast=''
 delay=''
+force='false'
 DisplayDescription=''
 
 # skip past the first required command
@@ -62,17 +63,19 @@ shift
 
 # skip past the second command
 valid='[-.]'
-if [[ ! "${SecondCommand}" =~ $valid ]]; then
+if [[ ! "$1" =~ $valid ]]; then
+  SecondCommand=$1
   shift
 fi
 
-while getopts 'd:b:o:vh' flag; do
+while getopts 'd:b:o:vhf' flag; do
   case "${flag}" in
     o) output="${OPTARG}" ;;
     b) broadcast="${OPTARG}" ;;
     d) delay="${OPTARG}" ;;
     v) verbose='true' ;;
     h) DisplayDescription='true' ;;
+    f) force='true' ;;
     *) error "Unexpected option ${flag}" ;;
   esac
 done
@@ -133,16 +136,6 @@ DynamicEcho() {
     fi
   fi
 }
-GenerateBrowser(){
-  if pidof ${SERVER} > /dev/null
-  then
-    OnlineCount=$(netstat -tlunp 2>/dev/null | grep -iv ':27'|grep -i $(pidof ${SERVER})|wc -l)
-    OnlinePlayers="$OnlineCount/$MAX_PLAYERS"
-  else
-    OnlinePlayers="0/$MAX_PLAYERS"
-  fi
-  php -f ${SCRIPTPATH}/avorion-manager/BannerGenerator.php "$1" "${IPAddress}" "${GALAXY}" "${OnlinePlayers}"
-}
 DeleteCronJobs(){
   crontab -l | grep -v "${SCRIPTPATH}/manager"  | crontab -
   crontab -l | grep -v "${SCRIPTPATH}/avorion-manager"  | crontab -
@@ -185,6 +178,10 @@ DisplayHelp(){
 
 LoadFile(){
   requested_file="${1}"
+  if [ "${2}" ]; then
+    SecondCommand="${2}"
+  fi
+
   file_path="${SCRIPTPATH}/avorion-manager/manager/${requested_file}"
   if [ -f "${file_path}" ]; then
     chmod +x "${file_path}"

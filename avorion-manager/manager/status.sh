@@ -18,7 +18,8 @@ fi
 # if server is offline
 LoadFile "core_status.sh"
 if [ "${status}" == "0" ]; then
-  GenerateBrowser 'Offline';
+  #GenerateBrowser 'Offline';
+  LoadFile "generate_banner.sh"
   # if status was run by cron
   if [ "$output" = "CRON" ]; then
     DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} has detected a crash."
@@ -131,7 +132,7 @@ SectorsUpdate=$(grep -A 15 "${D}" ${SCRIPTPATH}'/console.log' | grep 'Sectors Up
 AvgUpdate=$(awk "/${D}/,/min. update/" /proc/`pidof ${SERVER}`/fd/3 | grep 'avg. update' | sed -e 's/.*| //g')
 MaxUpdate=$(awk "/${D}/,/min. update/" /proc/`pidof ${SERVER}`/fd/3 | grep 'max. update' | sed -e 's/.*| //g')
 MinUpdate=$(awk "/${D}/,/min. update/" /proc/`pidof ${SERVER}`/fd/3 | grep 'min. update' | sed -e 's/.*| //g')
-Players=$(awk "/${D}/,/online players/" /proc/`pidof ${SERVER}`/fd/3 | grep 'online players (' | sed -e 's/online players (//' -e 's/).*//' -e 's/.*| //g' | tr -d '[:blank:]')
+PlayersCount=$(awk "/${D}/,/online players/" /proc/`pidof ${SERVER}`/fd/3 | grep 'online players (' | sed -e 's/online players (//' -e 's/).*//' -e 's/.*| //g' | tr -d '[:blank:]')
 PlayersNames=$(awk "/${D}/,/online players/" /proc/`pidof ${SERVER}`/fd/3 | grep 'online players ('| sed -e 's/.*://' | tr -d '[:blank:]')
 DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} is hosting galaxy: ${GALAXY}"
 DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} ${ServerTime}"
@@ -146,7 +147,7 @@ fi
 DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} ${AvgUpdate}"
 DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} ${MaxUpdate}"
 DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} ${MinUpdate}"
-DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Players Online: ${Players}/${MAX_PLAYERS}"
+DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Players Online: ${PlayersCount}/${MAX_PLAYERS}"
 DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Players: ${PlayersNames}"
 DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} `free -m | awk '/Mem:/ { print "Memory(mb)-Total:"$2",Used:"$3",Free:"$4",Cache:"$6 }'`"
 DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} CPU Usage: `top -bn 2 -d 1 | grep '^%Cpu' | tail -n 1 | awk '{print $2+$4+$6}'`"
@@ -157,6 +158,7 @@ find ${SCRIPTPATH}/avorion-manager/logs/*_status.log -mtime +${LOG_ROTATION} -ty
 find ${SCRIPTPATH}/avorion-manager/logs/*_playerchat.log -mtime +${LOG_ROTATION} -type f -delete 2> /dev/null
 
 #Generate data for the browser
-GenerateBrowser 'Online';
+#GenerateBrowser 'Online';
+LoadFile "generate_banner.sh"
 
 cat /proc/`pidof ${SERVER}`/fd/3 > ${SCRIPTPATH}/server.log
