@@ -3,6 +3,29 @@ if (!function_exists('imagecreatefromjpeg')) {
   echo 'PHPx.x-gd is not installed, unable to create status banner.'."\n";
   exit;
 }
+$status = $argv[1];
+$IPAddress = $argv[2];
+$GalaxyName = $argv[3];
+$OnlinePlayers = $argv[4];
+
+require_once __DIR__ .'/core/CommonController.php';
+require_once  __DIR__ .'/core/ServerConfigController.php';
+$ServerConfigController = new ServerConfigController();
+$TempConfig = $ServerConfigController->GetPHPConfig();
+
+$BannerNameOne = str_replace("'", "", $TempConfig['BannerNameOne']);
+$BannerNameTwo = str_replace("'", "", $TempConfig['BannerNameTwo']);
+$CustomMessageOne = str_replace("'", "", $TempConfig['BannerCustomMessageOne']);
+$CustomMessageTwo = str_replace("'", "", $TempConfig['BannerCustomMessageTwo']);
+$CustomMessageThree = str_replace("'", "", $TempConfig['BannerCustomMessageThree']);
+
+if(empty($BannerNameOne)){
+  $BannerNameOne = $GalaxyName;
+}
+if(empty($BannerNameTwo)){
+  $BannerNameTwo = $IPAddress;
+}
+
 $Dir = dirname(__FILE__)."/webroot/banner/";
 $originalFile = $Dir."BannerImgTemplate.jpg";
 $im = @imagecreatefromjpeg($originalFile)
@@ -21,19 +44,13 @@ $white = imagecolorallocate($SmallImage, 255, 255, 255);
 $green = imagecolorallocate($SmallImage, 0, 255, 0);
 $red = imagecolorallocate($SmallImage, 255, 0, 0);
 
-require_once __DIR__ .'/core/CommonController.php';
-require_once  __DIR__ .'/core/ServerConfigController.php';
-$ServerConfigController = new ServerConfigController();
-$TempConfig = $ServerConfigController->GetPHPConfig();
-
 //Large Image
-imagettftext($LargeImage, 30, 0, 20, 40, $white, $Dir."avantgarde-bold-webfont.ttf", $argv[3]);
-imagettftext($LargeImage, 25, 0, 20, 200, $white, $Dir."avantgarde-bold-webfont.ttf", $argv[2]);
-imagettftext($LargeImage, 16, 0, 550, 125, $white, $Dir."avantgarde-bold-webfont.ttf", str_replace("'", "", $TempConfig['BannerCustomMessageOne']));
-imagettftext($LargeImage, 16, 0, 550, 150, $white, $Dir."avantgarde-bold-webfont.ttf", str_replace("'", "", $TempConfig['BannerCustomMessageTwo']));
-imagettftext($LargeImage, 16, 0, 550, 175, $white, $Dir."avantgarde-bold-webfont.ttf", str_replace("'", "", $TempConfig['BannerCustomMessageThree']));
-imagettftext($LargeImage, 16, 0, 550, 200, $white, $Dir."avantgarde-bold-webfont.ttf", "Players: ".$argv[4]);
-$status = $argv[1];//@shell_exec('/home/avorion/avorion-manager/script.sh') or die('Offline');
+imagettftext($LargeImage, 30, 0, 20, 40, $white, $Dir."avantgarde-bold-webfont.ttf", $BannerNameOne);
+imagettftext($LargeImage, 25, 0, 20, 200, $white, $Dir."avantgarde-bold-webfont.ttf", $BannerNameTwo);
+imagettftext($LargeImage, 16, 0, 550, 125, $white, $Dir."avantgarde-bold-webfont.ttf", $CustomMessageOne);
+imagettftext($LargeImage, 16, 0, 550, 150, $white, $Dir."avantgarde-bold-webfont.ttf", $CustomMessageTwo);
+imagettftext($LargeImage, 16, 0, 550, 175, $white, $Dir."avantgarde-bold-webfont.ttf", $CustomMessageThree);
+imagettftext($LargeImage, 16, 0, 550, 200, $white, $Dir."avantgarde-bold-webfont.ttf", "Players: ".$OnlinePlayers);
 if(rtrim($status) == "Offline"){
   imagettftext($LargeImage, 25, 0, 550, 40, $red, $Dir."avantgarde-bold-webfont.ttf", $status);
 }else{
@@ -42,9 +59,9 @@ if(rtrim($status) == "Offline"){
 imagejpeg($LargeImage, $Dir."StatusBannerLrg.jpg");
 
 //Small Image
-imagettftext($SmallImage, 20, 0, 10, 30, $white, $Dir."avantgarde-bold-webfont.ttf", $argv[3]);
-imagettftext($SmallImage, 15, 0, 20, 75, $white, $Dir."avantgarde-bold-webfont.ttf", $argv[2]);
-imagettftext($SmallImage, 12, 0, 340, 75, $white, $Dir."avantgarde-bold-webfont.ttf", "Players: ".$argv[4]);
+imagettftext($SmallImage, 20, 0, 10, 30, $white, $Dir."avantgarde-bold-webfont.ttf", $BannerNameOne);
+imagettftext($SmallImage, 15, 0, 20, 75, $white, $Dir."avantgarde-bold-webfont.ttf", $BannerNameTwo);
+imagettftext($SmallImage, 12, 0, 340, 75, $white, $Dir."avantgarde-bold-webfont.ttf", "Players: ".$OnlinePlayers);
 $status = $argv[1];//@shell_exec('/home/avorion/avorion-manager/script.sh') or die('Offline');
 if(rtrim($status) == "Offline"){
   imagettftext($SmallImage, 18, 0, 360, 30, $red, $Dir."avantgarde-bold-webfont.ttf", $status);
