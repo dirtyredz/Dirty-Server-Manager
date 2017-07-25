@@ -8,8 +8,10 @@
   Added parser verbose output when manually running scripts
   Added verbose output for start command, will display additional info if server cant start, and more
   Added (help)  `-h` optional parameter, will display name/description of function
-  Added optional paramter `-f` to force specific features, like running update with -f will ignore current version checks, and reinstall
-
+  Added optional parameter `-f` to force specific features, like running update with -f will ignore current version checks, and reinstall
+  Added custom names for status banners, in PHPConfig.ini
+  Moved Banner Generator script to its own script, ad removed netstat dependency(will now use last reported /players from console).
+  Updated install, to install all options and comments properly
 
 1.1.7
   Added custom cronjob config options to manager-config.ini

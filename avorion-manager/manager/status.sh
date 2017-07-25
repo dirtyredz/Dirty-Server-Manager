@@ -111,7 +111,8 @@ if [ "${success}" = false ]; then
   DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Unable to retrieve a status or save response from the server."
   if [ "$AutoRestart" = true ]; then
     DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} will restart the server."
-    $0 restart
+    LoadFile "restart.sh"
+
     exit 1
   fi
 

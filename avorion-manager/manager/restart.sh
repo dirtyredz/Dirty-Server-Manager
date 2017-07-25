@@ -4,9 +4,11 @@
 LogToManagerLog "Ran Restart command.";
 DynamicEcho "restarting ${PURPLE}${SERVER}${NOCOLOR}..."
 OLDPID=$(pidof ${SERVER})
-$0 stop
+
+LoadFile "stop.sh"
 sleep 120
-$0 start
+LoadFile "start.sh"
+
 NEWPID=$(pidof ${SERVER})
 if pidof ${SERVER} > /dev/null
 then

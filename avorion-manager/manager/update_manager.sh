@@ -1,4 +1,27 @@
 #!/bin/bash
+# Project: Dirty Server Manager
+# Author: Dirtyredz | David McCLain
+# License: MIT License, Copyright (c) 2017 David McCLain
+# Purpose: Avorion Server Management Script and web interface
+# Documentation: https://github.com/dirtyredz/Dirty-Server-Manager
+# Website: https://github.com/dirtyredz/Dirty-Server-Manager
+
+COMMAND_NAME="update_manager"
+COMMAND_DESCRIPTION="Updates manager files"
+
+if [ "${DisplayDescription}" == "true" ]; then
+  DynamicEcho "$COMMAND_NAME"
+  DynamicEcho "$COMMAND_DESCRIPTION"
+  LoadFile "core_exit.sh"
+fi
+
+# if server is online
+LoadFile "core_status.sh"
+if [ "${status}" != "0" ]; then
+  DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} should not be running while updating."
+  LoadFile "core_exit.sh"
+fi
+
 Latest=$(wget -O - -o /dev/null https://api.github.com/repos/dirtyredz/Dirty-Server-Manager/releases/latest)
 LatestVERSION=$(echo ${Latest}  | tr -d '[:blank:]' | sed -e 's/.*tag_name":"//g' -e 's/".*//g')
 
