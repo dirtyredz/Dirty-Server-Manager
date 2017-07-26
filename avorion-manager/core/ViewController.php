@@ -456,7 +456,7 @@ class ViewController extends CommonController
               return $a['CountryName'] <=> $b['CountryName'];
             });
           }
-          
+
           $this->Data['OnlinePlayers']  = $NewOnlinePlayers;
         }
         //we have players do we want to show the count?
@@ -698,7 +698,7 @@ class ViewController extends CommonController
     $this->RoleRequired($this->Config['AccessProfilePage']);
 
     include __DIR__ .'/../core/ProfileParser.php';
-    $ProfileParser = new ProfileParser('/home/avorion/serverfiles/profiling_stats.txt');
+    $ProfileParser = new ProfileParser(__DIR__.'/../../serverfiles/profiling_stats.txt');
 
     $Sectors = explode('########################################################', strstr($ProfileParser->ParsedData,'########################################################'));
     $Galaxy = [];

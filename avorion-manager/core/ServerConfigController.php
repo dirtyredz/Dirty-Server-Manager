@@ -400,6 +400,13 @@ class ServerConfigController extends CommonController
           'Definition' => 'To back up the parsed alliance file. KeepDataFiles - needs to be true',
           'Type' => 'select',
           'Values' => array('True'=>'true','False'=>'false')),
+    'MOTD' => array(
+          'Definition' => 'Disable or Enable MOTD on server startup.',
+          'Type' => 'select',
+          'Values' => array('True'=>'true','False'=>'false')),
+    'MOTDMessage' => array(
+          'Definition' => 'MOTD Message to broadcast to player when they enter the galaxy',
+          'Type' => 'text'),
   );
   /**
    * Settup class and requires ConfigParser.php

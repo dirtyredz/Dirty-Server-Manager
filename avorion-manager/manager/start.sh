@@ -25,6 +25,12 @@ fi
 # remove the cron job just incase
 DeleteCronJobs;
 
+#MOTD
+if [ "${MOTD}" = true ]; then
+  LoadFile "enable_login_callback.sh"
+fi
+
+
 cp ${SCRIPTPATH}/serverfiles/linux64/steamclient.so serverfiles/steamclient.so
 if [ ! -f bin/${SERVER} ]; then
   cp ${SCRIPTPATH}/serverfiles/bin/AvorionServer ${SCRIPTPATH}/serverfiles/bin/${SERVER}

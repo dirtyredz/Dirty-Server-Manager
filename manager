@@ -31,6 +31,8 @@ KeepDataFiles=`echo ${KeepDataFiles} | sed -e 's/\r//g'`
 KeepDataFilesDays=`echo ${KeepDataFilesDays} | sed -e 's/\r//g'`
 KeepDataFilesPlayers=`echo ${KeepDataFilesPlayers} | sed -e 's/\r//g'`
 KeepDataFilesAlliances=`echo ${KeepDataFilesAlliances} | sed -e 's/\r//g'`
+MOTD=`echo ${MOTD} | sed -e 's/\r//g'`
+MOTDMessage=`echo ${MOTDMessage} | sed -e 's/\r//g'`
 
 # Colors
 WHITE='\033[1;37m'
