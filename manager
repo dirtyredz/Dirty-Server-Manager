@@ -33,6 +33,12 @@ KeepDataFilesPlayers=`echo ${KeepDataFilesPlayers} | sed -e 's/\r//g'`
 KeepDataFilesAlliances=`echo ${KeepDataFilesAlliances} | sed -e 's/\r//g'`
 MOTD=`echo ${MOTD} | sed -e 's/\r//g'`
 MOTDMessage=`echo ${MOTDMessage} | sed -e 's/\r//g'`
+MessageOne=`echo ${MessageOne} | sed -e 's/\r//g'`
+MessageTwo=`echo ${MessageTwo} | sed -e 's/\r//g'`
+MessageThree=`echo ${MessageThree} | sed -e 's/\r//g'`
+MessageFour=`echo ${MessageFour} | sed -e 's/\r//g'`
+MessageFive=`echo ${MessageFive} | sed -e 's/\r//g'`
+MessageInterval=`echo ${MessageInterval} | sed -e 's/\r//g'`
 
 # Colors
 WHITE='\033[1;37m'
@@ -155,6 +161,9 @@ DeleteCronJobs(){
 CreateCronJobs(){
   if [ "${DAILYRESTART}" = true ]; then
     (crontab -l ; echo "${CRONDAILYRESTART_NOW}") | crontab -
+  fi
+  if [ ! -z "${MessageOne}" ]; then
+    (crontab -l ; echo "*/${MessageInterval} * * * * ${SCRIPTPATH}/manager broadcast_config_announcments") | crontab -
   fi
   (crontab -l ; echo "${UpdateServerLog}") | crontab -
   (crontab -l ; echo "0 ${GetSectorDataInterval} * * * ${CRONSECTORDATA}") | crontab -
