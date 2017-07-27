@@ -288,10 +288,8 @@ class AccountController extends CommonController
     }
     //Logs currently signed in user out and passes whether to destroy all cookie data in database
     $this->AccountModel->LogOut($this->SignedInUsername(),$AllLocations);
-    /** @var string $IPAddress performs a command line execution to retrieve servers IP address */
-    $IPAddress = $this->ManagerConfig['IPAddress'];
     //header("Location: http://".$IPAddress.":8080");
     //echo's a redirect script back to page
-    return "<script>parent.self.location='http://".$IPAddress.":8080';</script>";
+    return "<script>parent.self.location.reload();</script>";
   }
 }

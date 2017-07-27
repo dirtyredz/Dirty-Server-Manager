@@ -193,9 +193,8 @@
                     console.log("Account Link Clicked!");
                 });
                 $("li#SignOutBtn").click(function() {
-                  var ipaddress = "http://<?php echo $Data['IPAddress']; ?>:8080"
                   $.get("Account", {'function':'LogOut'}, function(data) {
-                    window.location.href=ipaddress;
+                    window.location.reload();
                   });
                 });
                 <?php

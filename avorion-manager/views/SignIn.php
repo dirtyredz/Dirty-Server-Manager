@@ -123,7 +123,6 @@
   </form>
 </div>
 <script type="text/javascript">
-  var ipaddress = "http://<?php echo $Data['IPAddress']; ?>:8080"
 
   $('input[name="username"]').focus();
 
@@ -151,7 +150,7 @@
       'success': function(data) {
         console.log(data);
         if(data['success']) { // Successful login
-          window.location.href=ipaddress;
+          window.location.reload();
         } else { // Login failed, call error()
           $('.Glow').addClass("Error");
           $('label.Error').css('visibility', 'visible');

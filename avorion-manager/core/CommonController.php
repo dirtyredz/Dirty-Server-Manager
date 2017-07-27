@@ -42,10 +42,8 @@ class CommonController
     if(!isset($_SESSION)) { session_start(); };
     if(!isset($_SESSION['login'])) {
       session_destroy();
-      /** @var string $IPAddress performs a command line execution to retrieve servers IP address */
-      $IPAddress = $this->ManagerConfig['IPAddress'];
       //header("Location: http://".$IPAddress.":8080");
-      echo "<script>parent.self.location='http://".$IPAddress.":".$this->ManagerConfig['WEBPORT']."';</script>";
+      echo "<script>parent.self.location.reload();</script>";
       exit;
     }
   }
@@ -128,10 +126,9 @@ class CommonController
     if($this->SessionRole() < $Role){
       if(!isset($_SESSION)) { session_start(); };
       session_destroy();
-      $IPAddress = $this->ManagerConfig['IPAddress'];
       //header("Location: http://".$IPAddress.":8080");
       //echo's a redirect script back to page
-      echo "<script>parent.self.location='http://".$IPAddress.":".$this->ManagerConfig['WEBPORT']."';</script>";
+      echo "<script>parent.self.location.reload();</script>";
       exit;
     }
   }

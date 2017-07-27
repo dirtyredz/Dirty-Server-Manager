@@ -87,9 +87,8 @@
 <script type="text/javascript">
 
 $("#SignOutAll").click(function() {
-  var ipaddress = "http://<?php echo $Data['IPAddress']; ?>:8080"
   $.get("Account", {'function':'LogOut','AllLocations': true}, function(data) {
-    window.location.href=ipaddress;
+    window.location.reload();
   });
 });
 

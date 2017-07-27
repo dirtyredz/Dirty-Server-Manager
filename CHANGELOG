@@ -19,6 +19,7 @@
   Migrated Admins.xml parser into its own function
   Refined Restart command to attempt restart 10 times, aswell as other improvments in the script
   Added new option GalaxyDirectory, allowing you to set the location of your galaxies directory.
+  Fixed bug where redirects would send you to wrong address
 
 1.1.7
   Added custom cronjob config options to manager-config.ini
