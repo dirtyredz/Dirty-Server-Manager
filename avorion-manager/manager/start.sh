@@ -31,13 +31,14 @@ if [ "${MOTD}" = true ]; then
 fi
 
 
-cp ${SCRIPTPATH}/serverfiles/linux64/steamclient.so serverfiles/steamclient.so
+cp ${SCRIPTPATH}/serverfiles/linux64/steamclient.so ${SCRIPTPATH}/serverfiles/steamclient.so
 if [ ! -f bin/${SERVER} ]; then
   cp ${SCRIPTPATH}/serverfiles/bin/AvorionServer ${SCRIPTPATH}/serverfiles/bin/${SERVER}
 fi
 
 LogToManagerLog "tmux new-session -d -s ${TMUX_SESSION} bin/${SERVER} --port ${PORT} --galaxy-name ${GALAXY} --max-players ${MAX_PLAYERS}  ${PARAMS}";
 cd "${INSTALL_DIR}"
+
 tmux new-session -d -s ${TMUX_SESSION} bin/${SERVER} --port ${PORT} --galaxy-name ${GALAXY} --max-players ${MAX_PLAYERS}  ${PARAMS} 2> ${SCRIPTPATH}/tmux-error.log
 
 # Thanks https://github.com/GameServerManagers/LinuxGSM
@@ -58,7 +59,7 @@ else
   touch ${SCRIPTPATH}'/console.log'
   cat ${SCRIPTPATH}'/console.log' | grep '^<.*>' | grep -v '^<Rusty>' >> ${SCRIPTPATH}/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_playerchat.log
   #Start loging console into console.log.
-  tmux pipe-pane -o -t ${TMUX_SESSION} "cat > ${SCRIPTPATH}/console.log"
+  tmux pipe-pane -o -t ${TMUX_SESSION} "cat > ${SCRIPTPATH}/console.log" 2> ${SCRIPTPATH}/tmux-error.log
 fi
 
 touch ${SCRIPTPATH}'/server.log'
@@ -81,21 +82,22 @@ if [ "${status}" == "0" ]; then
   LoadFile "core_exit.sh"
 fi
 
-DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} has started with pid ${YELLOW}$(pidof ${SERVER})${NOCOLOR}"
+if [ "${status}" != "0" ]; then
+  DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} has started with pid ${YELLOW}$(pidof ${SERVER})${NOCOLOR}"
 
-if [ "$verbose" = true ]; then
-  DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} has started with params: ${PARAMS}"
+  if [ "$verbose" = true ]; then
+    DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} has started with params: ${PARAMS}"
+  fi
+
+  VER=`wget -O - -o /dev/null https://api.github.com/repos/dirtyredz/Dirty-Server-Manager/releases/latest | grep tag_name | sed -e 's/.*://g' -e 's/"//g' -e 's/,//g' | tr -d '[:blank:]'`
+  if [ "${VER}" != "${VERSION}" ]; then
+    DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Dirty Server Manager is NOT Up To Date!"
+  else
+    DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Dirty Server Manager is Up To Date!"
+  fi
 fi
 
-VER=`wget -O - -o /dev/null https://api.github.com/repos/dirtyredz/Dirty-Server-Manager/releases/latest | grep tag_name | sed -e 's/.*://g' -e 's/"//g' -e 's/,//g' | tr -d '[:blank:]'`
-if [ "${VER}" != "${VERSION}" ]; then
-  DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Dirty Server Manager is NOT Up To Date!"
-else
-  DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Dirty Server Manager is Up To Date!"
-fi
-
-PlayersCount='0'
 #Generate jpg
-#GenerateBrowser 'Online';
+PlayersCount='0'
 LoadFile "generate_banner.sh"
 CreateCronJobs;

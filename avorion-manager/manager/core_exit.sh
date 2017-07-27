@@ -6,5 +6,7 @@
 # Documentation: https://github.com/dirtyredz/Dirty-Server-Manager
 # Website: https://github.com/dirtyredz/Dirty-Server-Manager
 
-trap - INT
-exit
+if [ -z "${DisableCoreExit}" ]; then
+  trap - INT
+  exit
+fi

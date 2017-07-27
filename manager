@@ -70,6 +70,7 @@ broadcast=''
 delay=''
 force='false'
 DisplayDescription=''
+DisableCoreExit=''
 
 # skip past the first required command
 shift
