@@ -172,7 +172,7 @@ class ServerConfigController extends CommonController
           'Type' => 'select',
           'Values' => array('Home'=>'Home','SignIn'=>'SignIn','Factions'=>'Factions','Players'=>'Players','DiscoveredMap'=>'DiscoveredMap','FactionsMap'=>'FactionsMap','Graphs'=>'Graphs','About'=>'About')),
     'GalaxiesDir' => array(
-          'Definition' => 'The directory the galaxies directories resides. (This path is relative to the PHPConfig.ini location)',
+          'Definition' => 'Obsolete Option',
           'Type' => 'text'),
     'ConsoleLog' => array(
           'Definition' => 'The file path the console.log file resides. (This path is relative to the PHPConfig.ini location)',
@@ -332,6 +332,9 @@ class ServerConfigController extends CommonController
     'GALAXY' => array(
           'Definition' => 'Name of the Galaxy, needed here aswell so the manager and the web interface knows which galaxy directory were working with.',
           'Type' => 'text'),
+    'GalaxyDirectory' => array(
+          'Definition' => 'File path to where your galaxy will be stored. GALAXY will be appended after path: [GalaxyDirectory][/GALAXY]  Blank will be default to ~/.avorion/galaxies/',
+          'Type' => 'text'),
     'PARAMS' => array(
           'Definition' => 'The parameters used to start the server.',
           'Type' => 'text'),
@@ -407,6 +410,25 @@ class ServerConfigController extends CommonController
     'MOTDMessage' => array(
           'Definition' => 'MOTD Message to broadcast to player when they enter the galaxy',
           'Type' => 'text'),
+    'MessageOne' => array(
+          'Definition' => 'A message to broadcast to the server, use MessageInterval and MessageOrder to set when to brodcast.',
+          'Type' => 'text'),
+    'MessageTwo' => array(
+          'Definition' => 'A message to broadcast to the server, use MessageInterval and MessageOrder to set when to brodcast.',
+          'Type' => 'text'),
+    'MessageThree' => array(
+          'Definition' => 'A message to broadcast to the server, use MessageInterval and MessageOrder to set when to brodcast.',
+          'Type' => 'text'),
+    'MessageFour' => array(
+          'Definition' => 'A message to broadcast to the server, use MessageInterval and MessageOrder to set when to brodcast.',
+          'Type' => 'text'),
+    'MessageFive' => array(
+          'Definition' => 'A message to broadcast to the server, use MessageInterval and MessageOrder to set when to brodcast.',
+          'Type' => 'text'),
+    'MessageInterval' => array(
+          'Definition' => 'An interval in minutes to broadcast a message to the server.',
+          'Type' => 'number',
+          'Range' => array('min'=>1,'max'=>120)),
   );
   /**
    * Settup class and requires ConfigParser.php
@@ -430,7 +452,7 @@ class ServerConfigController extends CommonController
     /** @var string $GalaxyName GalaxyName in manager-config */
     $GalaxyName = $this->ManagerConfig['GALAXY'];//`grep GALAXY {$this->Config['ManagerConfig']} | sed -e 's/.*=//g'`;
     /** @var string $File server.ini file location */
-    $File = $this->Config['GalaxiesDir']."/".trim($GalaxyName)."/server.ini";
+    $File = $this->ManagerConfig['GalaxyDirectory']."/".trim($GalaxyName)."/server.ini";
 
     // Parses the file and return an array
     if($this->ParseINI($File)){

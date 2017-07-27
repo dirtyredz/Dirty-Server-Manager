@@ -18,18 +18,20 @@ fi
 LogToManagerLog "Starting GetSectorData()"
 DynamicEcho "Starting GetSectorData()"
 
+if [ "$verbose" = true ]; then
+  DynamicEcho "Searching for sector files in: ${GalaxyDirectoryPath}${GALAXY}/sectors/"
+fi
+
 SectorDataTmp=${SCRIPTPATH}/avorion-manager/SectorData.tmp
-DIR="${SCRIPTPATH}/.avorion/galaxies"
 COUNT=0
-GALAXYNAME=$(grep GALAXY ${SCRIPTPATH}/manager-config.ini | sed -e 's/.*=//g' -e 's/\r//g')
 echo "<?php" > $SectorDataTmp;
 echo "\$SectorData = array(" >> $SectorDataTmp;
 if [ "$verbose" = true ]; then
-  numFiles=$(ls -1q "${DIR}/${GALAXYNAME}/sectors/" | wc -l | sed -e 's/\r//g')
+  numFiles=$(ls -1q "${GalaxyDirectoryPath}${GALAXY}/sectors/" | wc -l | sed -e 's/\r//g')
   TotalSectors=$(($numFiles / 2))
   DynamicEcho "Found ${numFiles}, sector files, totaling: ${TotalSectors} Sectors."
 fi
-for file in ${DIR}/${GALAXYNAME}/sectors/*v; do
+for file in ${GalaxyDirectoryPath}${GALAXY}/sectors/*v; do
   [ -e "$file" ] || continue
   if [ "$verbose" = true ]; then
     DynamicEcho "\rParsing file: ${file}" "DONTLOG"
@@ -48,10 +50,10 @@ for file in ${DIR}/${GALAXYNAME}/sectors/*v; do
   echo -n "array(\"X\" => \"$X\",\"Y\" => \"$Y\",\"Crafts\" => \"$CRAFTS\",\"Wrecks\" => \"$WRECKS\",\"Asteroids\" => \"$ASTEROIDS\",\"Stations\" => \"$STATIONS\",\"Influence\" => \"$INFLUENCE\",\"FactionIndex\" => \"$FACTIONINDEX\"" >> $SectorDataTmp;
   if [[ $FACTIONINDEX == 200* ]];
   then
-    FactionFile=${DIR}/${GALAXYNAME}/factions/faction_${FACTIONINDEX}.dat
-    #dd if=$FactionFile bs=1 skip=44 of=${FactionFile}.tmp > /dev/null 2>&1
+    FactionFile=${GalaxyDirectoryPath}${GALAXY}/factions/faction_${FACTIONINDEX}.dat
+
     php -f ${SCRIPTPATH}/avorion-manager/manager/zlib_Uncompress.php "${FactionFile}" "SectorUncompressed.tmp"
-    #rm ${FactionFile}.tmp
+
     FactionFile=SectorUncompressed.tmp
 
     StartingPositionStateForm=$(grep -b -a -o -P 'state_form' ${FactionFile} | sed 's/:.1*//' | head -n1 | awk '{SUM = $1 + 16 } END {print SUM}')
@@ -69,8 +71,8 @@ done
 echo ");" >> $SectorDataTmp;
 [ -e ${SCRIPTPATH}/avorion-manager/SectorData.php ] && rm ${SCRIPTPATH}/avorion-manager/SectorData.php
 cp $SectorDataTmp ${SCRIPTPATH}/avorion-manager/SectorData.php
-rm $SectorDataTmp
-rm $FactionFile
+[ -e $SectorDataTmp ] && rm $SectorDataTmp
+rm -f $FactionFile
 
 LogToManagerLog "Completed GetSectorData()"
 DynamicEcho "\r" "DONTLOG"

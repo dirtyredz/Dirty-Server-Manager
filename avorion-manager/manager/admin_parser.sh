@@ -22,13 +22,13 @@ fi
 
 GroupName=''
 while read -r line ; do
-    Exsists=$(awk "/$line/,/\/group/" ${SCRIPTPATH}/.avorion/galaxies/${GALAXY}/admin.xml | grep -F "user name=\"${SecondCommand}")
+    Exsists=$(awk "/$line/,/\/group/" ${GalaxyDirectoryPath}${GALAXY}/admin.xml | grep -F "user name=\"${SecondCommand}")
     if [ "$Exsists" ]; then
       GroupName=$(echo -n $line | sed -e 's/<group name="//g' -e 's/">//g')
     fi
-done < <(grep "group name=" ${SCRIPTPATH}/.avorion/galaxies/${GALAXY}/admin.xml)
+done < <(grep "group name=" ${GalaxyDirectoryPath}${GALAXY}/admin.xml)
 
-ADMIN=$(grep "<admin name=\"${SecondCommand}\"" ${SCRIPTPATH}/.avorion/galaxies/${GALAXY}/admin.xml)
+ADMIN=$(grep "<admin name=\"${SecondCommand}\"" ${GalaxyDirectoryPath}${GALAXY}/admin.xml)
 if [ "$ADMIN" ]; then
   GroupName='Admin'
 fi

@@ -21,7 +21,7 @@ if [ "$verbose" = true ]; then
   DynamicEcho "Enabling login callback in server.lua"
 fi
 
-ServerINIFile=serverfiles/$(grep "startUpScript" .avorion/galaxies/${GALAXY}/server.ini | sed -e 's/startUpScript=//g')
+ServerINIFile=serverfiles/$(grep "startUpScript" ${GalaxyDirectoryPath}${GALAXY}/server.ini | sed -e 's/startUpScript=//g')
 sed -i '/function onPlayerLogIn(playerIndex)/a --Added by DSM - Begin\nRunMOTD(playerIndex)--Added by DSM\n--Added by DSM - End' $ServerINIFile
 echo '--Added by DSM - Begin--Added by DSM' >> $ServerINIFile
 echo 'function RunMOTD(playerIndex)--Added by DSM' >> $ServerINIFile

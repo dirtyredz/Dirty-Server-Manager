@@ -23,26 +23,25 @@ DynamicEcho "Starting GetPlayerData()"
 
 #Settup TMP file
 PlayerDataTmp=${SCRIPTPATH}/avorion-manager/PlayerData.tmp
-DIR="${SCRIPTPATH}/.avorion/galaxies"
 #COUNT=0
 
 if [ "$verbose" = true ]; then
-  DynamicEcho "Searching for player files in: ${DIR}/${GALAXY}/players/"
+  DynamicEcho "Searching for player files in: ${GalaxyDirectoryPath}${GALAXY}/players/"
 fi
 
 echo "<?php" > $PlayerDataTmp;
 echo "\$PlayerData = array(" >> $PlayerDataTmp;
-numFiles=$(ls -1q "${DIR}/${GALAXY}/players/" | wc -l | sed -e 's/\r//g')
+numFiles=$(ls -1q "${GalaxyDirectoryPath}${GALAXY}/players/" | wc -l | sed -e 's/\r//g')
 if [ "$verbose" = true ]; then
   DynamicEcho "Found ${numFiles}, player files. (There are multiple copies of each player file, only parsing 1 for each player.)"
 fi
 #for i in {1..$numFiles}
 #do
 for i in $(seq 1 $numFiles); do
-  find ${DIR}/${GALAXY}/players/ -name \*.tmp -delete
-  file=${DIR}/${GALAXY}/players/player_$i.dat.0
+  find ${GalaxyDirectoryPath}${GALAXY}/players/ -name \*.tmp -delete
+  file=${GalaxyDirectoryPath}${GALAXY}/players/player_$i.dat.0
   [ -e "$file" ] || continue
-  file=$(ls -t ${DIR}/${GALAXY}/players/player_$i.dat.* | head -1)
+  file=$(ls -t ${GalaxyDirectoryPath}${GALAXY}/players/player_$i.dat.* | head -1)
   [ -e "$file" ] || continue
   if [ "$verbose" = true ]; then
     DynamicEcho "\rParsing file: ${file}" "DONTLOG"

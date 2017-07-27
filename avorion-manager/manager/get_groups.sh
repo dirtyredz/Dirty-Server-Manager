@@ -15,4 +15,4 @@ if [ "${DisplayDescription}" == "true" ]; then
   LoadFile "core_exit.sh"
 fi
 
-DynamicEcho $(grep "group name=" ${SCRIPTPATH}/.avorion/galaxies/${GALAXY}/admin.xml | sed -e 's/<group name="//g' -e 's/">//g' -e 's/\r//g' | tr -d '[:blank:]' | awk '{print $0}' ORS=',' | awk '{print $1"Admin"}')
+DynamicEcho $(grep "group name=" ${GalaxyDirectoryPath}${GALAXY}/admin.xml | sed -e 's/<group name="//g' -e 's/">//g' -e 's/\r//g' | tr -d '[:blank:]' | awk '{print $0}' ORS=',' | awk '{print $1"Admin"}')

@@ -19,5 +19,5 @@ if [ "$verbose" = true ]; then
   DynamicEcho "Disabling login callback in server.lua"
 fi
 
-ServerINIFile=serverfiles/$(grep "startUpScript" .avorion/galaxies/${GALAXY}/server.ini | sed -e 's/startUpScript=//g')
+ServerINIFile=serverfiles/$(grep "startUpScript" ${GalaxyDirectoryPath}${GALAXY}/server.ini | sed -e 's/startUpScript=//g')
 sed -i '/--Added by DSM/d' $ServerINIFile

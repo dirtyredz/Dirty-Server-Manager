@@ -11,6 +11,7 @@ source <(grep = ${SCRIPTPATH}/manager-config.ini)
 #sed "s/;/#/g" manager-config.ini | source /dev/stdin
 MAX_PLAYERS=`echo ${MAX_PLAYERS} | sed -e 's/\r//g'`
 GALAXY=`echo ${GALAXY} | sed -e 's/\r//g'`
+GalaxyDirectory=`echo ${GalaxyDirectory} | sed -e 's/\r//g'`
 PARAMS=`echo ${PARAMS} | sed -e 's/\r//g'`
 PORT=`echo ${PORT} | sed -e 's/\r//g'`
 LOG_ROTATION=`echo ${LOG_ROTATION} | sed -e 's/\r//g'`
@@ -39,6 +40,13 @@ MessageThree=`echo ${MessageThree} | sed -e 's/\r//g'`
 MessageFour=`echo ${MessageFour} | sed -e 's/\r//g'`
 MessageFive=`echo ${MessageFive} | sed -e 's/\r//g'`
 MessageInterval=`echo ${MessageInterval} | sed -e 's/\r//g'`
+
+#if empty assume .avorion/galaxies
+if [ -z $GalaxyDirectory ]; then
+  GalaxyDirectoryPath=${SCRIPTPATH}/.avorion/galaxies/
+else
+  GalaxyDirectoryPath=$GalaxyDirectory/
+fi
 
 # Colors
 WHITE='\033[1;37m'

@@ -18,26 +18,30 @@ fi
 #Log to manager.log
 LogToManagerLog "Starting GetAllianceData()"
 DynamicEcho "Starting GetAllianceData()"
+
+if [ "$verbose" = true ]; then
+  DynamicEcho "Searching for alliance files in: ${GalaxyDirectoryPath}${GALAXY}/alliance/"
+fi
+
 #Settup TMP file
 AllianceDataTmp=${SCRIPTPATH}/avorion-manager/AllianceData.tmp
-DIR="${SCRIPTPATH}/.avorion/galaxies"
 #COUNT=0
 source <(grep = ${SCRIPTPATH}/manager-config.ini)
 GALAXYNAME=`echo ${GALAXY} | sed -e 's/\r//g'`
 KeepDataFiles=`echo ${KeepDataFiles} | sed -e 's/\r//g'`
 KeepDataFilesDays=`echo ${KeepDataFilesDays} | sed -e 's/\r//g'`
 KeepDataFilesAlliances=`echo ${KeepDataFilesAlliances} | sed -e 's/\r//g'`
-numFiles=$(ls -1q "${DIR}/${GALAXYNAME}/alliances/" | wc -l | sed -e 's/\r//g')
+numFiles=$(ls -1q "${GalaxyDirectoryPath}${GALAXYNAME}/alliances/" | wc -l | sed -e 's/\r//g')
 if [ "$verbose" = true ]; then
   DynamicEcho "Found ${numFiles}, alliance files. (There are multiple copies of each alliance file, only parsing 1 for each alliance.)"
 fi
 echo "<?php" > $AllianceDataTmp;
 echo "\$AllianceData = array(" >> $AllianceDataTmp;
 for i in $(seq 1 $numFiles); do
-  find ${DIR}/${GALAXYNAME}/alliances/ -name \*.tmp -delete
-  file=${DIR}/${GALAXYNAME}/alliances/alliance_$i.dat.0
+  find ${GalaxyDirectoryPath}${GALAXYNAME}/alliances/ -name \*.tmp -delete
+  file=${GalaxyDirectoryPath}${GALAXYNAME}/alliances/alliance_$i.dat.0
   [ -e "$file" ] || continue
-  file=$(ls -t ${DIR}/${GALAXYNAME}/alliances/alliance_$i.dat.* | head -1)
+  file=$(ls -t ${GalaxyDirectoryPath}${GALAXYNAME}/alliances/alliance_$i.dat.* | head -1)
   [ -e "$file" ] || continue
   if [ "$verbose" = true ]; then
     DynamicEcho "\rParsing file: ${file}" "DONTLOG"

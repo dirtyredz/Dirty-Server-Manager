@@ -26,6 +26,12 @@ if [ "${status}" == "0" ]; then
   LoadFile "core_exit.sh"
 fi
 
+if [ "${force}" == "true" ]; then
+  DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Forcing Shutdown."
+  tmux kill-session -t ${TMUX_SESSION}
+  LoadFile "core_exit.sh"
+fi
+
 ServerPid=$(pidof ${SERVER})
 
 DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Saving..."

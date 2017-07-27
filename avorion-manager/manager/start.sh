@@ -36,10 +36,14 @@ if [ ! -f bin/${SERVER} ]; then
   cp ${SCRIPTPATH}/serverfiles/bin/AvorionServer ${SCRIPTPATH}/serverfiles/bin/${SERVER}
 fi
 
-LogToManagerLog "tmux new-session -d -s ${TMUX_SESSION} bin/${SERVER} --port ${PORT} --galaxy-name ${GALAXY} --max-players ${MAX_PLAYERS}  ${PARAMS}";
+LogToManagerLog "tmux new-session -d -s ${TMUX_SESSION} bin/${SERVER} --port ${PORT} --galaxy-name ${GALAXY} ${GalaxyDirectory} --max-players ${MAX_PLAYERS}  ${PARAMS}";
 cd "${INSTALL_DIR}"
 
-tmux new-session -d -s ${TMUX_SESSION} bin/${SERVER} --port ${PORT} --galaxy-name ${GALAXY} --max-players ${MAX_PLAYERS}  ${PARAMS} 2> ${SCRIPTPATH}/tmux-error.log
+if [ ! -z $GalaxyDirectory ]; then
+  GalaxyDirectory="--datapath ${GalaxyDirectory}"
+fi
+
+tmux new-session -d -s ${TMUX_SESSION} bin/${SERVER} --port ${PORT} --galaxy-name ${GALAXY} ${GalaxyDirectory} --max-players ${MAX_PLAYERS} ${PARAMS} 2> ${SCRIPTPATH}/tmux-error.log
 
 # Thanks https://github.com/GameServerManagers/LinuxGSM
 # tmux pipe-pane not supported in tmux versions < 1.6
