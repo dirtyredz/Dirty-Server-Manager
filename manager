@@ -163,6 +163,10 @@ CreateCronJobs(){
     (crontab -l ; echo "${CRONDAILYRESTART_NOW}") | crontab -
   fi
   if [ ! -z "${MessageOne}" ]; then
+    regex='^[0-9]+$'
+    if ! [[ $MessageInterval =~ $regex ]] ; then
+       MessageInterval=30
+    fi
     (crontab -l ; echo "*/${MessageInterval} * * * * ${SCRIPTPATH}/manager broadcast_config_announcments") | crontab -
   fi
   (crontab -l ; echo "${UpdateServerLog}") | crontab -
