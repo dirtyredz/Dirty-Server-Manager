@@ -42,6 +42,35 @@ class RefreshController extends CommonController
   }
 
   /**
+   * Deletes the sector from the galaxies/sectors directory
+   * @method DeleteSector
+   * @return string
+   */
+  public function DeleteSector()
+  {
+    /** @var array $return Settup array to build response */
+    $return = array();
+    //checks logged in users role against config options
+    if($this->RoleAccess($this->Config['DeleteSector'])){
+      $x=$_POST["XSector"];
+      $y=$_POST["YSector"];
+      if($this->RefreshModel->DeleteSector($x,$y)){
+        $return['success'] = true;
+        $return['message'] = 'Sector Deleted';
+      }else {
+        $return['success'] = false;
+        $return['message'] = 'Sector file doesnt not exsist';
+      }
+    }else {
+      //Role was not high enough
+      $return['success'] = false;
+      $return['message'] = 'Your Role level is not high enough to delete a sector';
+    }
+    //encode and return
+    echo json_encode($return);
+  }
+
+  /**
    * Returns Serverdata if logged in users role is high enough
    * @method GetServerData
    * @return string

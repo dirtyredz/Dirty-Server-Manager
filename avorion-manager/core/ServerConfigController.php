@@ -163,6 +163,10 @@ class ServerConfigController extends CommonController
           'Definition' => 'The role level required to Send Mail via Form. (0=public)',
           'Type' => 'number',
           'Range' => array('min'=>0,'max'=>99)),
+    'DeleteSector' => array(
+          'Definition' => 'The role level required to Delete a sector via console page. (0=public)',
+          'Type' => 'number',
+          'Range' => array('min'=>0,'max'=>99)),
     'EnableRSS' => array(
           'Definition' => 'If enabled will allow access to the /rss page, which provides details in an easy format for third party software.',
           'Type' => 'select',

@@ -263,6 +263,12 @@ class ViewController extends CommonController
     }else{
       $this->Data['SendMail'] = false;
     }
+    //If user has access to the Delete Sector controls
+    if($this->RoleAccess($this->Config['DeleteSector'])){//Role required for specific feature
+      $this->Data['DeleteSector'] = true;
+    }else{
+      $this->Data['DeleteSector'] = false;
+    }
     //Include player data for the send mail form to use
     include __DIR__ ."/../PlayerData.php";
     //Load page

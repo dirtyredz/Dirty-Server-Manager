@@ -176,13 +176,11 @@
     #SendMail .ResourceSection{
       display: block;
       flex: 1;
-      flex-grow: 1;
+      flex-grow: 2.2;
     }
-    #SendMail .ButtonSection{
+    .Button{
       flex: 1;
       flex-grow: 1;
-    }
-    #SendMail .ButtonSection input{
       width: 100%;
       background-color: #315683;
       margin: 10px;
@@ -196,9 +194,20 @@
       color: inherit;
       transition: background-color 500ms;
     }
-    #SendMail .ButtonSection input:hover{
+    .Button:hover{
       transform: rotate(1deg);
     }
+.OptionsWrapper .Button{
+  flex: none;
+  flex-grow: 0;
+  width: auto;
+  margin: 0px;
+  margin-left: 10px;
+}
+input[type="number"] {
+  height: 27px;
+}
+
     /* The switch - the box around the slider */
 .switch {
   position: relative;
@@ -295,6 +304,17 @@ $(document).ready(function() {
 <input type="range" name="delay" min="3" max="10" value="3"><span>Update delay: </span><span id="SecondsDelay"></span><span>sec.</span>
 </div>
 </br>
+
+<?php
+  if($Data['DeleteSector']) {
+       ?>
+       <div class="OptionsWrapper">
+       <span>X:&nbsp;</span><input type="number" name="XSector" min="-500" max="500" value="0"><span>&nbsp;&nbsp;&nbsp;Y:&nbsp;</span><input type="number" name="YSector" min="-500" max="500" value="0">
+       <input class="Button" id="DeleteSectorBtn" type="submit" name="submit" value="Delete Sector" />
+       </div>
+       <?php
+   }
+?>
 </br>
 </br>
 <form id="SendMail">
@@ -369,11 +389,8 @@ $(document).ready(function() {
       </div>
     </div>
   </div>
-  <div class="ButtonSection">
-    <input id="sendone" type="submit" name="submit" value="Send" />
-    <input id="sendall" type="submit" name="submitall" value="Send To All" />
-
-  </div>
+  <input class="Button" id="sendone" type="submit" name="submit" value="Send" />
+  <input class="Button" id="sendall" type="submit" name="submitall" value="Send To All" />
 </div>
 </form>
 </br>
@@ -563,8 +580,83 @@ $('.switch > input:checkbox').change(function () {
               }).catch(swal.noop);
 
             });
+
+
+            $("#DeleteSectorBtn").click(function(event){
+              event.preventDefault();
+              swal({
+                title: 'Are you sure?',
+                text: "Do you wish to continue with Deleting Sector: X:"+$('input[name="XSector"]').val()+" Y:"+$('input[name="YSector"]').val(),
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes!'
+              }).then(function () {
+                $.ajax({
+                  'url': 'GetData',
+                  'type': 'POST',
+                  'dataType': 'json',
+                  'data': {
+                    'function':'DeleteSector',
+                    'XSector': $('input[name="XSector"]').val(),
+                    'YSector': $('input[name="YSector"]').val(),
+                  },
+                  'success': function(data) {
+                    console.log(data);
+                    if(data['success']) {
+                      console.log('Success');
+                      AddNotification(data['message']);
+                    } else {
+                      AddNotification(data['message']);
+                    }
+                  }
+                });
+              }).catch(swal.noop);
+
+            });
           <?php
       }
    ?>
+
+   <?php
+       if($Data['DeleteSector']) {
+           ?>
+             $("#DeleteSectorBtn").click(function(event){
+               event.preventDefault();
+               swal({
+                 title: 'Are you sure?',
+                 text: "Do you wish to continue with Deleting Sector: X:"+$('input[name="XSector"]').val()+" Y:"+$('input[name="YSector"]').val(),
+                 type: 'warning',
+                 showCancelButton: true,
+                 confirmButtonColor: '#3085d6',
+                 cancelButtonColor: '#d33',
+                 confirmButtonText: 'Yes!'
+               }).then(function () {
+                 $.ajax({
+                   'url': 'GetData',
+                   'type': 'POST',
+                   'dataType': 'json',
+                   'data': {
+                     'function':'DeleteSector',
+                     'XSector': $('input[name="XSector"]').val(),
+                     'YSector': $('input[name="YSector"]').val(),
+                   },
+                   'success': function(data) {
+                     console.log(data);
+                     if(data['success']) {
+                       console.log('Success');
+                       AddNotification(data['message']);
+                     } else {
+                       AddNotification(data['message']);
+                     }
+                   }
+                 });
+               }).catch(swal.noop);
+
+             });
+           <?php
+       }
+    ?>
 
 </script>

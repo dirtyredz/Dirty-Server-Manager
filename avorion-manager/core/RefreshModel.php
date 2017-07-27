@@ -784,4 +784,26 @@ class RefreshModel extends CommonController
     return $ChatLog;
   }
 
+  /**
+   * Deletes the sector given X and Y,
+   * @method DeleteSector
+   * @return boolean
+   */
+  public function DeleteSector($x,$y)
+  {
+    $GalaxyName = $this->ManagerConfig['GALAXY'];
+    /** @var string $File XY file location */
+    $File = $this->ManagerConfig['GalaxyDirectory']."/".trim($GalaxyName)."/sectors/".$x."_".$y;
+    if(is_file($File)){
+      unlink($File);
+      $File .= "v";
+      if(is_file($File)){
+        unlink($File);
+      }
+      return true;
+    }else {
+      return false;
+    }
+
+  }
 }
