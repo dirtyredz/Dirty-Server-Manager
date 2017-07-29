@@ -48,14 +48,17 @@ else
 fi
 echo Beta: $BetaInput
 echo ''
-read -p "Would you like the server to be public?: [Y/n]"  PublicServerInput
-PublicServerInput=${PublicServerInput:-y}
-if [[ $PublicServerInput =~ ^[Yy]$ ]]; then
+## setting this to false makes the server local only so we always set it true
+## GitHub issue #29 https://github.com/dirtyredz/Dirty-Server-Manager/issues/29
+#read -p "Would you like the server to be public?: [Y/n]"  PublicServerInput
+#PublicServerInput=${PublicServerInput:-y}
+#if [[ $PublicServerInput =~ ^[Yy]$ ]]; then
   PublicServerInput=true
-else
-  PublicServerInput=false
-fi
-echo Public: $PublicServerInput
+#else
+  #PublicServerInput=false
+#fi
+## no need to echo this as its always true.
+#echo Public: $PublicServerInput
 echo ''
 read -p "Would you like the server to be listed?: [Y/n]"  ListedServerInput
 ListedServerInput=${ListedServerInput:-y}
@@ -75,8 +78,9 @@ else
 fi
 echo Same Start Sector: $SameStartInput
 echo ''
-read -p "Port number for the server: [2700]"  PortInput
-PortInput=${PortInput:-2700}
+# missing a 0 in the default port number
+read -p "Port number for the server: [27000]"  PortInput
+PortInput=${PortInput:-27000}
 echo Max Players: $PortInput
 echo ''
 read -p "Would you like the server to automatically restart if the server crashes?: [Y/n]"  AutoCrashRestartInput
