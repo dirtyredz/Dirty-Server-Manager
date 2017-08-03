@@ -779,6 +779,18 @@ class RefreshModel extends CommonController
   }
 
   /**
+   * Sends Command directly to manager
+   * @method ManagerCommand
+   * @return string
+   */
+  public function ManagerCommand($Command)
+  {
+    //Potential config option to only grab the last x lines instead of everything
+    $Manager = `{$this->Config['Manager']} {$Command} -o PHP`;
+    return $Manager;
+  }
+
+  /**
    * Grabs the last 100 lines of Status Log from [Date]_status.log, replaced <> special charectors and adds </br> for each line
    * @method GetStatusData
    * @return string

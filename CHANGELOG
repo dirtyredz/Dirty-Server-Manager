@@ -22,6 +22,7 @@
   Fixed bug where redirects would send you to wrong address
   Added Inputs on console page to delete a sector from the galaxies/sectors/ directory
   Extended input on console to show last 100 lines of manager and status log when toggled
+  Added Start/Stop/Status buttons on console page, commands sent to the manager not the console.
 
 1.1.7
   Added custom cronjob config options to manager-config.ini

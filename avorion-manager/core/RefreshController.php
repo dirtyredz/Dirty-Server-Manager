@@ -139,6 +139,75 @@ class RefreshController extends CommonController
   }
 
   /**
+   * Sends start command to the manager
+   * @method ManagerStart
+   * @return string
+   */
+  public function ManagerStart()
+  {
+    $return = array();
+    //checks logged in users role against config options
+    if($this->RoleAccess($this->Config['ConsoleCommandsAccess'])){
+      //Can this be tricked to send bad commands?
+
+      $return['success'] = true;
+      $return['message'] = $this->RefreshModel->ManagerCommand('start');
+    }else {
+      //Role was not high enough
+      $return['success'] = false;
+      $return['message'] = 'Your Role level is not high enough to use this command.';
+    }
+    //Encode and return
+    echo json_encode($return);
+  }
+
+  /**
+   * Sends start command to the manager
+   * @method ManagerStop
+   * @return string
+   */
+  public function ManagerStop()
+  {
+    $return = array();
+    //checks logged in users role against config options
+    if($this->RoleAccess($this->Config['ConsoleCommandsAccess'])){
+      //Can this be tricked to send bad commands?
+
+      $return['success'] = true;
+      $return['message'] = $this->RefreshModel->ManagerCommand('stop');
+    }else {
+      //Role was not high enough
+      $return['success'] = false;
+      $return['message'] = 'Your Role level is not high enough to use this command.';
+    }
+    //Encode and return
+    echo json_encode($return);
+  }
+
+  /**
+   * Sends start command to the manager
+   * @method ManagerStop
+   * @return string
+   */
+  public function ManagerStatus()
+  {
+    $return = array();
+    //checks logged in users role against config options
+    if($this->RoleAccess($this->Config['ConsoleCommandsAccess'])){
+      //Can this be tricked to send bad commands?
+
+      $return['success'] = true;
+      $return['message'] = $this->RefreshModel->ManagerCommand('status');
+    }else {
+      //Role was not high enough
+      $return['success'] = false;
+      $return['message'] = 'Your Role level is not high enough to use this command.';
+    }
+    //Encode and return
+    echo json_encode($return);
+  }
+
+  /**
    * Gets the Server's Current time, NOT the Clients time
    * @method GetTime
    * @return string json_encoded date string

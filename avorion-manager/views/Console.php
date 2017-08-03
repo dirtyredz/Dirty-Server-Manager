@@ -218,6 +218,11 @@
     .Button:hover{
       transform: rotate(1deg);
     }
+    .Button[Loading="true"]{
+      background-color: #671e1e;
+      pointer-events: none;
+    }
+
 .OptionsWrapper .Button{
   flex: none;
   flex-grow: 0;
@@ -336,6 +341,18 @@ $(document).ready(function() {
       }
    ?>
 </div>
+<br/>
+<?php
+  if($Data['AccessGranted']) {
+       ?>
+       <div class="OptionsWrapper">
+          <input class="Button" id="StartBtn" Loading="false" type="submit" name="StartBtn" value="Start" />
+          <input class="Button" id="StopBtn" Loading="false" type="submit" name="StopBtn" value="Stop" />
+          <input class="Button" id="StatusBtn" Loading="false" type="submit" name="StatusBtn" value="Status" />
+       </div>
+       <?php
+   }
+?>
 <br/>
 <div class="OptionsWrapper">
   <fieldset>
@@ -481,9 +498,80 @@ $(document).ready(function() {
           ?>
           $("#Post").submit(function(event){
             event.preventDefault();
-            console.log('Test')
             $.post("GetData", {function:'SendKeys',Message:$("#Input").val()}, function(data) {
                 $("#Input").val("");
+            });
+          });
+
+          $("#StartBtn").click(function(event){
+            event.preventDefault();
+            var button = this;
+            button.setAttribute('Loading','true')
+              $.ajax({
+                'url': 'GetData',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {
+                  'function':'ManagerStart'
+                },
+                'success': function(data) {
+                  console.log(data);
+                  button.setAttribute('Loading','false')
+                  if(data['success']) {
+                    console.log('Success');
+                    AddNotification(data['message']);
+                  } else {
+                    AddNotification(data['message']);
+                  }
+                }
+              });
+          });
+
+          $("#StopBtn").click(function(event){
+            event.preventDefault();
+            var button = this;
+            button.setAttribute('Loading','true')
+            $.ajax({
+              'url': 'GetData',
+              'type': 'POST',
+              'dataType': 'json',
+              'data': {
+                'function':'ManagerStop'
+              },
+              'success': function(data) {
+                console.log(data);
+                button.setAttribute('Loading','false')
+                if(data['success']) {
+                  console.log('Success');
+                  AddNotification(data['message']);
+                } else {
+                  AddNotification(data['message']);
+                }
+              }
+            });
+          });
+
+          $("#StatusBtn").click(function(event){
+            event.preventDefault();
+            var button = this;
+            button.setAttribute('Loading','true')
+            $.ajax({
+              'url': 'GetData',
+              'type': 'POST',
+              'dataType': 'json',
+              'data': {
+                'function':'ManagerStatus'
+              },
+              'success': function(data) {
+                console.log(data);
+                button.setAttribute('Loading','false')
+                if(data['success']) {
+                  console.log('Success');
+                  AddNotification(data['message']);
+                } else {
+                  AddNotification(data['message']);
+                }
+              }
             });
           });
           <?php
@@ -650,41 +738,6 @@ $('.switch-toggle > input').change(function () {
                       }
                     }
                   });
-                });
-              }).catch(swal.noop);
-
-            });
-
-
-            $("#DeleteSectorBtn").click(function(event){
-              event.preventDefault();
-              swal({
-                title: 'Are you sure?',
-                text: "Do you wish to continue with Deleting Sector: X:"+$('input[name="XSector"]').val()+" Y:"+$('input[name="YSector"]').val(),
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes!'
-              }).then(function () {
-                $.ajax({
-                  'url': 'GetData',
-                  'type': 'POST',
-                  'dataType': 'json',
-                  'data': {
-                    'function':'DeleteSector',
-                    'XSector': $('input[name="XSector"]').val(),
-                    'YSector': $('input[name="YSector"]').val(),
-                  },
-                  'success': function(data) {
-                    console.log(data);
-                    if(data['success']) {
-                      console.log('Success');
-                      AddNotification(data['message']);
-                    } else {
-                      AddNotification(data['message']);
-                    }
-                  }
                 });
               }).catch(swal.noop);
 

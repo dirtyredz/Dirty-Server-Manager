@@ -180,6 +180,10 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', e
 #Notifications{
   font-size: 15px;
 }
+#Notifications > li{
+  overflow: hidden;
+  width: 220px;
+}
 #Loading{
   margin-left: 220px;
   width: 200px;
