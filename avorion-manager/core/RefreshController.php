@@ -38,6 +38,8 @@ class RefreshController extends CommonController
       //Retrieve ConsoleData from model
       //Is it neccasary to use a module?
       echo $this->RefreshModel->GetConsoleData();
+    }else{
+      echo "No Access";
     }
   }
 
@@ -82,6 +84,42 @@ class RefreshController extends CommonController
       //Retrieve ServerData from model
       //Is it neccasary to use a module?
       echo $this->RefreshModel->GetServerData();
+    }else{
+      echo "No Access";
+    }
+  }
+
+  /**
+   * Returns Managerdata if logged in users role is high enough
+   * @method GetManagerData
+   * @return string
+   */
+  public function GetManagerData()
+  {
+    //checks logged in users role against config options
+    if($this->RoleAccess($this->Config['AccessConsolePage'])){
+      //Retrieve ServerData from model
+      //Is it neccasary to use a module?
+      echo "Manager Log<br/>".$this->RefreshModel->GetManagerData();
+    }else{
+      echo "No Access";
+    }
+  }
+
+  /**
+   * Returns Statusdata if logged in users role is high enough
+   * @method GetStatusData
+   * @return string
+   */
+  public function GetStatusData()
+  {
+    //checks logged in users role against config options
+    if($this->RoleAccess($this->Config['AccessConsolePage'])){
+      //Retrieve ServerData from model
+      //Is it neccasary to use a module?
+      echo "Status Log<br/>".$this->RefreshModel->GetStatusData();
+    }else{
+      echo "No Access";
     }
   }
 

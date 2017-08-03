@@ -196,7 +196,10 @@ class CommonController
   * @return string online/offline
   */
   public function onlineStatus(){
-    $PID = $this->returnPid();
-    return  `if [ {$PID} > /dev/null ]; then echo 'Online'; else echo 'Offline'; fi  | tr -d '[:space:]'`;
+    $Status = `{$this->Config['Manager']} core_status -v -o PHP | tr -d '\n'`;
+    if($Status == '1'){
+      return 'Online';
+    }
+    return 'Offline';
   }
 }

@@ -4,6 +4,7 @@
       <!--<meta name="viewport" content="width=device-width, initial-scale=1">-->
       <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Source+Sans+Pro" rel="stylesheet">
       <link rel="stylesheet" type="text/css" href="/resources/css/Main.css">
+      
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/eqcss/1.6.0/EQCSS.min.js"></script>

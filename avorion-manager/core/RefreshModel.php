@@ -761,9 +761,33 @@ class RefreshModel extends CommonController
    */
   public function GetServerData()
   {
-    //Potentall config option to only grab the last x lines instead of everything
+    //Potential config option to only grab the last x lines instead of everything
     $Server = `tail -n1000 {$this->Config['ServerLog']} | sed -e 's/</\&lt;/g' -e 's/>/\&gt;/g' -e 's/$/<br\/>/g'`;
     return $Server;
+  }
+
+  /**
+   * Grabs the last 100 lines of Manager Log from [Date]_manager.log, replaced <> special charectors and adds </br> for each line
+   * @method GetManagerData
+   * @return string
+   */
+  public function GetManagerData()
+  {
+    //Potential config option to only grab the last x lines instead of everything
+    $ManagerLog = `tail -n100 $(find {$this->Config['LogsDir']}/*_manager.log -mtime -1 ) | sed -e 's/$/<br\/>/g'`;
+    return $ManagerLog;
+  }
+
+  /**
+   * Grabs the last 100 lines of Status Log from [Date]_status.log, replaced <> special charectors and adds </br> for each line
+   * @method GetStatusData
+   * @return string
+   */
+  public function GetStatusData()
+  {
+    //Potentall config option to only grab the last x lines instead of everything
+    $StatusLog = `tail -n100 $(find {$this->Config['LogsDir']}/*_status.log -mtime -1 ) | sed -e 's/$/<br\/>/g'`;
+    return $StatusLog;
   }
 
   /**

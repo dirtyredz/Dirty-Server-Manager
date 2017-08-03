@@ -24,6 +24,31 @@
 <br/>
 <br/>
 <h3>CHANGE LOG:</h3>
+<h4>1.2.0</h4>
+  Moves Apache installer to avorion-manager/manager</br>
+  separated commands from manager and added to avorion-manager/manager</br>
+  updated todo link on about page to direct to github issues</br>
+  fixed grep error when running status command with an offline server.</br>
+  send command now checks if a `/command` was sent ie `/say` or `/stop`</br>
+  Added Parser scripts to manager commands</br>
+  Added parser verbose output when manually running scripts</br>
+  Added verbose output for start command, will display additional info if server cant start, and more</br>
+  Added (help)  `-h` optional parameter, will display name/description of function</br>
+  Added optional parameter `-f` to force specific features, like running update with -f will ignore current version checks, and reinstall</br>
+  Added custom names for status banners, in PHPConfig.ini</br>
+  Moved Banner Generator script to its own script, removed netstat dependency(will now use last reported /players from console).</br>
+  Updated install script, to install all options and comments properly</br>
+  Added Timed Broadcast's Options/script</br>
+  Added Message Of The Day options</br>
+  Added Sorting Option to PHPConfig.ini for players list on home screen</br>
+  Added send mail to all members of a group, select the group from the drop down and hit send</br>
+  Migrated Admins.xml parser into its own function</br>
+  Refined Restart command to attempt restart 10 times, aswell as other improvments in the script</br>
+  Added new option GalaxyDirectory, allowing you to set the location of your galaxies directory.</br>
+  Fixed bug where redirects would send you to wrong address</br>
+  Added Inputs on console page to delete a sector from the galaxies/sectors/ directory</br>
+  Extended input on console to show last 100 lines of manager and status log when toggled</br>
+  </br>
 <h4>1.1.7</h4>
   Added custom cronjob config options to manager-config.ini</br>
   removed old not working restart announcment and changed cronjob restart command to announce every 1minute for 15 minutes</br>

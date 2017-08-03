@@ -274,7 +274,6 @@ class ViewController extends CommonController
     //Load page
     $this->Data['PlayerData'] = $PlayerData;
     $this->Data['GroupsList'] = explode(",", shell_exec($this->Config['Manager'].' get_groups -o PHP'));
-    print_r($this->Data['GroupsList']);
     $this->LoadView('Console');
   }
 
@@ -413,8 +412,6 @@ class ViewController extends CommonController
     $this->Data['CustomMessageThree'] = $this->Config['HomeCustomMessageThree'];
     $this->Data['CustomMessageFour'] = $this->Config['HomeCustomMessageFour'];
     $this->Data['GalaxyName'] = $this->ManagerConfig['GALAXY'];
-    //Check if pid status is available, display online if pid is available
-    $ServerProcess = $this->Data['GalaxyName'].'_Server';
     $this->Data['OnlineStatus'] = $this->onlineStatus();
     if($this->Data['ShowDiskUsage']){
       $this->Data['DiskUsage'] = `df -h --total | awk '{print $5}' | tail -n 1 | sed -e 's/%//g'`;
@@ -633,7 +630,6 @@ class ViewController extends CommonController
       $this->Data['ServerLoad'] = $RefreshModel->GetCurrentServerLoad();
       $this->Data['IPAddress'] = $this->ManagerConfig['IPAddress'];
       $this->Data['GalaxyName'] = $this->ManagerConfig['GALAXY'];//`grep GALAXY {$this->Config['ManagerConfig']} | sed -e 's/.*=//g'`;
-      $ServerProcess =   $this->Data['GalaxyName'].'_Server';
       $this->Data['OnlineStatus'] = $this->onlineStatus();
       $this->Data['ShowOnlinePlayerCount'] = $this->Config['ShowOnlinePlayerCount'];
       //if the config allows showing online player count

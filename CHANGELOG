@@ -20,6 +20,8 @@
   Refined Restart command to attempt restart 10 times, aswell as other improvments in the script
   Added new option GalaxyDirectory, allowing you to set the location of your galaxies directory.
   Fixed bug where redirects would send you to wrong address
+  Added Inputs on console page to delete a sector from the galaxies/sectors/ directory
+  Extended input on console to show last 100 lines of manager and status log when toggled
 
 1.1.7
   Added custom cronjob config options to manager-config.ini

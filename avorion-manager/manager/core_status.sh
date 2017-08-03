@@ -8,3 +8,7 @@
 
 # Thanks https://github.com/GameServerManagers/LinuxGSM
 status=$(tmux list-sessions 2>&1 | awk '{print $1}' | grep -Ec "^${TMUX_SESSION}:")
+
+if [ "$verbose" == true ] && [ "$RequiredCommand" == "core_status" ]; then
+  DynamicEcho "$status"
+fi

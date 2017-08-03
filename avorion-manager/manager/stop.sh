@@ -21,6 +21,7 @@ DeleteCronJobs;
 #Generate Offline jpg
 LoadFile "generate_banner.sh"
 
+LoadFile "core_status.sh"
 if [ "${status}" == "0" ]; then
   DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} is not running currently!"
   LoadFile "core_exit.sh"

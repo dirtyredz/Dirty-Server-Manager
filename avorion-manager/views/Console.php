@@ -31,6 +31,27 @@
       background-color: darkgrey;
       outline: 1px solid slategrey;
     }
+    div#LogFile{
+      font-family: 'Source Code Pro', monospace;
+      border: 4px solid #3d3c3c;
+      overflow-x: hidden;
+      overflow-y: scroll;
+      height: 400px;
+      flex: 3 0 70%;
+      padding-left: 5px;
+      min-width: 600px;
+      order: 1;
+    }
+    div#LogFile::-webkit-scrollbar {
+        width: 1em;
+    }
+    div#LogFile::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    }
+    div#LogFile::-webkit-scrollbar-thumb {
+      background-color: darkgrey;
+      outline: 1px solid slategrey;
+    }
     div#PlayerList{
       order: 1;
       border: 4px solid #3d3c3c;
@@ -219,6 +240,17 @@ input[type="number"] {
 /* Hide default HTML checkbox */
 .switch input {display:none;}
 
+/* The switch - the box around the slider */
+.switch2 {
+position: relative;
+display: inline-block;
+width: 60px;
+height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch2 input {display:none;}
+
 /* The slider */
 .slider {
   position: absolute;
@@ -266,7 +298,24 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 }
+
+.switch-candy a {
+    background-color: #315683 !important;
+}
+.switch-toggle{
+  width: 325px;
+  text-align: center;
+  margin-top: 7px;
+}
+.switch-toggle > label{
+    cursor: pointer;
+}
+.switch-light.switch-candy input ~ span span:first-child, .switch-light.switch-candy input:checked ~ span span:nth-child(2), .switch-candy input:checked + label {
+    color: #fff;
+    text-shadow: 1px 1px 1px #191b1e;
+}
 </style>
+<link rel="stylesheet" type="text/css" href="/resources/css/toggle-switch.css">
 <script src="/resources/js/select2.min.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
@@ -289,11 +338,24 @@ $(document).ready(function() {
 </div>
 <br/>
 <div class="OptionsWrapper">
-  <label class="switch">
-    <input type="checkbox">
-    <div class="slider round"></div>
-  </label>
-  <span>Console Log</span>
+  <fieldset>
+    <legend>Log File</legend>
+    <div class="switch-toggle switch-candy">
+      <input id="ConsoleLog" name="LogFile" type="radio" checked>
+      <label for="ConsoleLog" onclick="">Console</label>
+
+      <input id="ServerLog" name="LogFile" type="radio">
+      <label for="ServerLog" onclick="">Server</label>
+
+      <input id="ManagerLog" name="LogFile" type="radio">
+      <label for="ManagerLog" onclick="">Manager</label>
+
+      <input id="StatusLog" name="LogFile" type="radio">
+      <label for="StatusLog" onclick="">Status</label>
+      <a></a>
+    </div>
+    <div class="switch-toggle switch-display">Console Log</div>
+  </fieldset>
 </div>
 <br/>
 <div class="OptionsWrapper">
@@ -428,22 +490,34 @@ $(document).ready(function() {
       }
    ?>
 
-$('.switch > input:checkbox').change(function () {
+$('.switch-toggle > input').change(function () {
   console.log('Changed')
-  if($('.switch > input').is(':checked')){
-    $('.switch + span').html('Server Log')
-  }else{
-    $('.switch + span').html('Console Log')
+  if($('.switch-toggle > #ConsoleLog').is(':checked')){
+    $('.switch-display').html('Console Log')
+  }else if($('.switch-toggle > #ServerLog').is(':checked')){
+    $('.switch-display').html('Server Log')
+  }else if($('.switch-toggle > #ManagerLog').is(':checked')){
+    $('.switch-display').html('Manager Log')
+  }else if($('.switch-toggle > #StatusLog').is(':checked')){
+    $('.switch-display').html('Status Log')
   }
 });
 
   function LoadnScroll(){
-    if($('.switch > input').is(':checked')){
+    if($('.switch-toggle > #ConsoleLog').is(':checked')){
+      $.get( "GetData", {function:"GetConsoleData"},function(data) {
+        $("#Main #Console").html(data);
+      });
+    }else if($('.switch-toggle > #ServerLog').is(':checked')){
       $.get( "GetData", {function:"GetServerData"},function(data) {
         $("#Main #Console").html(data);
       });
-    }else{
-      $.get( "GetData", {function:"GetConsoleData"},function(data) {
+    }else if($('.switch-toggle > #ManagerLog').is(':checked')){
+      $.get( "GetData", {function:"GetManagerData"},function(data) {
+        $("#Main #Console").html(data);
+      });
+    }else if($('.switch-toggle > #StatusLog').is(':checked')){
+      $.get( "GetData", {function:"GetStatusData"},function(data) {
         $("#Main #Console").html(data);
       });
     }
