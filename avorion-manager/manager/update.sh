@@ -35,3 +35,7 @@ case $BETA in
   (true)    $STEAM_DIR/steamcmd.sh +login anonymous +force_install_dir ${INSTALL_DIR} +app_update ${APPID} -beta beta validate +quit;;
   (false)   $STEAM_DIR/steamcmd.sh +login anonymous +force_install_dir ${INSTALL_DIR} +app_update ${APPID} validate +quit;;
 esac
+case $BETA in
+  (true)    $STEAM_DIR/steamcmd.sh +login anonymous +force_install_dir ${INSTALL_DIR} +app_update ${APPID} -beta beta validate +quit;;
+  (false)   $STEAM_DIR/steamcmd.sh +login anonymous +force_install_dir ${INSTALL_DIR} +app_update ${APPID} validate +quit;;
+esac
