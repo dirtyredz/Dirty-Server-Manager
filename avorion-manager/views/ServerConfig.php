@@ -100,6 +100,12 @@
     input[type="submit"]:hover{
       transform: rotate(1deg);
     }
+    input[type="number"]{
+      width: 120px;
+    }
+    .ChangeElsewhere{
+      color: red;
+    }
 </style>
 <div id="Top"><span class="Title"><svg class="icon"><use xlink:href="#icon-cogs"></use></svg>SERVER CONFIG</span><span class="Time"></span></div>
 <br/>
@@ -111,26 +117,41 @@
 </ul>
 <section id="first-tab-group" class="tabgroup">
   <div id="tab1">
-    <h2>Server INI</h2>
-    NOTE: Update via Web Interface currently unavailable.</br></br>
+    <h2>Server Config</h2>
+    NOTE: If an avorion patch has been released containing more option then this form has then dont use this form.</br>
+    It will rewrite server.ini with only these option breaking your current server.ini</br></br>
+    <form id="ServerConfigForm" novalidate>
+      <?php if($Data['ChangeServerINI']){
+        if($Data['OnlineStatus']){
+          echo 'Cannot Edit config while server is offline!';
+        }else{
+          echo '<input type="submit" name="submit" value="Submit" />';
+        }
+      }?>
+    </br>
+    </br>
+    </br>
     <?php
-      $Count = 0;
       foreach ($Data['ServerINI'] as $key => $value) {
+        $value = trim($value,"'");
+        if($value != strip_tags($value)) {
+            $value = htmlentities($value);
+        }
         ?>
         <div class="ConfigContainer">
           <div class="ConfigOption">
             <span><?php echo $key; ?></span>
             <br/>
-            <span class="Definition"><?php echo $Data['ServerINIDetails'][$Count]['Definition']; ?></span>
+            <span class="Definition"><?php echo $Data['ServerINIDetails'][$key]['Definition']; ?></span>
           </div>
           <div class="ConfigInput">
             <?php
-              if($Data['ChangeServerINI']){
-                if($Data['ServerINIDetails'][$Count]['Type'] == 'input'){
+              if($Data['ChangeServerINI'] && !$Data['OnlineStatus']){
+                if($Data['ServerINIDetails'][$key]['Type'] == 'text'){
                   echo '<input class="" type="text" name="'.$key.'" value="'.$value.'"></input>';
-                }elseif($Data['ServerINIDetails'][$Count]['Type'] == 'select'){
-                  echo '<select>';
-                    foreach ($Data['ServerINIDetails'][$Count]['Values'] as $SelectKey => $SelectValue) {
+                }elseif($Data['ServerINIDetails'][$key]['Type'] == 'select'){
+                  echo '<select name="'.$key.'">';
+                    foreach ($Data['ServerINIDetails'][$key]['Values'] as $SelectKey => $SelectValue) {
                       if($value == $SelectValue){
                         echo '<option value="'.$SelectValue.'" selected>'.$SelectKey.'</option>';
                       }else{
@@ -138,6 +159,10 @@
                       }
                     }
                   echo '</select>';
+                }elseif($Data['ServerINIDetails'][$key]['Type'] == 'number'){
+                  echo '<input type="number" name="'.$key.'" step="'.$Data['ServerINIDetails'][$key]['Range']['step'].'" min="'.$Data['ServerINIDetails'][$key]['Range']['min'].'" max="'.$Data['ServerINIDetails'][$key]['Range']['max'].'" value="'.$value.'">';
+                }else{
+                  echo '<span class="ChangeElsewhere">'.$Data['ServerINIDetails'][$key]['Type'].'</span>';
                 }
               }
               echo '&nbsp;&nbsp;&nbsp;'.$value;
@@ -146,18 +171,30 @@
           </div>
         </div>
         <?php
-        $Count +=1;
       }
      ?>
+   </form>
   </div>
   <div id="tab2">
     <h2>Manager Config</h2>
-    NOTE: Update via Web Interface currently unavailable.</br></br>
+    </br></br>
     <form id="ManagerConfigForm">
+    <?php if($Data['ChangeManagerConfigINI']){
+      if($Data['OnlineStatus']){
+        echo 'Cannot Edit config while server is offline!';
+      }else{
+        echo '<input type="submit" name="submit" value="Submit" />';
+      }
+    }?>
+    </br>
+    </br>
+    </br>
     <?php
-      $Count = 0;
       foreach ($Data['ManagerConfig'] as $key => $value) {
         $value = trim($value,"'");
+        if($value != strip_tags($value)) {
+            $value = htmlentities($value);
+        }
         ?>
         <div class="ConfigContainer">
           <div class="ConfigOption">
@@ -167,7 +204,7 @@
           </div>
           <div class="ConfigInput">
             <?php
-              if($Data['ChangeManagerConfigINI']){
+              if($Data['ChangeManagerConfigINI'] && !$Data['OnlineStatus']){
                 if($Data['ManagerConfigDetails'][$key]['Type'] == 'text'){
                   echo '<input class="" type="text" name="'.$key.'" value="'.$value.'"></input>';
                 }elseif($Data['ManagerConfigDetails'][$key]['Type'] == 'select'){
@@ -181,7 +218,9 @@
                     }
                   echo '</select>';
                 }elseif($Data['ManagerConfigDetails'][$key]['Type'] == 'number'){
-                  echo '<input type="number" name="'.$key.'" min="'.$Data['ManagerConfigDetails'][$key]['Range']['min'].'" max="'.$Data['ManagerConfigDetails'][$key]['Range']['max'].'" value="'.$value.'">';
+                  echo '<input type="number" name="'.$key.'" step="'.$Data['ServerINIDetails'][$key]['Range']['step'].'" min="'.$Data['ManagerConfigDetails'][$key]['Range']['min'].'" max="'.$Data['ManagerConfigDetails'][$key]['Range']['max'].'" value="'.$value.'">';
+                }else{
+                  echo '<span class="ChangeElsewhere">'.$Data['ManagerConfigDetails'][$key]['Type'].'</span>';
                 }
               }
               echo '&nbsp;&nbsp;&nbsp;'.$value;
@@ -190,7 +229,6 @@
           </div>
         </div>
         <?php
-        $Count +=1;
       }
      ?>
    </form>
@@ -208,7 +246,6 @@
       </br>
       </br>
       <?php
-        $Count = 0;
         foreach ($Data['PHPConfig'] as $key => $value) {
           $value = trim($value,"'");
           if($value != strip_tags($value)) {
@@ -237,16 +274,16 @@
                       }
                     echo '</select>';
                   }elseif($Data['PHPConfigDetails'][$key]['Type'] == 'number'){
-                    echo '<input type="number" name="'.$key.'" min="'.$Data['PHPConfigDetails'][$key]['Range']['min'].'" max="'.$Data['PHPConfigDetails'][$key]['Range']['max'].'" value="'.$value.'">';
+                    echo '<input type="number" name="'.$key.'" step="'.$Data['ServerINIDetails'][$key]['Range']['step'].'" min="'.$Data['PHPConfigDetails'][$key]['Range']['min'].'" max="'.$Data['PHPConfigDetails'][$key]['Range']['max'].'" value="'.$value.'">';
+                  }else{
+                    echo '<span class="ChangeElsewhere">'.$Data['PHPConfigDetails'][$key]['Type'].'</span>';
                   }
                 }
                 echo '&nbsp;&nbsp;&nbsp;'.$value;
                ?>
-
             </div>
           </div>
           <?php
-          $Count +=1;
         }
        ?>
     </form>
@@ -270,18 +307,18 @@
     })
 
     <?php
-        if($Data['ChangePHPConfigINI']) {
+        if($Data['ChangeServerINI']) {
             ?>
-            console.log($('#PHPConfigForm').serializeArray());
-            $("#PHPConfigForm").submit(function(event){
+            console.log($('#ServerConfigForm').serializeArray());
+            $("#ServerConfigForm").submit(function(event){
               event.preventDefault();
               $.ajax({
                 'url': 'Config',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {
-                  'function':'UpdatePHPConfig',
-                  'FormData':$('#PHPConfigForm').serializeArray()
+                  'function':'UpdateServerConfig',
+                  'FormData':$('#ServerConfigForm').serializeArray()
                 },
                 'success': function(data) {
                   console.log(data);
@@ -298,4 +335,64 @@
             <?php
         }
      ?>
+
+     <?php
+         if($Data['ChangeManagerConfigINI']) {
+             ?>
+             console.log($('#ManagerConfigForm').serializeArray());
+             $("#ManagerConfigForm").submit(function(event){
+               event.preventDefault();
+               $.ajax({
+                 'url': 'Config',
+                 'type': 'POST',
+                 'dataType': 'json',
+                 'data': {
+                   'function':'UpdateManagerConfig',
+                   'FormData':$('#ManagerConfigForm').serializeArray()
+                 },
+                 'success': function(data) {
+                   console.log(data);
+                   if(data['success']) {
+                     console.log('Success');
+                     AddNotification(data['message']);
+                     Load("ServerConfig");
+                   } else {
+                     AddNotification(data['message']);
+                   }
+                 }
+               });
+             });
+             <?php
+         }
+      ?>
+
+      <?php
+          if($Data['ChangePHPConfigINI']) {
+              ?>
+              console.log($('#PHPConfigForm').serializeArray());
+              $("#PHPConfigForm").submit(function(event){
+                event.preventDefault();
+                $.ajax({
+                  'url': 'Config',
+                  'type': 'POST',
+                  'dataType': 'json',
+                  'data': {
+                    'function':'UpdatePHPConfig',
+                    'FormData':$('#PHPConfigForm').serializeArray()
+                  },
+                  'success': function(data) {
+                    console.log(data);
+                    if(data['success']) {
+                      console.log('Success');
+                      AddNotification(data['message']);
+                      Load("ServerConfig");
+                    } else {
+                      AddNotification(data['message']);
+                    }
+                  }
+                });
+              });
+              <?php
+          }
+       ?>
 </script>

@@ -42,55 +42,55 @@ class ServerConfigController extends CommonController
     'AccessConsolePage' => array(
           'Definition' => 'The role level required to view the Console page. (0=public)',
           'Type' => 'number',
-          'Range' => array('min'=>0,'max'=>99)),
+          'Range' => array('step'=>'1','min'=>0,'max'=>99)),
     'AccessServerConfigPage' => array(
           'Definition' => 'The role level required to view the Configuration page. (0=public)',
           'Type' => 'number',
-          'Range' => array('min'=>0,'max'=>99)),
+          'Range' => array('step'=>'1','min'=>0,'max'=>99)),
     'AccessFactionsPage' => array(
           'Definition' => 'The role level required to view the Factions page. (0=public)',
           'Type' => 'number',
-          'Range' => array('min'=>0,'max'=>99)),
+          'Range' => array('step'=>'1','min'=>0,'max'=>99)),
     'AccessPlayerPage' => array(
           'Definition' => 'The role level required to view the Players page. (0=public)',
           'Type' => 'number',
-          'Range' => array('min'=>0,'max'=>99)),
+          'Range' => array('step'=>'1','min'=>0,'max'=>99)),
     'AccessDiscoveredMapPage' => array(
           'Definition' => 'The role level required to view the Discovered Map page. (0=public)',
           'Type' => 'number',
-          'Range' => array('min'=>0,'max'=>99)),
+          'Range' => array('step'=>'1','min'=>0,'max'=>99)),
     'AccessFactionsMapPage' => array(
           'Definition' => 'The role level required to view the Factions Map page. (0=public)',
           'Type' => 'number',
-          'Range' => array('min'=>0,'max'=>99)),
+          'Range' => array('step'=>'1','min'=>0,'max'=>99)),
     'AccessGraphsPage' => array(
           'Definition' => 'The role level required to view the Graphs page. (0=public)',
           'Type' => 'number',
-          'Range' => array('min'=>0,'max'=>99)),
+          'Range' => array('step'=>'1','min'=>0,'max'=>99)),
     'AccessProfilePage' => array(
           'Definition' => 'The role level required to view the Profile page. (0=public)',
           'Type' => 'number',
-          'Range' => array('min'=>0,'max'=>99)),
+          'Range' => array('step'=>'1','min'=>0,'max'=>99)),
     'AccessUserManagmentPage' => array(
           'Definition' => 'The role level required to view the User Management page. (0=public)',
           'Type' => 'number',
-          'Range' => array('min'=>0,'max'=>99)),
+          'Range' => array('step'=>'1','min'=>0,'max'=>99)),
     'AccessSpaceInvadersPage' => array(
           'Definition' => 'The role level required to view the Space Invaders page. (0=public)',
           'Type' => 'number',
-          'Range' => array('min'=>0,'max'=>99)),
+          'Range' => array('step'=>'1','min'=>0,'max'=>99)),
     'AccessAlliancePage' => array(
           'Definition' => 'The role level required to view the Alliances page. (0=public)',
           'Type' => 'number',
-          'Range' => array('min'=>0,'max'=>99)),
+          'Range' => array('step'=>'1','min'=>0,'max'=>99)),
     'HomeChatLog' => array(
           'Definition' => 'The role level required to view the Chat log on the home page. (0=public)',
           'Type' => 'number',
-          'Range' => array('min'=>0,'max'=>99)),
+          'Range' => array('step'=>'1','min'=>0,'max'=>99)),
     'HomePlayerList' => array(
           'Definition' => 'The role level required to view the Players list on the home page. (0=public)',
           'Type' => 'number',
-          'Range' => array('min'=>0,'max'=>99)),
+          'Range' => array('step'=>'1','min'=>0,'max'=>99)),
     'HomeSortPlayerList' => array(
           'Definition' => 'Sorts the players list on the home page. (Name/Flag)',
           'Type' => 'select',
@@ -98,75 +98,75 @@ class ServerConfigController extends CommonController
     'HomeDiskUsage' => array(
           'Definition' => 'The role level required to view the Disk Usage on the home page. (0=public)',
           'Type' => 'number',
-          'Range' => array('min'=>0,'max'=>99)),
+          'Range' => array('step'=>'1','min'=>0,'max'=>99)),
     'ServerLoadGraph' => array(
           'Definition' => 'The role level required to view the Server Load graph on the graphs page. (0=public)',
           'Type' => 'number',
-          'Range' => array('min'=>0,'max'=>99)),
+          'Range' => array('step'=>'1','min'=>0,'max'=>99)),
     'OnlinePlayersGraph' => array(
           'Definition' => 'The role level required to view the Online players graph on the graphs page. (0=public)',
           'Type' => 'number',
-          'Range' => array('min'=>0,'max'=>99)),
+          'Range' => array('step'=>'1','min'=>0,'max'=>99)),
     'InMemoryGraph' => array(
           'Definition' => 'The role level required to view the In Memory graph on the graphs page. (0=public)',
           'Type' => 'number',
-          'Range' => array('min'=>0,'max'=>99)),
+          'Range' => array('step'=>'1','min'=>0,'max'=>99)),
     'UpdatesGraph' => array(
           'Definition' => 'The role level required to view the Updates graph on the graphs page. (0=public)',
           'Type' => 'number',
-          'Range' => array('min'=>0,'max'=>99)),
+          'Range' => array('step'=>'1','min'=>0,'max'=>99)),
     'CpuUsageGraph' => array(
           'Definition' => 'The role level required to view the Cpu Usage graph on the graphs page. (0=public)',
           'Type' => 'number',
-          'Range' => array('min'=>0,'max'=>99)),
+          'Range' => array('step'=>'1','min'=>0,'max'=>99)),
     'MemoryUsageGraph' => array(
           'Definition' => 'The role level required to view the Server Memory Usage graph on the graphs page. (0=public)',
           'Type' => 'number',
-          'Range' => array('min'=>0,'max'=>99)),
+          'Range' => array('step'=>'1','min'=>0,'max'=>99)),
     'ScriptMemoryGraph' => array(
           'Definition' => 'The role level required to view the Script Memory Usage graph on the graphs page. (0=public)',
           'Type' => 'number',
-          'Range' => array('min'=>0,'max'=>99)),
+          'Range' => array('step'=>'1','min'=>0,'max'=>99)),
     'ConsoleCommandsAccess' => array(
           'Definition' => 'The role level required to run commands in the console page. (0=public)',
           'Type' => 'number',
-          'Range' => array('min'=>0,'max'=>99)),
+          'Range' => array('step'=>'1','min'=>0,'max'=>99)),
     'ConsoleStopCommand' => array(
           'Definition' => 'The role level required to run the /stop command in the console page. (0=public)',
           'Type' => 'number',
-          'Range' => array('min'=>0,'max'=>99)),
+          'Range' => array('step'=>'1','min'=>0,'max'=>99)),
     'ChatLogInput' => array(
           'Definition' => 'The role level required to send chat message from home. (0=public)',
           'Type' => 'number',
-          'Range' => array('min'=>0,'max'=>99)),
+          'Range' => array('step'=>'1','min'=>0,'max'=>99)),
     'AccessDetailedPlayerData' => array(
           'Definition' => 'The role level required to view extra details on the players page. (0=public)',
           'Type' => 'number',
-          'Range' => array('min'=>0,'max'=>99)),
+          'Range' => array('step'=>'1','min'=>0,'max'=>99)),
     'AccessDetailedAllianceData' => array(
           'Definition' => 'The role level required to view extra details on the alliance page. (0=public)',
           'Type' => 'number',
-          'Range' => array('min'=>0,'max'=>99)),
+          'Range' => array('step'=>'1','min'=>0,'max'=>99)),
     'ChangeServerINI' => array(
           'Definition' => 'The role level required to change the server.ini file via the config page. (0=public)',
           'Type' => 'number',
-          'Range' => array('min'=>0,'max'=>99)),
+          'Range' => array('step'=>'1','min'=>0,'max'=>99)),
     'ChangeManagerConfigINI' => array(
           'Definition' => 'The role level required to change the manager-config.ini file via the config page. (0=public)',
           'Type' => 'number',
-          'Range' => array('min'=>0,'max'=>99)),
+          'Range' => array('step'=>'1','min'=>0,'max'=>99)),
     'ChangePHPConfigINI' => array(
           'Definition' => 'The role level required to change the PHPConfig.ini file via the config page. (0=public)',
           'Type' => 'number',
-          'Range' => array('min'=>0,'max'=>99)),
+          'Range' => array('step'=>'1','min'=>0,'max'=>99)),
     'SendMail' => array(
           'Definition' => 'The role level required to Send Mail via Form. (0=public)',
           'Type' => 'number',
-          'Range' => array('min'=>0,'max'=>99)),
+          'Range' => array('step'=>'1','min'=>0,'max'=>99)),
     'DeleteSector' => array(
           'Definition' => 'The role level required to Delete a sector via console page. (0=public)',
           'Type' => 'number',
-          'Range' => array('min'=>0,'max'=>99)),
+          'Range' => array('step'=>'1','min'=>0,'max'=>99)),
     'EnableRSS' => array(
           'Definition' => 'If enabled will allow access to the /rss page, which provides details in an easy format for third party software.',
           'Type' => 'select',
@@ -200,128 +200,145 @@ class ServerConfigController extends CommonController
 
   /** @var array ServerINIOptions Contains all the deffinitions and input type info */
   const ServerINIOptions = array(
-    array('name' => 'Seed',
+    'Seed' => array(
           'Definition' => 'seed of the server',
-          'Type' => 'input'),
-    array('name' => 'Difficulity',
+          'Type' => '(Editing Seed is not supported!)'),
+    'Difficulity' => array(
           'Definition' => 'difficulty of the server, allowed values are: -3, -2, -1, 0, 1, 2, 3 Default: 0',
           'Type' => 'select',
           'Values' => array('Beginner'=>'-3','Easy'=>'-2','Normal'=>'-1','Veteran'=>'0','Difficult'=>'1','Hard'=>'2','Insane'=>'3')),
-    array('name' => 'InfiniteResources',
+    'InfiniteResources' => array(
           'Definition' => 'enable infinite resources for all players',
           'Type' => 'select',
           'Values' => array('True'=>'true','False'=>'false')),
-    array('name' => 'CollisionDamage',
+    'CollisionDamage' => array(
           'Definition' => 'amount of damage done to an object on collision, from 0 to 1. 0: no damage, 1: full damage. default: 1',
-          'Type' => 'input'),
-    array('name' => 'SafePlayerInput ',
+          'Type' => 'number',
+          'Range' => array('step'=>'0.01','min'=>0,'max'=>1)),
+    'SafePlayerInput' => array(
           'Definition' => 'Unkown',
           'Type' => 'select',
           'Values' => array('True'=>'true','False'=>'false')),
-    array('name' => 'BigWreckageDespawnTime',
+    'BigWreckageDespawnTime' => array(
           'Definition' => 'Time for wrecks with 10 or more blocks to despawn.',
-          'Type' => 'input'),
-    array('name' => 'SmallWreckageDespawnTime',
+          'Type' => 'number',
+          'Range' => array('step'=>'1','min'=>0,'max'=>100000)),
+    'SmallWreckageDespawnTime' => array(
           'Definition' => 'Time for wrecks with less then 10 blocks to despawn.',
-          'Type' => 'input'),
-    array('name' => 'LootDiminishingFactor',
+          'Type' => 'number',
+          'Range' => array('step'=>'1','min'=>0,'max'=>100000)),
+    'LootDiminishingFactor' => array(
           'Definition' => 'Amount of loot dropped from mining/salvaging, higher equals less material.',
-          'Type' => 'input'),
-    array('name' => 'ResourceDropChance',
+          'Type' => 'number',
+          'Range' => array('step'=>'0.01','min'=>0,'max'=>1)),
+    'ResourceDropChance' => array(
           'Definition' => 'Effect unknown (chance of resources dropping from destroyed wreckage pieces?)',
-          'Type' => 'input'),
-    array('name' => 'TurretDropChanceFromTurret',
+          'Type' => 'number',
+          'Range' => array('step'=>'0.01','min'=>0,'max'=>1)),
+    'TurretDropChanceFromTurret' => array(
           'Definition' => 'The chance that a turret will drop from an NPC space craft when the turret is destroyed',
-          'Type' => 'input'),
-    array('name' => 'TurretDropChanceFromCraft',
+          'Type' => 'number',
+          'Range' => array('step'=>'0.01','min'=>0,'max'=>1)),
+    'TurretDropChanceFromCraft' => array(
           'Definition' => 'The chance that a turret will drop from an NPC space craft when the craft is destroyed',
-          'Type' => 'input'),
-    array('name' => 'TurretDropChanceFromBlock',
+          'Type' => 'number',
+          'Range' => array('step'=>'0.01','min'=>0,'max'=>1)),
+    'TurretDropChanceFromBlock' => array(
           'Definition' => 'The chance that a turret will drop from a block of wreckage when it is destroyed',
-          'Type' => 'input'),
-    array('name' => 'SystemDropChanceFromCraft',
+          'Type' => 'number',
+          'Range' => array('step'=>'0.01','min'=>0,'max'=>1)),
+    'SystemDropChanceFromCraft' => array(
           'Definition' => 'The chance that a ship system will drop from an NPC space craft when the craft is destroyed	',
-          'Type' => 'input'),
-    array('name' => 'SystemDropChanceFromBlock',
+          'Type' => 'number',
+          'Range' => array('step'=>'0.01','min'=>0,'max'=>1)),
+    'SystemDropChanceFromBlock' => array(
           'Definition' => 'The chance that a ship system will drop from a block of wreckage when it is destroyed',
-          'Type' => 'input'),
-    array('name' => 'ColorDropChanceFromCraft',
+          'Type' => 'number',
+          'Range' => array('step'=>'0.01','min'=>0,'max'=>1)),
+    'ColorDropChanceFromCraft' => array(
           'Definition' => 'The chance that a color will drop from a space craft when the craft is destroyed',
-          'Type' => 'input'),
-    array('name' => 'ColorDropChanceFromBlock',
+          'Type' => 'number',
+          'Range' => array('step'=>'0.01','min'=>0,'max'=>1)),
+    'ColorDropChanceFromBlock' => array(
           'Definition' => 'The chance that a color will drop from a block of wreckage when it is destroyed',
-          'Type' => 'input'),
-    array('name' => 'sameStartSector',
+          'Type' => 'number',
+          'Range' => array('step'=>'0.01','min'=>0,'max'=>1)),
+    'sameStartSector' => array(
           'Definition' => 'Indicates if all players should start in the same sector. If false, a random empty sector on the outer rim is populated and used as the home sector for each new player.',
           'Type' => 'select',
           'Values' => array('True'=>'true','False'=>'false')),
-    array('name' => 'startUpScript',
+    'startUpScript' => array(
           'Definition' => 'Specifies a Lua script to run on server startup.',
-          'Type' => 'input'),
-    array('name' => 'startSectorScript',
+          'Type' => 'text'),
+    'startSectorScript' => array(
           'Definition' => 'Specifies a Lua script to run when generating a start sector for a player.',
-          'Type' => 'input'),
-    array('name' => 'saveInterval',
+          'Type' => 'text'),
+    'saveInterval' => array(
           'Definition' => 'The time between server saves, in seconds.',
-          'Type' => 'input'),
-    array('name' => 'sectorUpdateTimeLimit',
-          'Definition' => 'This is the time in seconds (by default 300, ie. 5 minutes) that the server will update a sector once it detects that no players are present. (including connected players through gates/wormholes)',
-          'Type' => 'input'),
-    array('name' => 'emptySectorUpdateInterval',
+          'Type' => 'number',
+          'Range' => array('step'=>'1','min'=>0,'max'=>100000)),
+    'sectorUpdateTimeLimit' => array(
+      'Type' => 'number',
+      'Range' => array('step'=>'1','min'=>0,'max'=>100000)),
+    'emptySectorUpdateInterval' => array(
           'Definition' => 'Update interval in seconds that will be used for sectors without players. (lower value equals faster simulation/lower performance)',
-          'Type' => 'input'),
-    array('name' => 'workerThreads',
-          'Definition' => 'Number of threads handling normal updates accross all active sectors.',
-          'Type' => 'input'),
-    array('name' => 'generatorThreads',
+          'Type' => 'number',
+          'Range' => array('step'=>'1','min'=>0,'max'=>100000)),
+    'workerThreads' => array(
+      'Type' => 'number',
+      'Range' => array('step'=>'1','min'=>0,'max'=>100)),
+    'generatorThreads' => array(
           'Definition' => 'Number of threads handling sector generation. ie When calculating a jump or in a sector with wormholes/gates. (These are temporary/unlimited and run at full load to perform computations quickly.)',
-          'Type' => 'input'),
-    array('name' => 'aliveSectorsPerPlayer',
+          'Type' => 'number',
+          'Range' => array('step'=>'1','min'=>0,'max'=>100)),
+    'aliveSectorsPerPlayer' => array(
           'Definition' => 'Number of sectors for each player to keep alive, based on a ranking system.(the more ships/stations of yours, the higher the priority)',
-          'Type' => 'input'),
-    array('name' => 'weakUpdate',
+          'Type' => 'number',
+          'Range' => array('step'=>'1','min'=>0,'max'=>50)),
+    'weakUpdate' => array(
           'Definition' => 'When enabled sectors that have no players are updated in a more lightweight and simplified way, without huge physics calculations, which saves performance.',
           'Type' => 'select',
           'Values' => array('True'=>'true','False'=>'false')),
-    array('name' => 'profiling',
+    'profiling' => array(
           'Definition' => 'Analysis of last 20 frames is printed out when profiling is enabled and /status command is used. (Profiling measures time for actions to complete.)',
           'Type' => 'select',
           'Values' => array('True'=>'true','False'=>'false')),
-    array('name' => 'port',
+    'port' => array(
           'Definition' => 'The default port to access the server on. Does not affect the TCP/UDP game traffic port or the query ports.',
-          'Type' => 'input'),
-    array('name' => 'broadcastInterval',
+          'Type' => 'text'),
+    'broadcastInterval' => array(
           'Definition' => 'The time between server activity broadcasts (in seconds?)',
-          'Type' => 'input'),
-    array('name' => 'isPublic',
+          'Type' => 'number',
+          'Range' => array('step'=>'1','min'=>0,'max'=>100000)),
+    'isPublic' => array(
           'Definition' => 'indicate if the server should allow other players to join',
           'Type' => 'select',
           'Values' => array('True'=>'true','False'=>'false')),
-    array('name' => 'isListed',
+    'isListed' => array(
           'Definition' => 'indicate if the server should show up on public server lists',
           'Type' => 'select',
           'Values' => array('True'=>'true','False'=>'false')),
-    array('name' => 'isAuthenticated',
+    'isAuthenticated' => array(
           'Definition' => 'Effect unknown. (Presumably identical to the ingame setting "Authenticate Users" which toggles steam authentication)',
           'Type' => 'select',
           'Values' => array('True'=>'true','False'=>'false')),
-    array('name' => 'useSteam',
+    'useSteam' => array(
           'Definition' => 'Determines whether the server can be joined via Steam, using options like "join game".',
           'Type' => 'select',
           'Values' => array('True'=>'true','False'=>'false')),
-    array('name' => 'maxPlayers',
-          'Definition' => 'The max number of players allowed on the server at one time',
-          'Type' => 'input'),
-    array('name' => 'name',
+    'maxPlayers' => array(
+          'Definition' => 'The max number of players allowed on the server at one time.',
+          'Type' => '(Change this in ManagerConfig)'),
+    'name' => array(
           'Definition' => 'The name of the server, shown in the server list.',
-          'Type' => 'input'),
-    array('name' => 'description',
+          'Type' => 'text'),
+    'description' => array(
           'Definition' => 'A description for the server, shown in the server list.',
-          'Type' => 'input'),
-    array('name' => 'password',
+          'Type' => 'text'),
+    'password' => array(
           'Definition' => 'Password requirment for the server.',
-          'Type' => 'input'),
-    array('name' => 'accessListMode',
+          'Type' => '(Change this in ManagerConfig)'),
+    'accessListMode' => array(
           'Definition' => 'Determines whether the server uses a blacklist or a whitelist to restrict access.',
           'Type' => 'select',
           'Values' => array('Blacklist'=>'Blacklist','Whitelist'=>'Whitelist')),
@@ -332,7 +349,7 @@ class ServerConfigController extends CommonController
     'MAX_PLAYERS' => array(
           'Definition' => 'Max number of players on the server at once. Used here so the manager has easy access to this value.',
           'Type' => 'number',
-          'Range' => array('min'=>1,'max'=>9999)),
+          'Range' => array('step'=>'1','min'=>1,'max'=>9999)),
     'GALAXY' => array(
           'Definition' => 'Name of the Galaxy, needed here aswell so the manager and the web interface knows which galaxy directory were working with.',
           'Type' => 'text'),
@@ -348,7 +365,7 @@ class ServerConfigController extends CommonController
     'LOG_ROTATION' => array(
           'Definition' => 'The number of days to maintain manager logs.',
           'Type' => 'number',
-          'Range' => array('min'=>1,'max'=>10)),
+          'Range' => array('step'=>'1','min'=>1,'max'=>10)),
     'AutoRestart' => array(
           'Definition' => 'If enabled will attempt to restart the server if a crash is detected.',
           'Type' => 'select',
@@ -398,7 +415,7 @@ class ServerConfigController extends CommonController
     'KeepDataFilesDays' => array(
           'Definition' => 'How many days of backed up Parsed data to keep',
           'Type' => 'number',
-          'Range' => array('min'=>1,'max'=>10)),
+          'Range' => array('step'=>'1','min'=>1,'max'=>10)),
     'KeepDataFilesPlayers' => array(
           'Definition' => 'To back up the parsed player file. KeepDataFiles - needs to be true',
           'Type' => 'select',
@@ -432,7 +449,7 @@ class ServerConfigController extends CommonController
     'MessageInterval' => array(
           'Definition' => 'An interval in minutes to broadcast a message to the server.',
           'Type' => 'number',
-          'Range' => array('min'=>1,'max'=>120)),
+          'Range' => array('step'=>'1','min'=>1,'max'=>120)),
   );
   /**
    * Settup class and requires ConfigParser.php
@@ -509,7 +526,127 @@ class ServerConfigController extends CommonController
   }
 
   /**
-   * Validates and cleans form data from PHPConfig ChangeServerINI
+   * Validates and cleans form data for server.ini
+   * Updates and writes to file with comments
+   * @method UpdateServerConfig
+   * @return string json_encoded success message
+   */
+  public function UpdateServerConfig()
+  {
+    if(!$this->RoleAccess($this->Config['ChangeServerINI'])){
+      $return['success'] = false;
+      $return['message'] = 'Role level not high enough.';
+      echo json_encode($return);
+      exit;
+    }
+    /** @var array $return Builds response array */
+    $return = array();
+    /** @var array $NewPHPConfig array with updated values */
+    $NewConfig = array();
+    /** @var array $Defaults PHPConfig.ini current values from file */
+    $Defaults = $this->GetServerINI();
+    //foreach value in the form data
+    foreach ($_POST['FormData'] as $key => $value) {
+      /** @var mixed $RtnValue form value to be validated and update the file with */
+      $RtnValue = $value['value'];
+      //if this INI option requires a number
+      if(self::ServerINIOptions[$value['name']]['Type'] == 'number'){
+        //Cleans it
+        $RtnValue = htmlspecialchars($RtnValue);
+        //if its not a number restore default
+        if(!is_numeric($RtnValue)){
+          $RtnValue = $Defaults[$value['name']];
+        }
+      //if INI option is a text field
+    }elseif(self::ServerINIOptions[$value['name']]['Type'] == 'text'){
+        //Client can use HTML here so lets only strip  out script tags
+        $RtnValue = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $RtnValue);
+      //if INI option is a select input
+    }elseif(self::ServerINIOptions[$value['name']]['Type'] == 'select'){
+        //cleans it
+        $RtnValue = htmlspecialchars($RtnValue);
+        //if value is not one of the allowed values then restore it
+        if(!in_array($RtnValue,self::ServerINIOptions[$value['name']]['Values'])){
+          $RtnValue = $Defaults[$value['name']];
+        }
+      }
+      //add the value to the array to be updated
+      $NewConfig[$value['name']] = $RtnValue;
+    }
+
+    //Update the class array with our new array
+    $this->ConfigParser->update($NewConfig);
+    //Write the class array to the file include our comments with it so they are written in as well
+    $this->ConfigParser->write();
+
+    //return success message
+    $return['success'] = true;
+    $return['message'] = 'Server Config Updated';
+    echo json_encode($return);
+  }
+
+  /**
+   * Validates and cleans form data for Manager-config.ini
+   * Updates and writes to file with comments
+   * @method UpdateManagerConfig
+   * @return string json_encoded success message
+   */
+  public function UpdateManagerConfig()
+  {
+    if(!$this->RoleAccess($this->Config['ChangeManagerConfigINI'])){
+      $return['success'] = false;
+      $return['message'] = 'Role level not high enough.';
+      echo json_encode($return);
+      exit;
+    }
+    /** @var array $return Builds response array */
+    $return = array();
+    /** @var array $NewPHPConfig array with updated values */
+    $NewPHPConfig = array();
+    /** @var array $Defaults PHPConfig.ini current values from file */
+    $Defaults = $this->GetManagerConfig();
+    //foreach value in the form data
+    foreach ($_POST['FormData'] as $key => $value) {
+      /** @var mixed $RtnValue form value to be validated and update the file with */
+      $RtnValue = $value['value'];
+      //if this INI option requires a number
+      if(self::ManagerConfigOptions[$value['name']]['Type'] == 'number'){
+        //Cleans it
+        $RtnValue = htmlspecialchars($RtnValue);
+        //if its not a number restore default
+        if(!is_numeric($RtnValue)){
+          $RtnValue = $Defaults[$value['name']];
+        }
+      //if INI option is a text field
+    }elseif(self::ManagerConfigOptions[$value['name']]['Type'] == 'text'){
+        //Client can use HTML here so lets only strip  out script tags
+        $RtnValue = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $RtnValue);
+      //if INI option is a select input
+    }elseif(self::ManagerConfigOptions[$value['name']]['Type'] == 'select'){
+        //cleans it
+        $RtnValue = htmlspecialchars($RtnValue);
+        //if value is not one of the allowed values then restore it
+        if(!in_array($RtnValue,self::ManagerConfigOptions[$value['name']]['Values'])){
+          $RtnValue = $Defaults[$value['name']];
+        }
+      }
+      //add the value to the array to be updated
+      $NewPHPConfig[$value['name']] = $RtnValue;
+    }
+
+    //Update the class array with our new array
+    $this->ConfigParser->update($NewPHPConfig);
+    //Write the class array to the file include our comments with it so they are written in as well
+    $this->ConfigParser->write(self::ManagerConfigOptions);
+
+    //return success message
+    $return['success'] = true;
+    $return['message'] = 'Manager Config Updated';
+    echo json_encode($return);
+  }
+
+  /**
+   * Validates and cleans form data for PHPConfig.ini
    * Updates and writes to file with comments
    * @method UpdatePHPConfig
    * @return string json_encoded success message
@@ -567,4 +704,5 @@ class ServerConfigController extends CommonController
     $return['message'] = 'PHP Config Updated';
     echo json_encode($return);
   }
+
 }

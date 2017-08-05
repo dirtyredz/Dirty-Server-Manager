@@ -786,7 +786,8 @@ class RefreshModel extends CommonController
   public function ManagerCommand($Command)
   {
     //Potential config option to only grab the last x lines instead of everything
-    $Manager = `{$this->Config['Manager']} {$Command} -o PHP`;
+    unlink($this->Config['LogsDir'].'/../ManagerCommandOuput.log');
+    $Manager = `{$this->Config['Manager']} {$Command} -o PHP >> {$this->Config['LogsDir']}/../ManagerCommandOuput.log`;
     return $Manager;
   }
 
@@ -800,6 +801,18 @@ class RefreshModel extends CommonController
     //Potentall config option to only grab the last x lines instead of everything
     $StatusLog = `tail -n100 $(find {$this->Config['LogsDir']}/*_status.log -mtime -1 ) | sed -e 's/$/<br\/>/g'`;
     return $StatusLog;
+  }
+
+  /**
+   * Grabs all lines from ManagerCommandOuput.log
+   * @method GetStatusData
+   * @return string
+   */
+  public function GetCommandData()
+  {
+    //Potentall config option to only grab the last x lines instead of everything
+    $CommandLog = `tail {$this->Config['LogsDir']}/../ManagerCommandOuput.log  | sed -e '/^$/d' -e 's/$/<br\/>/g'`;
+    return $CommandLog;
   }
 
   /**

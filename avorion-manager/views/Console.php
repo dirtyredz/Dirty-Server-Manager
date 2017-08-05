@@ -507,6 +507,7 @@ $(document).ready(function() {
             event.preventDefault();
             var button = this;
             button.setAttribute('Loading','true')
+            $("#Main #PlayerList").html('Running Command.....');
               $.ajax({
                 'url': 'GetData',
                 'type': 'POST',
@@ -523,14 +524,20 @@ $(document).ready(function() {
                   } else {
                     AddNotification(data['message']);
                   }
+                  $.get( "GetData", {function:"GetCommandData"},function(data) {
+                    $("#Main #PlayerList").html(data);
+                  });
                 }
               });
+
+
           });
 
           $("#StopBtn").click(function(event){
             event.preventDefault();
             var button = this;
             button.setAttribute('Loading','true')
+            $("#Main #PlayerList").html('Running Command.....');
             $.ajax({
               'url': 'GetData',
               'type': 'POST',
@@ -547,6 +554,9 @@ $(document).ready(function() {
                 } else {
                   AddNotification(data['message']);
                 }
+                $.get( "GetData", {function:"GetCommandData"},function(data) {
+                  $("#Main #PlayerList").html(data);
+                });
               }
             });
           });
@@ -555,6 +565,7 @@ $(document).ready(function() {
             event.preventDefault();
             var button = this;
             button.setAttribute('Loading','true')
+            $("#Main #PlayerList").html('Running Command.....');
             $.ajax({
               'url': 'GetData',
               'type': 'POST',
@@ -571,6 +582,9 @@ $(document).ready(function() {
                 } else {
                   AddNotification(data['message']);
                 }
+                $.get( "GetData", {function:"GetCommandData"},function(data) {
+                  $("#Main #PlayerList").html(data);
+                });
               }
             });
           });

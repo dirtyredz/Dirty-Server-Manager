@@ -139,6 +139,21 @@ class RefreshController extends CommonController
   }
 
   /**
+   * Returns Data in file ManagerCommandOuput.log
+   * @method GetCommandData
+   * @return string
+   */
+  public function GetCommandData()
+  {
+    //checks logged in users role against config options
+    if($this->RoleAccess($this->Config['ConsoleCommandsAccess'])){
+      //Retrieve Chatlog from model
+      //Is it neccasary to use a module?
+      echo $this->RefreshModel->GetCommandData();
+    }
+  }
+
+  /**
    * Sends start command to the manager
    * @method ManagerStart
    * @return string
@@ -149,9 +164,9 @@ class RefreshController extends CommonController
     //checks logged in users role against config options
     if($this->RoleAccess($this->Config['ConsoleCommandsAccess'])){
       //Can this be tricked to send bad commands?
-
+      $this->RefreshModel->ManagerCommand('start');
       $return['success'] = true;
-      $return['message'] = $this->RefreshModel->ManagerCommand('start');
+      $return['message'] = 'Start command completed.';
     }else {
       //Role was not high enough
       $return['success'] = false;
@@ -172,9 +187,9 @@ class RefreshController extends CommonController
     //checks logged in users role against config options
     if($this->RoleAccess($this->Config['ConsoleCommandsAccess'])){
       //Can this be tricked to send bad commands?
-
+      $this->RefreshModel->ManagerCommand('stop');
       $return['success'] = true;
-      $return['message'] = $this->RefreshModel->ManagerCommand('stop');
+      $return['message'] = 'Stop command completed.';
     }else {
       //Role was not high enough
       $return['success'] = false;
@@ -195,9 +210,9 @@ class RefreshController extends CommonController
     //checks logged in users role against config options
     if($this->RoleAccess($this->Config['ConsoleCommandsAccess'])){
       //Can this be tricked to send bad commands?
-
+      $this->RefreshModel->ManagerCommand('status');
       $return['success'] = true;
-      $return['message'] = $this->RefreshModel->ManagerCommand('status');
+      $return['message'] = 'Status command completed.';
     }else {
       //Role was not high enough
       $return['success'] = false;

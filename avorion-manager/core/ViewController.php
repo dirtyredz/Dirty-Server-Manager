@@ -237,6 +237,14 @@ class ViewController extends CommonController
     if($this->RoleAccess($this->Config['ChangePHPConfigINI'])){//Role required for specific feature
       $this->Data['ChangePHPConfigINI'] = true;
     }
+
+    $this->Data['OnlineStatus'] = $this->onlineStatus();
+    if($this->Data['OnlineStatus'] == "Online"){
+      $this->Data['OnlineStatus'] = true;
+      $this->Data['OnlineOnly'] = 'This Config can only be edited while the server is OFFLINE!';
+    }else {
+      $this->Data['OnlineStatus'] = false;
+    }
     //Load the page
     $this->LoadView('ServerConfig');
   }
