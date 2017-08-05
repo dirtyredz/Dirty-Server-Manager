@@ -825,11 +825,19 @@ class RefreshModel extends CommonController
   public function GetChatLog()
   {
     //Potentall config option to only grab the last x lines instead of everything
-    $ChatLog = `grep -e '^....-..-.. ..-..-..| <..*>' -e '^....-..-.. ..-..-..| <> \[.*\]' {$this->Config['ServerLog']} | tac |  sed -e 's/</\&lt;/g' -e 's/>/\&gt;/g'  -e 's/^/<span>/g' -e 's/$/<\/span>/g' -e 's/<span>....-..-.. /<span>/g'`;
+    $ChatLog = '';
+    $File = $this->Config['ServerLog'];
+    if(is_file($File)){
+      $ChatLog .= `grep -e '^....-..-.. ..-..-..| <..*>' -e '^....-..-.. ..-..-..| <> \[.*\]' {$this->Config['ServerLog']} | tac |  sed -e 's/</\&lt;/g' -e 's/>/\&gt;/g'  -e 's/^/<span>/g' -e 's/$/<\/span>/g' -e 's/<span>....-..-.. /<span>/g'`;
+    }
 
     //<Rusty> Nesatorix joined the galaxy
     //<> Restarting server in 17 minutes
-    $ChatLog .= `grep '^<.*>' $(find {$this->Config['LogsDir']}/*_playerchat.log -mtime -1 ) | tac | grep -v '^<Rusty>' | sed -e 's/.*</\&lt;/g' -e 's/>/\&gt;/g'  -e 's/^/<span>/g' -e 's/$/<\/span>/g'`;
+    $PlayerLogs = `find {$this->Config['LogsDir']}/*_playerchat.log -mtime -1`;
+    if($PlayerLogs){
+      $ChatLog .= `grep '^<.*>' $(find {$this->Config['LogsDir']}/*_playerchat.log -mtime -1 ) | tac | grep -v '^<Rusty>' | sed -e 's/.*</\&lt;/g' -e 's/>/\&gt;/g'  -e 's/^/<span>/g' -e 's/$/<\/span>/g'`;
+    }
+
     return $ChatLog;
   }
 
