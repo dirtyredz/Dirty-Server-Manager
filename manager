@@ -7,6 +7,7 @@ SCRIPT=$(readlink -f "$0")
 SCRIPTPATH=$(dirname "$SCRIPT")
 #http://stackoverflow.com/questions/242538/unix-shell-script-find-out-which-directory-the-script-file-resides
 #Pull values from config INI
+sed -i 's/^+//g' ${SCRIPTPATH}/manager-config.ini
 source <(grep = ${SCRIPTPATH}/manager-config.ini)
 #sed "s/;/#/g" manager-config.ini | source /dev/stdin
 MAX_PLAYERS=`echo ${MAX_PLAYERS} | sed -e 's/\r//g'`
@@ -56,7 +57,7 @@ YELLOW='\033[1;33m'
 PURPLE='\033[1;35m'
 NOCOLOR='\033[0m'
 # Static - Dont change these
-VERSION=1.1.7
+VERSION=1.2.0
 APPID=565060
 SERVER=${GALAXY}_Server
 TMUX_SESSION=${GALAXY}_Tmux
@@ -200,9 +201,9 @@ LogToManagerLog(){
 }
 
 DisplayHelp(){
-  DynamicEcho "available commands:\n           ${GREEN}start${NOCOLOR} server,\n           ${GREEN}stop${NOCOLOR} server,\n           ${GREEN}restart${NOCOLOR} server,\n           check server's ${GREEN}status${NOCOLOR},\n           check for ${GREEN}update${NOCOLOR}s,\n           ${GREEN}attach${NOCOLOR} to console,\n           show this ${GREEN}help${NOCOLOR},\n           ${GREEN}install${NOCOLOR} steamcmd,\n           ${GREEN}start-web${NOCOLOR} starts php server\n           ${GREEN}stop-web${NOCOLOR} Stops PHP server\n           ${GREEN}enablerestart${NOCOLOR} Adds restart cron jobs,\n           ${GREEN}disablerestart${NOCOLOR} Removes restart cron jobs,\n           ${GREEN}get_alliance_data${NOCOLOR} for the web interface,\n           ${GREEN}get_player_data${NOCOLOR} for the web interface,\n           ${GREEN}get_sector_data${NOCOLOR} for the web interface,\n           ${GREEN}apache_install${NOCOLOR} so the web interface can run off of apache (must be root/sudo),"
+  DynamicEcho "available commands:\n           ${GREEN}start${NOCOLOR} server,\n           ${GREEN}stop${NOCOLOR} server,\n           ${GREEN}restart${NOCOLOR} server,\n           check server's ${GREEN}status${NOCOLOR},\n           check for ${GREEN}update${NOCOLOR}s,\n           ${GREEN}attach${NOCOLOR} to console,\n           show this ${GREEN}help${NOCOLOR},\n           ${GREEN}install${NOCOLOR} steamcmd,\n           ${GREEN}start-web${NOCOLOR} starts php server\n           ${GREEN}stop-web${NOCOLOR} Stops PHP server\n           ${GREEN}enablerestart${NOCOLOR} Adds restart cron jobs,\n           ${GREEN}disablerestart${NOCOLOR} Removes restart cron jobs,\n           ${GREEN}get_alliance_data${NOCOLOR} for the web interface,\n           ${GREEN}get_player_data${NOCOLOR} for the web interface,\n           ${GREEN}get_sector_data${NOCOLOR} for the web interface,\n           ${GREEN}apache_install${NOCOLOR} so the web interface can run off of apache (must be root/sudo),\n           And more!"
   echo ""
-  DynamicEcho "available options:\n           ${GREEN}-h${NOCOLOR}                --Shows description of command\n           ${GREEN}-d${NOCOLOR} #              --Delay time in minutes\n           ${GREEN}-b${NOCOLOR} \"Message\"      --Broadcast message every minute of the delay\n           ${GREEN}-v${NOCOLOR}                --verbose output\n           ${GREEN}-o${NOCOLOR} [CRON/PHP]     --Displays message without coloring"
+  DynamicEcho "available options:\n           ${GREEN}-h${NOCOLOR}                --Shows description of command\n           ${GREEN}-d${NOCOLOR} #              --Delay time in minutes\n           ${GREEN}-f${NOCOLOR}                --Will force some commands.\n           ${GREEN}-b${NOCOLOR} \"Message\"      --Broadcast message every minute of the delay\n           ${GREEN}-v${NOCOLOR}                --verbose output\n           ${GREEN}-o${NOCOLOR} [CRON/PHP]     --Displays message without coloring"
 }
 
 LoadFile(){

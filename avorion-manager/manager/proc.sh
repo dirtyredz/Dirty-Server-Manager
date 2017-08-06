@@ -22,6 +22,10 @@ if [ "${status}" == "0" ]; then
   LoadFile "core_exit.sh"
 fi
 
-cat /proc/`pidof ${SERVER}`/fd/3 > ${SCRIPTPATH}/server.log
-sleep 30
-cat /proc/`pidof ${SERVER}`/fd/3 > ${SCRIPTPATH}/server.log
+ServerPid=$(pidof ${SERVER})
+
+if [ "$ServerPid" ]; then
+  cat /proc/${ServerPid}/fd/3 > ${SCRIPTPATH}/server.log
+  sleep 30
+  cat /proc/${ServerPid}/fd/3 > ${SCRIPTPATH}/server.log
+fi

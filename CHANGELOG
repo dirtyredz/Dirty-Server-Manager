@@ -23,6 +23,11 @@
   Added Inputs on console page to delete a sector from the galaxies/sectors/ directory
   Extended input on console to show last 100 lines of manager and status log when toggled
   Added Start/Stop/Status buttons on console page, commands sent to the manager not the console.
+  Added Backup command: backup_galaxy, which will backup the entire galaxy directory. The command will only keep 10 backups.
+  Fixed a bug causing the php-server to crash if there was no playerchatlog available.
+  Fixed php-server saying it wasn't starting.
+  forced update command to perform the update twice in succession, to catch any thing missed during first update.
+  Removed Sudo command prefix from apacheInstall script for VM users.
 
 1.1.7
   Added custom cronjob config options to manager-config.ini

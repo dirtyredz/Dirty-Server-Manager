@@ -18,8 +18,6 @@ fi
 LogToManagerLog "Ran Stop command.";
 # remove the cron job just incase
 DeleteCronJobs;
-#Generate Offline jpg
-LoadFile "generate_banner.sh"
 
 LoadFile "core_status.sh"
 if [ "${status}" == "0" ]; then
@@ -30,6 +28,8 @@ fi
 if [ "${force}" == "true" ]; then
   DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Forcing Shutdown."
   tmux kill-session -t ${TMUX_SESSION}
+  #Generate Offline jpg
+  LoadFile "generate_banner.sh"
   LoadFile "core_exit.sh"
 fi
 
@@ -60,7 +60,7 @@ sleep 30
 $Tmux_SendKeys /stop C-m
 time=0
 while [ $time -lt 90 ]; do
-  SHUTDOWN=$(awk "/${D}/,/Server shutdown successful/" /proc/${ServerPid}/fd/3 | grep 'Server shutdown successful')
+  SHUTDOWN=$(cat /proc/${ServerPid}/fd/3 | awk "/${D}/,/Server shutdown successful/" | grep 'Server shutdown successful')
   if [ "${SHUTDOWN}" ] || [ "$( ps ax | grep ${SERVER} | grep -v grep | grep tmux | wc -l)" ]; then
     DynamicEcho "\r" "DONTLOG"
     DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} has been stopped."
@@ -77,3 +77,6 @@ if ! kill $(pidof ${SERVER}) > /dev/null 2>&1; then
   sleep 1
   tmux kill-session -t ${TMUX_SESSION}
 fi
+
+#Generate Offline jpg
+LoadFile "generate_banner.sh"

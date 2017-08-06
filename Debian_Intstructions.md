@@ -52,7 +52,7 @@ Alternativly: [Optional] Apache settup for those who wish to take advantage of S
 
         su root           'or another user with sudo access'
         sudo apt-get update
-        sudo apt-get install apache2 libapache2-mod-php7.0
+        sudo apt-get install apache2 libapache2-mod-php7.0 libapache2-mpm-itk
         cd /home/avorion
         sudo ./ApacheInstall.sh
 

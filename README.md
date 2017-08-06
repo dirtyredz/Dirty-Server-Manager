@@ -3,7 +3,10 @@ A script for quick server deployment and managment of the server.
 
 Tested and works on these linux OS:
 Ubuntu 16.04
-Debian 8, for debian instructions see here:
+Debian 8
+
+Partial Support for:
+Centos 7
 
 You don't need to own Avorion on Steam to use this.
 
@@ -11,8 +14,8 @@ INSTALLATION
 Step 1: Verify or install these dependencies:
          lib32gcc1, tmux (V2.0+), php7.0, php7.0-gd
 
-        sudo apt-get update
-        sudo apt-get install lib32gcc1 tmux php7.0 php7.0-gd
+        sudo apt-get -y update
+        sudo apt-get -y install lib32gcc1 tmux php7.0 php7.0-gd
 
 Step 2: Create a new user for avorion to run on. (Do not use root)
 
@@ -45,8 +48,8 @@ Step 7: [Optional] To start the web interface run this commands
 Alternativly: [Optional] Apache settup for those who wish to take advantage of SSL(https)
 
     su root           'or another user with sudo access'
-    sudo apt-get update
-    sudo apt-get install apache2 libapache2-mod-php7.0 libapache2-mpm-itk
+    sudo apt-get -y update
+    sudo apt-get -y install apache2 libapache2-mod-php7.0 libapache2-mpm-itk
     cd /home/avorion
     sudo ./ApacheInstall.sh
 

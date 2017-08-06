@@ -330,7 +330,7 @@ $(document).ready(function() {
 <div id="Top"><span class="Title"><svg class="icon icon-untitled3"><use xlink:href="#icon-untitled3"></use></svg>CONSOLE</span><span class="Time"></span></div>
 <div id="ConsoleWrapper">
   <div id="Console"></div>
-  <div id="PlayerList"><?php echo $PlayerList; ?></div>
+  <div id="PlayerList"></div>
   <?php
       if($Data['AccessGranted']) {
           ?>

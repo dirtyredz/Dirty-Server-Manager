@@ -34,7 +34,7 @@ AvorionSSLConf=/etc/apache2/sites-available/${GALAXY}_avorionssl.conf
 SSLParams=/etc/apache2/conf-available/ssl-params.conf
 
 echo "Stopping PHP Web Server incase its running..."
-./manager stop-web
+LoadFile "stop-web.sh"
 
 echo ''
 read -p "User name to set apache to use for this website (Needs to be same user who owns the manager file) [default avorion]"  UserNameInput
@@ -105,21 +105,21 @@ echo "" >> $AvorionConf
 echo "# vim: syntax=apache ts=4 sw=4 sts=4 sr noet" >> $AvorionConf
 
 echo "Disabling apache's Default site, and Enabling our sites virtual host."
-sudo a2ensite -q ${GALAXY}_avorion.conf
-sudo a2dissite -q 000-default.conf
-sudo service apache2 reload
-sudo a2enmod -q rewrite
+a2ensite -q ${GALAXY}_avorion.conf
+a2dissite -q 000-default.conf
+service apache2 reload
+a2enmod -q rewrite
 #sudo a2dismod mpm_prefork
-sudo a2enmod mpm_itk
+a2enmod mpm_itk
 echo "Restarting Apache please wait..."
-sudo service apache2 restart
+service apache2 restart
 
 #SSL
 if [ "$SSLEnable" == "true" ]; then
   echo "You have chosen to add SSL we will generate a self signed certificate."
   echo ""
-  sudo openssl req -x509 -nodes -days 365 -subj "/C=NA/ST=NA/L=NA/CN=${IPAddress}" -newkey rsa:2048 -keyout /etc/ssl/private/${GALAXY}-avorion-selfsigned.key -out /etc/ssl/certs/${GALAXY}-avorion-selfsigned.crt
-  sudo openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
+  openssl req -x509 -nodes -days 365 -subj "/C=NA/ST=NA/L=NA/CN=${IPAddress}" -newkey rsa:2048 -keyout /etc/ssl/private/${GALAXY}-avorion-selfsigned.key -out /etc/ssl/certs/${GALAXY}-avorion-selfsigned.crt
+  openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
 
   echo "Setting up Apache's SSL Parameters..."
   echo "# from https://cipherli.st/" > $SSLParams
@@ -183,18 +183,18 @@ if [ "$SSLEnable" == "true" ]; then
   echo "</IfModule>" >> $AvorionSSLConf
 
   echo "Enabling SSL in Apache..."
-  sudo a2enmod -q ssl
-  sudo a2enmod -q headers
+  a2enmod -q ssl
+  a2enmod -q headers
   echo "Enabling SSL VirtualHost..."
-  sudo a2ensite -q ${GALAXY}_avorionssl.conf
+  a2ensite -q ${GALAXY}_avorionssl.conf
   OS=$(lsb_release -si)
   if [ "$OS" == "Ubuntu" ]; then
     echo "Loading SSL Params..."
-    sudo a2enconf -q ssl-params
+    a2enconf -q ssl-params
   fi
-  sudo service apache2 reload
+  service apache2 reload
   echo "Restarting Apache..."
-  sudo service apache2 restart
+  service apache2 restart
 fi
 echo ""
 echo "Apache installation complete."

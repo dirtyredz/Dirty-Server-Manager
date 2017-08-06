@@ -170,6 +170,22 @@ echo ";will apply KeepDataFiles to players data.(KeepDataFiles must be true) Def
 echo "KeepDataFilesPlayers=true" >> manager-config.ini
 echo ";will apply KeepDataFiles to alliance data.(KeepDataFiles must be true) Default: true" >> manager-config.ini
 echo "KeepDataFilesAlliances=true" >> manager-config.ini
+echo ";Disable or Enable MOTD on server startup" >> manager-config.ini
+echo "MOTD=false" >> manager-config.ini
+echo ";MOTD Message to broadcast to player when they enter the galaxy" >> manager-config.ini
+echo "MOTDMessage='Message of the Day!'" >> manager-config.ini
+echo ";A message to broadcast to the server, use MessageInterval and MessageOrder to set when to brodcast." >> manager-config.ini
+echo "MessageOne='Thanks for playing on the server.'" >> manager-config.ini
+echo ";A message to broadcast to the server, use MessageInterval and MessageOrder to set when to brodcast." >> manager-config.ini
+echo "MessageTwo=''" >> manager-config.ini
+echo ";A message to broadcast to the server, use MessageInterval and MessageOrder to set when to brodcast." >> manager-config.ini
+echo "MessageThree=''" >> manager-config.ini
+echo ";A message to broadcast to the server, use MessageInterval and MessageOrder to set when to brodcast." >> manager-config.ini
+echo "MessageFour=''" >> manager-config.ini
+echo ";A message to broadcast to the server, use MessageInterval and MessageOrder to set when to brodcast." >> manager-config.ini
+echo "MessageFive=''" >> manager-config.ini
+echo ";An interval in minutes to broadcast a message to the server." >> manager-config.ini
+echo "MessageInterval=30" >> manager-config.ini
 
 mkdir -p $STEAM_DIR
 wget https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz
