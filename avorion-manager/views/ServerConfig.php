@@ -123,7 +123,7 @@
     <form id="ServerConfigForm" novalidate>
       <?php if($Data['ChangeServerINI']){
         if($Data['OnlineStatus']){
-          echo 'Cannot Edit config while server is offline!';
+          echo 'Cannot Edit config while server is online!';
         }else{
           echo '<input type="submit" name="submit" value="Submit" />';
         }
@@ -181,7 +181,7 @@
     <form id="ManagerConfigForm">
     <?php if($Data['ChangeManagerConfigINI']){
       if($Data['OnlineStatus']){
-        echo 'Cannot Edit config while server is offline!';
+        echo 'Cannot Edit config while server is online!';
       }else{
         echo '<input type="submit" name="submit" value="Submit" />';
       }
