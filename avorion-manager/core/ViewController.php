@@ -210,11 +210,9 @@ class ViewController extends CommonController
     $this->Data['ServerINI'] = $ServerConfigController->GetServerINI();
     $this->Data['ServerINIDetails'] = $ServerConfigController::ServerINIOptions;
 
-
     $this->Data['ManagerConfig'] = $ServerConfigController->GetManagerConfig();
     //Need to move to config controller
     $this->Data['ManagerConfigDetails'] = $ServerConfigController::ManagerConfigOptions;
-
 
     $this->Data['PHPConfig'] = $ServerConfigController->GetPHPConfig();
     //need to move to config controller

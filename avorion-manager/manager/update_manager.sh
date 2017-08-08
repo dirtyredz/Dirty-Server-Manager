@@ -31,44 +31,22 @@ if [ "${VERSION}" != "${LatestVERSION}" ] || [ "${force}" == "true" ]; then
   wget -O UpdateDirtyServerManager.tar.gz https://github.com/dirtyredz/Dirty-Server-Manager/releases/download/${LatestVERSION}/DirtyServerManager.tar.gz
   DynamicEcho "Installing $LatestVERSION"
 
-  if [ -f manager-config.ini ]; then
-    cp manager-config.ini manager-config.ini.backup
+  if [ -f ${SCRIPTPATH}/manager-config.ini ]; then
+    cp ${SCRIPTPATH}/manager-config.ini ${SCRIPTPATH}/manager-config.ini.backup
   fi
-  if [ -f avorion-manager/PHPConfig.ini ]; then
-    cp avorion-manager/PHPConfig.ini avorion-manager/PHPConfig.ini.backup
-  fi
-
-  tar -xvf UpdateDirtyServerManager.tar.gz --exclude='Database.php' --exclude='avorion-manager/HighScore.php' --exclude='avorion-manager/PlayerData.php' --exclude='avorion-manager/SectorData.php' --exclude='avorion-manager/logs'
-
-  if [ -f manager-config.ini.backup ]; then
-    diff --unchanged-line-format='%L' --old-line-format='%L' --new-line-format='+%L' manager-config.ini.backup manager-config.ini > manager-config.ini.diff
-    grep ^+ manager-config.ini.diff | while read -r line ; do
-        Addition=$(echo $line | sed -e 's/^+//' -e 's/=.*//g')
-        if grep -q "^$Addition" manager-config.ini.diff; then
-            sed -i "/+$Addition.*/d" manager-config.ini.diff
-       else
-            Remove=$(echo $line | sed 's/^.//g')
-            sed -i "s/^$line/$Remove/g" manager-config.ini.diff
-       fi
-    done
-    rm manager-config.ini
-    mv manager-config.ini.diff manager-config.ini
+  if [ -f ${SCRIPTPATH}/avorion-manager/PHPConfig.ini ]; then
+    cp ${SCRIPTPATH}/avorion-manager/PHPConfig.ini ${SCRIPTPATH}/avorion-manager/PHPConfig.ini.backup
   fi
 
-  if [ -f avorion-manager/PHPConfig.ini.backup ]; then
-    diff --unchanged-line-format='%L' --old-line-format='%L' --new-line-format='+%L' avorion-manager/PHPConfig.ini.backup avorion-manager/PHPConfig.ini > avorion-manager/PHPConfig.ini.diff
-    grep ^+ avorion-manager/PHPConfig.ini.diff | while read -r line ; do
-        Addition=$(echo $line | sed -e 's/^+//' -e 's/=.*//g')
-        if grep -q "^$Addition" avorion-manager/PHPConfig.ini.diff; then
-            sed -i "/+$Addition.*/d" avorion-manager/PHPConfig.ini.diff
-       else
-            Remove=$(echo $line | sed 's/^.//g')
-            sed -i "s/^$line/$Remove/g" avorion-manager/PHPConfig.ini.diff
-       fi
-    done
-    rm avorion-manager/PHPConfig.ini
-    mv avorion-manager/PHPConfig.ini.diff avorion-manager/PHPConfig.ini
-  fi
+  tar -xvf UpdateDirtyServerManager.tar.gz --exclude='Database.php' --exclude='avorion-manager/HighScore.php' --exclude='avorion-manager/AllianceData.php' --exclude='avorion-manager/PlayerData.php' --exclude='avorion-manager/SectorData.php' --exclude='avorion-manager/logs'
+
+  OldFilePath=${SCRIPTPATH}/manager-config.ini.backup
+  NewFilePath=${SCRIPTPATH}/manager-config.ini
+  php -f ${SCRIPTPATH}/avorion-manager/manager/UpdateConfig.php "${OldFilePath}" "${NewFilePath}" "Manager"
+
+  OldFilePath=${SCRIPTPATH}/avorion-manager/PHPConfig.ini.backup
+  NewFilePath=${SCRIPTPATH}/avorion-manager/PHPConfig.ini
+  php -f ${SCRIPTPATH}/avorion-manager/manager/UpdateConfig.php "${OldFilePath}" "${NewFilePath}" "PHP"
 
   rm UpdateDirtyServerManager.tar.gz
   DynamicEcho "Update complete."
