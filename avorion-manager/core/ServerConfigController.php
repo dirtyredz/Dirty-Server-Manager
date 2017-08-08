@@ -278,15 +278,17 @@ class ServerConfigController extends CommonController
           'Type' => 'number',
           'Range' => array('step'=>'1','min'=>0,'max'=>100000)),
     'sectorUpdateTimeLimit' => array(
-      'Type' => 'number',
-      'Range' => array('step'=>'1','min'=>0,'max'=>100000)),
+          'Definition' => 'This is the time in seconds (by default 300, ie. 5 minutes) that the server will update a sector once it detects that no players are present. (including connected players through gates/wormholes)',
+          'Type' => 'number',
+          'Range' => array('step'=>'1','min'=>0,'max'=>100000)),
     'emptySectorUpdateInterval' => array(
           'Definition' => 'Update interval in seconds that will be used for sectors without players. (lower value equals faster simulation/lower performance)',
           'Type' => 'number',
           'Range' => array('step'=>'1','min'=>0,'max'=>100000)),
     'workerThreads' => array(
-      'Type' => 'number',
-      'Range' => array('step'=>'1','min'=>0,'max'=>100)),
+          'Definition' => 'Number of threads handling normal updates accross all active sectors.',
+          'Type' => 'number',
+          'Range' => array('step'=>'1','min'=>0,'max'=>100)),
     'generatorThreads' => array(
           'Definition' => 'Number of threads handling sector generation. ie When calculating a jump or in a sector with wormholes/gates. (These are temporary/unlimited and run at full load to perform computations quickly.)',
           'Type' => 'number',
@@ -450,6 +452,18 @@ class ServerConfigController extends CommonController
           'Definition' => 'An interval in minutes to broadcast a message to the server.',
           'Type' => 'number',
           'Range' => array('step'=>'1','min'=>1,'max'=>120)),
+    'StopDelay' => array(
+          'Definition' => 'Time in seconds for the stop command to wait BETWEEN saving and stoping the server.',
+          'Type' => 'number',
+          'Range' => array('step'=>'1','min'=>1,'max'=>120)),
+    'SaveWait' => array(
+          'Definition' => 'Time in seconds for the stop command to wait if a successful SAVE message is not retrieved.',
+          'Type' => 'number',
+          'Range' => array('step'=>'1','min'=>1,'max'=>120)),
+    'StopWait' => array(
+          'Definition' => 'Time in seconds for the stop command to wait if a successful STOP message is not retrieved.',
+          'Type' => 'number',
+          'Range' => array('step'=>'1','min'=>1,'max'=>120)),
   );
   /**
    * Settup class and requires ConfigParser.php
@@ -558,11 +572,11 @@ class ServerConfigController extends CommonController
           $RtnValue = $Defaults[$value['name']];
         }
       //if INI option is a text field
-    }elseif(self::ServerINIOptions[$value['name']]['Type'] == 'text'){
+      }elseif(self::ServerINIOptions[$value['name']]['Type'] == 'text'){
         //Client can use HTML here so lets only strip  out script tags
         $RtnValue = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $RtnValue);
       //if INI option is a select input
-    }elseif(self::ServerINIOptions[$value['name']]['Type'] == 'select'){
+      }elseif(self::ServerINIOptions[$value['name']]['Type'] == 'select'){
         //cleans it
         $RtnValue = htmlspecialchars($RtnValue);
         //if value is not one of the allowed values then restore it
@@ -577,11 +591,20 @@ class ServerConfigController extends CommonController
     //Update the class array with our new array
     $this->ConfigParser->update($NewConfig);
     //Write the class array to the file include our comments with it so they are written in as well
-    $this->ConfigParser->write();
+    $GalaxyName = $this->ManagerConfig['GALAXY'];
+    $File = $this->ManagerConfig['GalaxyDirectory']."/".trim($GalaxyName)."/server.ini";
+    if($this->ConfigParser->write()){
+      shell_exec("sed -i '1s/^/[Game]\\n/' {$File}");
+      shell_exec("sed -i '0,/^saveInterval.*/s/^saveInterval.*/[System]\\n&/' {$File}");
+      shell_exec("sed -i '0,/^port.*/s/^port.*/[Networking]\\n&/' {$File}");
+      shell_exec("sed -i '0,/^maxPlayers.*/s/^maxPlayers.*/[Administration]\\n&/' {$File}");
+      $return['success'] = true;
+      $return['message'] = 'Server config ini';
+    }else{
+      $return['success'] = false;
+      $return['message'] = 'Error in updating file';
+    }
 
-    //return success message
-    $return['success'] = true;
-    $return['message'] = 'Server Config Updated';
     echo json_encode($return);
   }
 
@@ -637,7 +660,7 @@ class ServerConfigController extends CommonController
     //Update the class array with our new array
     $this->ConfigParser->update($NewPHPConfig);
     //Write the class array to the file include our comments with it so they are written in as well
-    $this->ConfigParser->write(self::ManagerConfigOptions);
+    $this->ConfigParser->write(self::ManagerConfigOptions,' ');
 
     //return success message
     $return['success'] = true;
@@ -678,11 +701,11 @@ class ServerConfigController extends CommonController
           $RtnValue = $Defaults[$value['name']];
         }
       //if INI option is a text field
-    }elseif(self::PHPConfigDetails[$value['name']]['Type'] == 'text'){
+      }elseif(self::PHPConfigDetails[$value['name']]['Type'] == 'text'){
         //Client can use HTML here so lets only strip  out script tags
         $RtnValue = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $RtnValue);
       //if INI option is a select input
-    }elseif(self::PHPConfigDetails[$value['name']]['Type'] == 'select'){
+      }elseif(self::PHPConfigDetails[$value['name']]['Type'] == 'select'){
         //cleans it
         $RtnValue = htmlspecialchars($RtnValue);
         //if value is not one of the allowed values then restore it
@@ -697,7 +720,7 @@ class ServerConfigController extends CommonController
     //Update the class array with our new array
     $this->ConfigParser->update($NewPHPConfig);
     //Write the class array to the file include our comments with it so they are written in as well
-    $this->ConfigParser->write(self::PHPConfigDetails);
+    $this->ConfigParser->write(self::PHPConfigDetails,' ');
 
     //return success message
     $return['success'] = true;

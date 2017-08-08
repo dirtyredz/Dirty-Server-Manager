@@ -707,60 +707,71 @@ class ViewController extends CommonController
     //If page access is not available, redirect to home page
     $this->RoleRequired($this->Config['AccessProfilePage']);
 
-    include __DIR__ .'/../core/ProfileParser.php';
-    $ProfileParser = new ProfileParser(__DIR__.'/../../serverfiles/profiling_stats.txt');
+    //Load config controller
+    require_once  __DIR__ .'/ServerConfigController.php';
+    $ServerConfigController = new ServerConfigController();
+    //Grab all INI configuration files data
+    $ServerINI = $ServerConfigController->GetServerINI();
 
-    $Sectors = explode('########################################################', strstr($ProfileParser->ParsedData,'########################################################'));
-    $Galaxy = [];
-    function rootSort($a,$b){
-      if ($a['root'] == $b['root']) {
-        return 0;
-      }
-      return ($a['root'] > $b['root']) ? -1 : 1;
-    };
-    foreach ($Sectors as $key => $sector) {
-      $Original = $sector;
-      $coords = $this->getBetweenChar($Original,'(',')');
-      if($coords != '0'){
-        $Galaxy[$coords]['coords'] = preg_replace('/:/', ' : ', $coords);
-        $Galaxy[$coords]['players'] = $this->getBetweenChar($Original,') (',' players');
-        $Galaxy[$coords]['entities'] = $this->getBetweenChar($Original,'Entities: ',',');
-        $Galaxy[$coords]['awake'] = $this->getBetweenChar($Original,', awake: ',PHP_EOL);
-        $Galaxy[$coords]['none'] = $this->getBetweenChar($Original,'None: ',PHP_EOL);
-        $Galaxy[$coords]['ship'] = $this->getBetweenChar($Original,'Ship: ',PHP_EOL);
-        $Galaxy[$coords]['turret'] = $this->getBetweenChar($Original,'Turet: ',PHP_EOL);
-        $Galaxy[$coords]['asteroid'] = $this->getBetweenChar($Original,'Asteroid: ',PHP_EOL);
-        $Galaxy[$coords]['wreckage'] = $this->getBetweenChar($Original,'Wreckage: ',PHP_EOL);
-        $Galaxy[$coords]['loot'] = $this->getBetweenChar($Original,'Loot: ',PHP_EOL);
-        $Galaxy[$coords]['wormhole'] = $this->getBetweenChar($Original,'Wormhole: ',PHP_EOL);
-        $Galaxy[$coords]['fighter'] = $this->getBetweenChar($Original,'Fighter: ',PHP_EOL);
-        $Galaxy[$coords]['station'] = $this->getBetweenChar($Original,'Station: ',PHP_EOL);
-        $Galaxy[$coords]['rootArrays'] = array();
-        $Root = false;
-        $RootIndex = 0;
-        foreach (explode(PHP_EOL,$Original) as $key2 => $value2) {
-          //if root assign new array
-          if(preg_match('/(root:)/', $value2)){
-            $Galaxy[$coords]['rootArrays'][$RootIndex]['root']=$this->getBetweenChar($value2,': ',' ms');
-            $Root = true;
-          }elseif($Root && $value2 != ''){
-            $Galaxy[$coords]['rootArrays'][$RootIndex][]=$value2;
-          }elseif($Root){
-            $RootIndex += 1;
-            $Root = false;
-          }
+    if($ServerINI['profiling'] == 'true'){
+      include __DIR__ .'/../core/ProfileParser.php';
+      $ProfileParser = new ProfileParser(__DIR__.'/../../serverfiles/profiling_stats.txt');
+
+      $Sectors = explode('########################################################', strstr($ProfileParser->ParsedData,'########################################################'));
+      $Galaxy = [];
+      function rootSort($a,$b){
+        if ($a['root'] == $b['root']) {
+          return 0;
         }
-        usort($Galaxy[$coords]['rootArrays'],'rootSort');
+        return ($a['root'] > $b['root']) ? -1 : 1;
+      };
+      foreach ($Sectors as $key => $sector) {
+        $Original = $sector;
+        $coords = $this->getBetweenChar($Original,'(',')');
+        if($coords != '0'){
+          $Galaxy[$coords]['coords'] = preg_replace('/:/', ' : ', $coords);
+          $Galaxy[$coords]['players'] = $this->getBetweenChar($Original,') (',' players');
+          $Galaxy[$coords]['entities'] = $this->getBetweenChar($Original,'Entities: ',',');
+          $Galaxy[$coords]['awake'] = $this->getBetweenChar($Original,', awake: ',PHP_EOL);
+          $Galaxy[$coords]['none'] = $this->getBetweenChar($Original,'None: ',PHP_EOL);
+          $Galaxy[$coords]['ship'] = $this->getBetweenChar($Original,'Ship: ',PHP_EOL);
+          $Galaxy[$coords]['turret'] = $this->getBetweenChar($Original,'Turet: ',PHP_EOL);
+          $Galaxy[$coords]['asteroid'] = $this->getBetweenChar($Original,'Asteroid: ',PHP_EOL);
+          $Galaxy[$coords]['wreckage'] = $this->getBetweenChar($Original,'Wreckage: ',PHP_EOL);
+          $Galaxy[$coords]['loot'] = $this->getBetweenChar($Original,'Loot: ',PHP_EOL);
+          $Galaxy[$coords]['wormhole'] = $this->getBetweenChar($Original,'Wormhole: ',PHP_EOL);
+          $Galaxy[$coords]['fighter'] = $this->getBetweenChar($Original,'Fighter: ',PHP_EOL);
+          $Galaxy[$coords]['station'] = $this->getBetweenChar($Original,'Station: ',PHP_EOL);
+          $Galaxy[$coords]['rootArrays'] = array();
+          $Root = false;
+          $RootIndex = 0;
+          foreach (explode(PHP_EOL,$Original) as $key2 => $value2) {
+            //if root assign new array
+            if(preg_match('/(root:)/', $value2)){
+              $Galaxy[$coords]['rootArrays'][$RootIndex]['root']=$this->getBetweenChar($value2,': ',' ms');
+              $Root = true;
+            }elseif($Root && $value2 != ''){
+              $Galaxy[$coords]['rootArrays'][$RootIndex][]=$value2;
+            }elseif($Root){
+              $RootIndex += 1;
+              $Root = false;
+            }
+          }
+          usort($Galaxy[$coords]['rootArrays'],'rootSort');
+        }
       }
+      function sortAll($a,$b){
+        if ($a['rootArrays'][0]['root'] == $b['rootArrays'][0]['root']) {
+          return 0;
+        }
+        return ($a['rootArrays'][0]['root'] > $b['rootArrays'][0]['root']) ? -1 : 1;
+      };
+      usort($Galaxy,'sortAll');
+      $this->Data['ParsedData'] = $Galaxy;
+    }else{
+      $this->Data['ParsedData'] = 'Pofiling for the server is disabled, edit server.ini to use the profile parser.';
     }
-    function sortAll($a,$b){
-      if ($a['rootArrays'][0]['root'] == $b['rootArrays'][0]['root']) {
-        return 0;
-      }
-      return ($a['rootArrays'][0]['root'] > $b['rootArrays'][0]['root']) ? -1 : 1;
-    };
-    usort($Galaxy,'sortAll');
-    $this->Data['ParsedData'] = $Galaxy;
+
     //Load the page
     $this->LoadView('ProfileParser');
   }

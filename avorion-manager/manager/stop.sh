@@ -35,7 +35,7 @@ fi
 
 ServerPid=$(pidof ${SERVER})
 
-DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Saving..."
+DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Attempting to Save...(Can take up to 30 seconds)"
 
 D='Server Time is: '"$(date +"%F %H-%M-%S")"
 #Send commands to the console
@@ -43,9 +43,11 @@ $Tmux_SendKeys '/echo '"${D}" C-m
 $Tmux_SendKeys /save C-m
 time=0
 
-while [ $time -lt 45 ]; do
-  SaveStatus=$(cat /proc/${ServerPid}/fd/3 | awk "/${D}/,/Triggered saving of all server data/" | grep 'Triggered saving of all server data')
-  if [ "${SaveStatus}" ]; then
+while [ $time -lt $SaveWait ]; do
+  Save_Status=$(cat /proc/${ServerPid}/fd/3 | awk "/${D}/,/Triggered saving of all server data/" | grep 'Triggered saving of all server data')
+  if [ "${Save_Status}" ]; then
+    DynamicEcho "\r" "DONTLOG"
+    DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Has been saved."
     break;
   fi
   let time++
@@ -54,14 +56,14 @@ while [ $time -lt 45 ]; do
 done
 
 DynamicEcho "\r" "DONTLOG"
-DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Has been saved."
-DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Stopping...."
-sleep 30
+DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Waiting ${StopDelay} seconds...(Incase theres a lag in the server)"
+sleep $StopDelay
+DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Attempting to Stop...(Can take up to 30 seconds)"
 $Tmux_SendKeys /stop C-m
 time=0
-while [ $time -lt 90 ]; do
-  SHUTDOWN=$(cat /proc/${ServerPid}/fd/3 | awk "/${D}/,/Server shutdown successful/" | grep 'Server shutdown successful')
-  if [ "${SHUTDOWN}" ] || [ "$( ps ax | grep ${SERVER} | grep -v grep | grep tmux | wc -l)" ]; then
+while [ $time -lt $StopWait ]; do
+  Shutdown_Status=$(cat /proc/${ServerPid}/fd/3 | awk "/${D}/,/Server shutdown successful/" | grep 'Server shutdown successful')
+  if [ "${Shutdown_Status}" ] || [ "$( ps ax | grep ${SERVER} | grep -v grep | grep tmux | wc -l)" ]; then
     DynamicEcho "\r" "DONTLOG"
     DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} has been stopped."
     break;
@@ -78,5 +80,6 @@ if ! kill $(pidof ${SERVER}) > /dev/null 2>&1; then
   tmux kill-session -t ${TMUX_SESSION}
 fi
 
+status=0
 #Generate Offline jpg
 LoadFile "generate_banner.sh"

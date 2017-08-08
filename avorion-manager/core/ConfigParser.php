@@ -80,7 +80,7 @@ class ConfigParser
    * @param mixed $Comments Array of comments to be added, defaults null
    * @return bool true for a succes
    */
-  public function write(array $Comments = null)
+  public function write(array $Comments = null,$QuoteChars = null)
   {
     //Again should verify ParsedINI() has been run and $FilePath is set
     //why am i doing this?
@@ -96,13 +96,14 @@ class ConfigParser
       }
       //Append key and value to $file_contents
       //encode values to valid ini format
-      $file_content .= $key_2.'='.self::encode($value_2)."\n";
+      $file_content .= $key_2.'='.self::encode($value_2,$QuoteChars)."\n";
     }
     //Remove leading newlines from $file_contents
     $file_content = preg_replace('#^\n#', '', $file_content);
     //silence error
     //Write $file_content to $FilePath
     $result = @file_put_contents($this->FilePath, $file_content);
+    copy($this->FilePath,$this->FilePath.'.DSM_Backup');
     if (false === $result) {
         throw new \Exception(sprintf('Unable to write in the file ini : %s', $this->FilePath));
     }
@@ -117,7 +118,7 @@ class ConfigParser
    *
    * @return mixed
    */
-  private static function encode($value)
+  private static function encode($value,$QuoteChars = null)
   {
     if ($value == '1' || $value === true) {
       //we dont want to store a boolean as a string
@@ -127,7 +128,7 @@ class ConfigParser
       return 0;
     } elseif ($value == '') {
       //Shouldent i return single qoutes?
-      return '""';
+      return '';
     } elseif ($value == 'true') {//should i be using strict comparison? ===
       //if implicetly writing the word true then return it
       return "true";
@@ -146,6 +147,16 @@ class ConfigParser
     }
     //return value with single quoutes for valid INI string,
     //otherwise INI parses would breake with words containing special charectors or spaces
-    return "'".$value."'";
+    $value = str_replace('"',"'",$value);
+
+    $char = "?{}|&~!()^'";
+
+    if($QuoteChars){
+      $char .= $QuoteChars;
+    }
+    if(preg_match("/[".$char."]/",$value)){
+      return '"'.$value.'"';
+    }
+    return $value;
   }
 }

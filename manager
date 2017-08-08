@@ -41,6 +41,9 @@ MessageThree=`echo ${MessageThree} | sed -e 's/\r//g'`
 MessageFour=`echo ${MessageFour} | sed -e 's/\r//g'`
 MessageFive=`echo ${MessageFive} | sed -e 's/\r//g'`
 MessageInterval=`echo ${MessageInterval} | sed -e 's/\r//g'`
+StopDelay=`echo ${StopDelay} | sed -e 's/\r//g'`
+StopWait=`echo ${StopWait} | sed -e 's/\r//g'`
+SaveWait=`echo ${SaveWait} | sed -e 's/\r//g'`
 
 #if empty assume .avorion/galaxies
 if [ -z $GalaxyDirectory ]; then
@@ -57,7 +60,7 @@ YELLOW='\033[1;33m'
 PURPLE='\033[1;35m'
 NOCOLOR='\033[0m'
 # Static - Dont change these
-VERSION=1.2.0
+VERSION=1.2.1
 APPID=565060
 SERVER=${GALAXY}_Server
 TMUX_SESSION=${GALAXY}_Tmux
@@ -215,7 +218,7 @@ LoadFile(){
   file_path="${SCRIPTPATH}/avorion-manager/manager/${requested_file}"
   if [ -f "${file_path}" ]; then
     chmod +x "${file_path}"
-    LogToManagerLog "Executing: ${RequiredCommand}";
+    LogToManagerLog "Executing: ${requested_file}";
     source "${file_path}"
   else
     DisplayHelp;

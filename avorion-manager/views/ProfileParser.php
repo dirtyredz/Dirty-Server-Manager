@@ -47,29 +47,33 @@
 <div>
 <?php
 $TooMuchCount = 0;
-foreach ($Data['ParsedData'] as $key => $value) {
-  echo '<div class="SectorDiv">'.$value['coords'].'</div></br>';
-  echo '<div class="SectorDetails">';
-  foreach ($value['rootArrays'] as $RootIndex => $RootArray) {
+if(is_array($Data['ParsedData'])){
+  foreach ($Data['ParsedData'] as $key => $value) {
+    echo '<div class="SectorDiv">'.$value['coords'].'</div></br>';
+    echo '<div class="SectorDetails">';
+    foreach ($value['rootArrays'] as $RootIndex => $RootArray) {
 
-    if($TooMuchCount >= 5){
-      if($TooMuchCount == 5){
-        echo '<span class="ShowMore">Show More</span><br class="clear">';
+      if($TooMuchCount >= 5){
+        if($TooMuchCount == 5){
+          echo '<span class="ShowMore">Show More</span><br class="clear">';
+        }
+        echo '<div class="ClickMe TooMuch"><span class="TooMuch">'.$RootArray['root'].' ms</span></br><div class="ExtraDetails">';
+      }else{
+        echo '<div class="ClickMe"><span>'.$RootArray['root'].' ms</span></br><div class="ExtraDetails">';
       }
-      echo '<div class="ClickMe TooMuch"><span class="TooMuch">'.$RootArray['root'].' ms</span></br><div class="ExtraDetails">';
-    }else{
-      echo '<div class="ClickMe"><span>'.$RootArray['root'].' ms</span></br><div class="ExtraDetails">';
-    }
-    for ($i=0; $i < (count($RootArray)-1) ; $i++) {
-      echo $RootArray[$i].'</br>';
-    }
-    echo '</div></div>';
-    $TooMuchCount += 1;
+      for ($i=0; $i < (count($RootArray)-1) ; $i++) {
+        echo $RootArray[$i].'</br>';
+      }
+      echo '</div></div>';
+      $TooMuchCount += 1;
 
+    }
+    echo '</div>';
+    echo '</br></br>';
+    $TooMuchCount = 0;
   }
-  echo '</div>';
-  echo '</br></br>';
-  $TooMuchCount = 0;
+}else{
+  echo '</br>'.$Data['ParsedData'];
 }
 ?>
 </div>

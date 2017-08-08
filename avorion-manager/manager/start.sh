@@ -36,12 +36,17 @@ if [ ! -f bin/${SERVER} ]; then
   cp ${SCRIPTPATH}/serverfiles/bin/AvorionServer ${SCRIPTPATH}/serverfiles/bin/${SERVER}
 fi
 
-LogToManagerLog "tmux new-session -d -s ${TMUX_SESSION} bin/${SERVER} --port ${PORT} --galaxy-name ${GALAXY} ${GalaxyDirectory} --max-players ${MAX_PLAYERS}  ${PARAMS}";
-cd "${INSTALL_DIR}"
-
 if [ ! -z $GalaxyDirectory ]; then
   GalaxyDirectory="--datapath ${GalaxyDirectory}"
 fi
+
+LogToManagerLog "tmux new-session -d -s ${TMUX_SESSION} bin/${SERVER} --port ${PORT} --galaxy-name ${GALAXY} ${GalaxyDirectory} --max-players ${MAX_PLAYERS}  ${PARAMS}";
+cd "${INSTALL_DIR}"
+
+touch ${SCRIPTPATH}'/console.log'
+cat ${SCRIPTPATH}'/console.log' | grep '^<.*>' | grep -v '^<Rusty>' >> ${SCRIPTPATH}/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_playerchat.log
+> ${SCRIPTPATH}'/console.log'
+> ${SCRIPTPATH}'/server.log'
 
 tmux new-session -d -s ${TMUX_SESSION} bin/${SERVER} --port ${PORT} --galaxy-name ${GALAXY} ${GalaxyDirectory} --max-players ${MAX_PLAYERS} ${PARAMS} 2> ${SCRIPTPATH}/tmux-error.log
 
@@ -60,13 +65,9 @@ elif [ "$(tmux -V|sed "s/tmux //"|sed -n '1 p'|tr -cd '[:digit:]')" -eq "18" ] 2
 
 # Console logging enable or not set
 else
-  touch ${SCRIPTPATH}'/console.log'
-  cat ${SCRIPTPATH}'/console.log' | grep '^<.*>' | grep -v '^<Rusty>' >> ${SCRIPTPATH}/avorion-manager/logs/$(/bin/date +\%d-\%m-\%Y)_playerchat.log
   #Start loging console into console.log.
   tmux pipe-pane -o -t ${TMUX_SESSION} "cat > ${SCRIPTPATH}/console.log" 2> ${SCRIPTPATH}/tmux-error.log
 fi
-
-touch ${SCRIPTPATH}'/server.log'
 
 DynamicEcho "starting ${PURPLE}${SERVER}${NOCOLOR} on ${YELLOW}${PORT}${NOCOLOR}"
 
@@ -77,9 +78,14 @@ if [ "${status}" == "0" ]; then
   DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} could not be started!"
   if [ "$verbose" = true ]; then
     DynamicEcho "tmux new-session -d -s ${TMUX_SESSION} bin/${SERVER} --port ${PORT} --galaxy-name ${GALAXY} --max-players ${MAX_PLAYERS}  ${PARAMS}"
+    DynamicEcho "==============================================================="
     DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Console.log:"
+    DynamicEcho "==============================================================="
     tail -n 50 "${SCRIPTPATH}/console.log"
     if [ -s "${SCRIPTPATH}/tmux-error.log" ]; then
+      DynamicEcho "==============================================================="
+      DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} tmux-error.log:"
+      DynamicEcho "==============================================================="
       cat "${SCRIPTPATH}/tmux-error.log"
     fi
   fi
@@ -90,7 +96,7 @@ if [ "${status}" != "0" ]; then
   DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} has started with pid ${YELLOW}$(pidof ${SERVER})${NOCOLOR}"
 
   if [ "$verbose" = true ]; then
-    DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} has started with params: ${PARAMS}"
+    DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} has started with params: --port ${PORT} --galaxy-name ${GALAXY} ${GalaxyDirectory} --max-players ${MAX_PLAYERS}  ${PARAMS}"
   fi
 
   VER=`wget -O - -o /dev/null https://api.github.com/repos/dirtyredz/Dirty-Server-Manager/releases/latest | grep tag_name | sed -e 's/.*://g' -e 's/"//g' -e 's/,//g' | tr -d '[:blank:]'`

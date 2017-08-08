@@ -1,5 +1,5 @@
 DIRTY-SERVER-MANAGER
-A script for quick server deployment and managment of the server.
+A script for quick server deployment and management of the server.
 
 Tested and works on these linux OS:
 Ubuntu 16.04
@@ -34,7 +34,7 @@ Step 5: Steamcmd and avorion server Installation
 
         ./manager install
 
-Step 6: After a succesful server installation you can start the server
+Step 6: After a successful server installation you can start the server
 
         ./manager start
 
@@ -43,9 +43,9 @@ Step 7: [Optional] To start the web interface run this commands
         ./manager start-web
 
         This command will start the PHP-web-server, this server is unable to handle ssl requests.
-        Ultimatly the php server is not as robust as an apache server, that is why I include an apache settup below.
+        Ultimately the php server is not as robust as an apache server, that is why I include an apache setup below.
 
-Alternativly: [Optional] Apache settup for those who wish to take advantage of SSL(https)
+Alternatively: [Optional] Apache settup for those who wish to take advantage of SSL(https)
 
     su root           'or another user with sudo access'
     sudo apt-get -y update
@@ -79,7 +79,7 @@ Check help for more commands:
 
 To update your manager and web interface use command from the directory the manager is located:
 
-    avorion-manager/UpdateManager.sh
+    ./manager Update_Manager
 
 
 
