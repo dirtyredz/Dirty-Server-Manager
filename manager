@@ -106,6 +106,26 @@ while getopts 'd:b:o:vhf' flag; do
   esac
 done
 
+DynamicEcho() {
+  # Second Argument used to detect who were echoing too.
+
+  if [ "$output" = "CRON" ]; then
+      if [ "$2" != "DONTLOG" ]; then
+          echo -e -n $(date +"%F %H-%M-00| "); echo -e '[Manager]: '$1 | sed -r 's/'$(echo -e "\033")'\[[0-9]{1,2}(;([0-9]{1,2})?)?[mK]//g'
+      fi
+  elif [ "$output" = "PHP" ]; then
+    if [ "$2" != "DONTLOG" ]; then
+      echo -e $1'\n' | sed -r 's/'$(echo -e "\033")'\[[0-9]{1,2}(;([0-9]{1,2})?)?[mK]//g'
+    fi
+  else
+    if [ "$2" != "DONTLOG" ]; then
+      echo -e "${WHITE}[Manager]${NOCOLOR}: $1"
+    else
+      echo -en "$1"
+    fi
+  fi
+}
+
 if [ ! -z "$broadcast" ]; then
   if [ "$verbose" = true ]; then
     DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Broadcasting message: $broadcast, will append delay time if \-d is used"
@@ -143,25 +163,6 @@ if [ ! -z "$delay" ]; then
   done
 fi
 
-DynamicEcho() {
-  # Second Argument used to detect who were echoing too.
-
-  if [ "$output" = "CRON" ]; then
-      if [ "$2" != "DONTLOG" ]; then
-          echo -e -n $(date +"%F %H-%M-00| "); echo -e '[Manager]: '$1 | sed -r 's/'$(echo -e "\033")'\[[0-9]{1,2}(;([0-9]{1,2})?)?[mK]//g'
-      fi
-  elif [ "$output" = "PHP" ]; then
-    if [ "$2" != "DONTLOG" ]; then
-      echo -e $1'\n' | sed -r 's/'$(echo -e "\033")'\[[0-9]{1,2}(;([0-9]{1,2})?)?[mK]//g'
-    fi
-  else
-    if [ "$2" != "DONTLOG" ]; then
-      echo -e "${WHITE}[Manager]${NOCOLOR}: $1"
-    else
-      echo -en "$1"
-    fi
-  fi
-}
 DeleteCronJobs(){
   crontab -l | grep -v "${SCRIPTPATH}/manager"  | crontab -
   crontab -l | grep -v "${SCRIPTPATH}/avorion-manager"  | crontab -

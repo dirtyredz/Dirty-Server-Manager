@@ -99,7 +99,9 @@
     <?php if($Data['ShowOnlinePlayerCount']){ ?>
       <h3 id="PlayersOnline">Players Online: <?php echo $Data['OnlinePlayerCount'].'/'.$Data['MaxPlayers']?></h3>
     <?php }?>
-    <h3>Server restarts daily at <span style="color: red;">2356</span> and <span style="color: red;">1156</span> Server Time.</h3>
+    <?php if($Data['DailyRestart']){ ?>
+      <h3>Server restarts daily at <span style="color: red;">2356</span> and <span style="color: red;">1156</span> Server Time.</h3>
+    <?php }?>
   </div>
   <?php if($Data['ShowDiskUsage']){ ?>
     <div id="DiskUsagePie"></div>

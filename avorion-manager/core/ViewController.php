@@ -413,6 +413,13 @@ class ViewController extends CommonController
     }else{
       $this->Data['ShowDiskUsage'] = false;
     }
+
+    if($this->ManagerConfig['DailyRestart'] == 'true'){//Role required for specific feature
+      $this->Data['DailyRestart'] = true;
+    }else{
+      $this->Data['DailyRestart'] = false;
+    }
+
     //Prepare data to be displayed
     $this->Data['ShowOnlinePlayerCount'] = $this->Config['ShowOnlinePlayerCount'];
     $this->Data['CustomMessageOne'] = $this->Config['HomeCustomMessageOne'];
