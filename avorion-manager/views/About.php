@@ -24,6 +24,16 @@
 <br/>
 <br/>
 <h3>CHANGE LOG:</h3>
+<h4>1.2.1</h4>
+  Fix editing server.ini with web interface, from breaking your server.ini</br>
+  Editing any config through the web interface will now create a copy of the config for backup</br>
+  Added complete Params to log and echo when starting server with -v</br>
+  Fixed bug in stop command that was not updating the status banner</br>
+  Added a message to profile parser page, notifing when the server has profiling disabled</br>
+  Added StopWait,SaveWait, and StopDelay to stop command and manager-config.ini</br>
+  Using the web interface will now add double qoutes around any string containing special charectors.</br>
+  Fixed manager logger to display the files its exectuing and not repeating the command that was run.</br>
+  </br>
 <h4>1.2.0</h4>
   Moves Apache installer to avorion-manager/manager</br>
   separated commands from manager and added to avorion-manager/manager</br>
