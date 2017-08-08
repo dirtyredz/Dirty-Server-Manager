@@ -1,7 +1,7 @@
 DIRTY-SERVER-MANAGER
 A script for quick server deployment and managment of the server.
 
-Debian specific instructions are neccassary due to its package manager is slightly behind on a few packages.
+Centos specific instructions are neccassary due to its package manager is slightly behind on a few packages.
 
 INSTALLATION
 Step 1: Verify or install these dependencies:
