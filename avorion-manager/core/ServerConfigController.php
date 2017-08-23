@@ -339,7 +339,7 @@ class ServerConfigController extends CommonController
           'Type' => 'text'),
     'password' => array(
           'Definition' => 'Password requirment for the server.',
-          'Type' => '(Change this in ManagerConfig)'),
+          'Type' => 'text'),
     'accessListMode' => array(
           'Definition' => 'Determines whether the server uses a blacklist or a whitelist to restrict access.',
           'Type' => 'select',

@@ -77,7 +77,7 @@
       display: flex;
       padding-left: 20px;
     }
-    div.OptionsWrapper span{
+    div.OptionsWrapper > span{
       padding: 5px;
     }
     input#ScrollLock{
@@ -383,7 +383,6 @@ $(document).ready(function() {
 <input type="range" name="delay" min="3" max="10" value="3"><span>Update delay: </span><span id="SecondsDelay"></span><span>sec.</span>
 </div>
 </br>
-
 <?php
   if($Data['DeleteSector']) {
        ?>
@@ -392,6 +391,33 @@ $(document).ready(function() {
        <input class="Button" id="DeleteSectorBtn" type="submit" name="submit" value="Delete Sector" />
        </div>
        <?php
+   }
+?>
+</br>
+</br>
+<?php
+  if($Data['DeletePlayer']) {
+    ?>
+    <div class="OptionsWrapper">
+      <span>Player:&nbsp;</span>
+      <select class="js-example-basic-single" name="DeletePlayer">
+        <option value="NA">N/A</option>
+          <?php
+          foreach ($Data['PlayerData'] as $key => $value) {
+            echo '<option value="'.$value['ID'].'">'.$value['Name'].'</option>';
+          }
+        ?>
+      </select>
+      <input class="Button" id="DeletePlayerBtn" type="submit" name="submit" value="Delete Player" />
+    </div>
+    </br>
+    <div class="OptionsWrapper">
+      <span>&nbsp;--Server NEEDS to be offline, to delete a player</span>
+    </div>
+    <div class="OptionsWrapper">
+      <span>&nbsp;--Player list is updated when the server parses the player files again (frequency set by manager-config.ini)</span>
+    </div>
+    <?php
    }
 ?>
 </br>
@@ -760,7 +786,7 @@ $('.switch-toggle > input').change(function () {
       }
    ?>
 
-   <?php
+    <?php
        if($Data['DeleteSector']) {
            ?>
              $("#DeleteSectorBtn").click(function(event){
@@ -800,4 +826,42 @@ $('.switch-toggle > input').change(function () {
        }
     ?>
 
+    <?php
+        if($Data['DeletePlayer']) {
+            ?>
+              $("#DeletePlayerBtn").click(function(event){
+                event.preventDefault();
+                swal({
+                  title: 'Are you sure?',
+                  text: "Do you wish to continue with Deleting PlayerID:"+$('select[name="DeletePlayer"]').val(),
+                  type: 'warning',
+                  showCancelButton: true,
+                  confirmButtonColor: '#3085d6',
+                  cancelButtonColor: '#d33',
+                  confirmButtonText: 'Yes!'
+                }).then(function () {
+                  $.ajax({
+                    'url': 'GetData',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'data': {
+                      'function':'DeletePlayer',
+                      'PlayerID': $('select[name="DeletePlayer"]').val()
+                    },
+                    'success': function(data) {
+                      console.log(data);
+                      if(data['success']) {
+                        console.log('Success');
+                        AddNotification(data['message']);
+                      } else {
+                        AddNotification(data['message']);
+                      }
+                    }
+                  });
+                }).catch(swal.noop);
+
+              });
+            <?php
+        }
+    ?>
 </script>

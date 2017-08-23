@@ -186,6 +186,12 @@ echo ";A message to broadcast to the server, use MessageInterval and MessageOrde
 echo "MessageFive=''" >> manager-config.ini
 echo ";An interval in minutes to broadcast a message to the server." >> manager-config.ini
 echo "MessageInterval=30" >> manager-config.ini
+echo ";Time in seconds for the stop command to wait BETWEEN saving and stoping the server." >> manager-config.ini
+echo "StopDelay=10" >> manager-config.ini
+echo ";Time in seconds for the stop command to wait if a successful SAVE message is not retrieved." >> manager-config.ini
+echo "SaveWait=30" >> manager-config.ini
+echo ";Time in seconds for the stop command to wait if a successful STOP message is not retrieved." >> manager-config.ini
+echo "StopWait=30" >> manager-config.ini
 
 mkdir -p $STEAM_DIR
 wget https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz

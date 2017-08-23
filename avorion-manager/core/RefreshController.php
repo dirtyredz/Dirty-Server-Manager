@@ -73,6 +73,37 @@ class RefreshController extends CommonController
   }
 
   /**
+   * Deletes ALL of the player files from the galaxies/players directory
+   * @method DeletePlayer
+   * @return string
+   */
+  public function DeletePlayer()
+  {
+    /** @var array $return Settup array to build response */
+    $return = array();
+    //checks logged in users role against config options
+    if($this->RoleAccess($this->Config['DeleteSector'])){
+      $PlayerID=$_POST["PlayerID"];
+      if($this->onlineStatus() == "Online"){
+        $return['success'] = false;
+        $return['message'] = 'Server is Online, Cannot delete player!';
+      }elseif($this->RefreshModel->DeletePlayer($PlayerID)){
+        $return['success'] = true;
+        $return['message'] = 'Player Deleted';
+      }else {
+        $return['success'] = false;
+        $return['message'] = 'Player file doesnt not exsist';
+      }
+    }else {
+      //Role was not high enough
+      $return['success'] = false;
+      $return['message'] = 'Your Role level is not high enough to delete a sector';
+    }
+    //encode and return
+    echo json_encode($return);
+  }
+
+  /**
    * Returns Serverdata if logged in users role is high enough
    * @method GetServerData
    * @return string

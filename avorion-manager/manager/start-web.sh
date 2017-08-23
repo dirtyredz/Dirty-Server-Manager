@@ -34,6 +34,17 @@ status=$(tmux list-sessions 2>&1 | awk '{print $1}' | grep -Ec "^${GALAXY}_php:"
 
 if [ "${status}" == "0" ]; then
   DynamicEcho "${PURPLE}PHP Web Server${NOCOLOR} Failed to start"
+  php -S ${IPAddress}:${WEBPORT} -t ${SCRIPTPATH}/avorion-manager/webroot ${SCRIPTPATH}/avorion-manager/webroot/index.php 2> ${SCRIPTPATH}/tmux-error.log
+  if [ "$verbose" = true ]; then
+    if [ -s "${SCRIPTPATH}/tmux-error.log" ]; then
+      DynamicEcho "============================tmux-error.log==================================="
+      cat "${SCRIPTPATH}/tmux-error.log"
+      DynamicEcho "============================================================================="
+    fi
+    DynamicEcho "============================Tmux sessions===================================="
+    tmux ls
+    DynamicEcho "============================================================================="
+  fi
   LoadFile "core_exit.sh"
 fi
 

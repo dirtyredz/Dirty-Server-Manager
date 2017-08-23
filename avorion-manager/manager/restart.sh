@@ -22,6 +22,7 @@ OLDPID=$(pidof ${SERVER})
 DisableCoreExit=true
 
 LoadFile "stop.sh"
+DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Waiting 30 seconds, before attempting start. (sometimes its takes a little bit for the os, to close the process)"
 sleep 30
 Tries=0
 while true; do

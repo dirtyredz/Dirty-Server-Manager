@@ -127,8 +127,7 @@ class ConfigParser
       //we dont want to store a boolean as a string
       return 0;
     } elseif ($value == '') {
-      //Shouldent i return single qoutes?
-      return '';
+      return;
     } elseif ($value == 'true') {//should i be using strict comparison? ===
       //if implicetly writing the word true then return it
       return "true";
@@ -147,8 +146,8 @@ class ConfigParser
     }
     //return value with single quoutes for valid INI string,
     //otherwise INI parses would breake with words containing special charectors or spaces
-    $value = str_replace('"',"'",$value);
-
+    $value = str_replace('"',"",$value);
+    $value = str_replace("'", "", $value);
     $char = "?{}|&~!()^'";
 
     if($QuoteChars){

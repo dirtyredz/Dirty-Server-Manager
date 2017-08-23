@@ -275,6 +275,11 @@ class ViewController extends CommonController
     }else{
       $this->Data['DeleteSector'] = false;
     }
+    if($this->RoleAccess($this->Config['DeletePlayer'])){//Role required for specific feature
+      $this->Data['DeletePlayer'] = true;
+    }else{
+      $this->Data['DeletePlayer'] = false;
+    }
     //Include player data for the send mail form to use
     include __DIR__ ."/../PlayerData.php";
     //Load page

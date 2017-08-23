@@ -35,17 +35,31 @@ numFiles=$(ls -1q "${GalaxyDirectoryPath}${GALAXY}/players/" | wc -l | sed -e 's
 if [ "$verbose" = true ]; then
   DynamicEcho "Found ${numFiles}, player files. (There are multiple copies of each player file, only parsing 1 for each player.)"
 fi
-#for i in {1..$numFiles}
-#do
-for i in $(seq 1 $numFiles); do
+
+ProcessedCount=0
+SeenPlayer=()
+
+for file in ${GalaxyDirectoryPath}${GALAXY}/players/player_*; do
   find ${GalaxyDirectoryPath}${GALAXY}/players/ -name \*.tmp -delete
-  file=${GalaxyDirectoryPath}${GALAXY}/players/player_$i.dat.0
+
+  PlayerIndex=$(echo ${file} | sed -e 's/.*_//g' -e 's/\.dat.*//g')
+  file=$(find ${GalaxyDirectoryPath}${GALAXY}/players/player_${PlayerIndex}.dat.* -printf '%T+ %p\n' | sort -r | head -n 1 | sed 's/.* //g')
   [ -e "$file" ] || continue
-  file=$(ls -t ${GalaxyDirectoryPath}${GALAXY}/players/player_$i.dat.* | head -1)
-  [ -e "$file" ] || continue
+
   if [ "$verbose" = true ]; then
     DynamicEcho "\rParsing file: ${file}" "DONTLOG"
   fi
+  PlayerSeen=false
+  for i in ${SeenPlayer[@]} ; do
+      if [ $i == $PlayerIndex ] ; then
+          echo 'player already parsed'
+          PlayerSeen=true
+      fi
+  done
+  if [ "$PlayerSeen" == true ]; then
+    continue
+  fi
+  SeenPlayer+=("$PlayerIndex")
 
   php -f ${SCRIPTPATH}/avorion-manager/manager/zlib_Uncompress.php "${file}" "PlayerUncompressed.tmp"
 

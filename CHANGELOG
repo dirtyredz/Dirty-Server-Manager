@@ -1,3 +1,17 @@
+1.2.2
+  fixed Player data retrieval script, was not getting all players
+  fixed Alliance data retrieval script, was not getting all alliances
+  added 3 options to the install script, StopWait,SaveWait, and StopDelay, that was previously missed in last update
+  player,alliance, and group scripts now use variables passed by the manager script
+  **update_manager now uses the same script for editing configs via web interface, the script will re add any missing comments and any missing options to the configs
+  Restart command now displays a message between stopping and Starting
+  removed password lockout on server config editor. (until I settup password protection on installation)
+  Added DeletePlayer button in console.(server needs to be offline)
+  Added -v option to start-web script, will output more information when failing to start webserver
+
+  **Note:
+  when you update to this version, youll still be using the old Update_manager script, the updated script wont take effect until the next update for you.
+
 1.2.1
   Fix editing server.ini with web interface, from breaking your server.ini
   Editing any config through the web interface will now create a copy of the config for backup

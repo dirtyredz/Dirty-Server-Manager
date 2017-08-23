@@ -863,4 +863,38 @@ class RefreshModel extends CommonController
     }
 
   }
+
+  /**
+   * Deletes all player files from the players directory,
+   * @method DeletePlayer
+   * @return boolean
+   */
+  public function DeletePlayer($PlayerID)
+  {
+    $GalaxyName = $this->ManagerConfig['GALAXY'];
+
+    $File0 = $this->ManagerConfig['GalaxyDirectory']."/".trim($GalaxyName)."/players/player_".$PlayerID.".dat.0";
+    $File1 = $this->ManagerConfig['GalaxyDirectory']."/".trim($GalaxyName)."/players/player_".$PlayerID.".dat.1";
+    $File2 = $this->ManagerConfig['GalaxyDirectory']."/".trim($GalaxyName)."/players/player_".$PlayerID.".dat.2";
+    $File3 = $this->ManagerConfig['GalaxyDirectory']."/".trim($GalaxyName)."/players/player_".$PlayerID.".dat.3";
+    $File4 = $this->ManagerConfig['GalaxyDirectory']."/".trim($GalaxyName)."/players/player_".$PlayerID.".dat.4";
+    $File5 = $this->ManagerConfig['GalaxyDirectory']."/".trim($GalaxyName)."/players/player_".$PlayerID.".dat.5";
+
+    $files = array($File0, $File1, $File2, $File3, $File4, $File5);
+
+    $Found = false;
+    foreach ($files as $file) {
+      if(is_file($file)){
+        $Found = true;
+        unlink($file);
+      }
+    }
+
+    if($Found){
+      return true;
+    }else {
+      return false;
+    }
+
+  }
 }
