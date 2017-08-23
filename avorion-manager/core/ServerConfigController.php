@@ -167,6 +167,10 @@ class ServerConfigController extends CommonController
           'Definition' => 'The role level required to Delete a sector via console page. (0=public)',
           'Type' => 'number',
           'Range' => array('step'=>'1','min'=>0,'max'=>99)),
+    'DeletePlayer' => array(
+          'Definition' => 'The role level required to Delete a player file via console page. (0=public)',
+          'Type' => 'number',
+          'Range' => array('step'=>'1','min'=>0,'max'=>99)),
     'EnableRSS' => array(
           'Definition' => 'If enabled will allow access to the /rss page, which provides details in an easy format for third party software.',
           'Type' => 'select',
