@@ -1,3 +1,13 @@
+1.2.3
+  Updated Server.ini default config options
+  Removed Enablerestart command
+  changed disablerestart command to work properly with how the auto restart cronjob works
+  new disablerestart feature, `./manager disablerestart 30` this will stop current restart sequence, and re start the sequence for 30 minutes.
+  apache_install will now properly stop galaxies running php webserver.
+  fixed error message in stop-web when php_server is not running
+  apache_intaller will now place backups config files prior to modifying the configs.
+  fixed manager always saying its out of date
+
 1.2.2
   fixed Player data retrieval script, was not getting all players
   fixed Alliance data retrieval script, was not getting all alliances

@@ -267,6 +267,10 @@ class ServerConfigController extends CommonController
           'Definition' => 'The chance that a color will drop from a block of wreckage when it is destroyed',
           'Type' => 'number',
           'Range' => array('step'=>'0.01','min'=>0,'max'=>1)),
+    'MaximumFightersPerSectorAndPlayer' => array(
+          'Definition' => 'Number of allowed fighters per player in a sector, -1 = unlimited.',
+          'Type' => 'number',
+          'Range' => array('step'=>'1','min'=>-1,'max'=>100000)),
     'sameStartSector' => array(
           'Definition' => 'Indicates if all players should start in the same sector. If false, a random empty sector on the outer rim is populated and used as the home sector for each new player.',
           'Type' => 'select',
@@ -295,6 +299,10 @@ class ServerConfigController extends CommonController
           'Range' => array('step'=>'1','min'=>0,'max'=>100)),
     'generatorThreads' => array(
           'Definition' => 'Number of threads handling sector generation. ie When calculating a jump or in a sector with wormholes/gates. (These are temporary/unlimited and run at full load to perform computations quickly.)',
+          'Type' => 'number',
+          'Range' => array('step'=>'1','min'=>0,'max'=>100)),
+    'scriptBackgroundThreads' => array(
+          'Definition' => 'Number of threads handling scripts in the background.)',
           'Type' => 'number',
           'Range' => array('step'=>'1','min'=>0,'max'=>100)),
     'aliveSectorsPerPlayer' => array(
@@ -328,10 +336,23 @@ class ServerConfigController extends CommonController
           'Definition' => 'Effect unknown. (Presumably identical to the ingame setting "Authenticate Users" which toggles steam authentication)',
           'Type' => 'select',
           'Values' => array('True'=>'true','False'=>'false')),
+    'sendStatsToAdmins' => array(
+          'Definition' => 'True will allow server stats to be sent to the admin when using f3 on the client',
+          'Type' => 'select',
+          'Values' => array('True'=>'true','False'=>'false')),
     'useSteam' => array(
           'Definition' => 'Determines whether the server can be joined via Steam, using options like "join game".',
           'Type' => 'select',
           'Values' => array('True'=>'true','False'=>'false')),
+    'rconIp' => array(
+          'Definition' => 'IP address the RCON interface will use.',
+          'Type' => 'text'),
+    'rconPassword' => array(
+          'Definition' => 'Password needed to access RCON',
+          'Type' => 'text'),
+    'rconPort' => array(
+          'Definition' => 'Port that RCON will listen on',
+          'Type' => 'text'),
     'maxPlayers' => array(
           'Definition' => 'The max number of players allowed on the server at one time.',
           'Type' => '(Change this in ManagerConfig)'),

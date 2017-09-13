@@ -194,6 +194,6 @@ echo ";Time in seconds for the stop command to wait if a successful STOP message
 echo "StopWait=30" >> manager-config.ini
 
 mkdir -p $STEAM_DIR
-wget https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz
+wget --no-check-certificate https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz
 tar -zxvf steamcmd_linux.tar.gz -C $STEAM_DIR
 LoadFile "update.sh"

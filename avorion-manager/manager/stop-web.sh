@@ -17,5 +17,11 @@ fi
 
 LogToManagerLog "Ran Stop-web command.";
 
-tmux kill-session -t ${GALAXY}_php
-DynamicEcho "PHP Server Stoped"
+if tmux has-session -t ${GALAXY}_php 2>/dev/null; then
+  tmux kill-session -t ${GALAXY}_php
+else
+  if [[ $EUID -eq 0 ]]; then
+     sudo pkill -f ${GALAXY}_php
+  fi
+fi
+DynamicEcho "${GALAXY}_php Server Stoped"

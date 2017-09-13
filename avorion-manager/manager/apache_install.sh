@@ -29,9 +29,13 @@ echo ""
 echo "Grabbing Web Port settings and IP address...."
 
 ApachePortsConf=/etc/apache2/ports.conf
+[ -e ApachePortsConf ] && mv ApachePortsConf ApachePortsConf.bckup
 AvorionConf=/etc/apache2/sites-available/${GALAXY}_avorion.conf
+[ -e AvorionConf ] && mv AvorionConf AvorionConf.bckup
 AvorionSSLConf=/etc/apache2/sites-available/${GALAXY}_avorionssl.conf
+[ -e AvorionSSLConf ] && mv AvorionSSLConf AvorionSSLConf.bckup
 SSLParams=/etc/apache2/conf-available/ssl-params.conf
+[ -e SSLParams ] && mv SSLParams SSLParams.bckup
 
 echo "Stopping PHP Web Server incase its running..."
 LoadFile "stop-web.sh"

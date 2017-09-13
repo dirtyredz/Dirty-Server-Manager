@@ -6,6 +6,8 @@
 # Documentation: https://github.com/dirtyredz/Dirty-Server-Manager
 # Website: https://github.com/dirtyredz/Dirty-Server-Manager
 
+COMMAND_DESCRIPTION="Stops current shell."
+
 if [ -z "${DisableCoreExit}" ]; then
   trap - INT
   exit

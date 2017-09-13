@@ -7,6 +7,9 @@
 # Website: https://github.com/dirtyredz/Dirty-Server-Manager
 
 # Thanks https://github.com/GameServerManagers/LinuxGSM
+
+COMMAND_DESCRIPTION="Returns 0 offline and 1 for online, used -v"
+
 status=$(tmux list-sessions 2>&1 | awk '{print $1}' | grep -Ec "^${TMUX_SESSION}:")
 
 if [ "$verbose" == true ] && [ "$RequiredCommand" == "core_status" ]; then

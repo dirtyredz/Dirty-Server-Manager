@@ -7,7 +7,7 @@
 # Website: https://github.com/dirtyredz/Dirty-Server-Manager
 
 COMMAND_NAME="proc"
-COMMAND_DESCRIPTION="copys the process output and stors it in server.log"
+COMMAND_DESCRIPTION="Broadcast's rotating messages to the server."
 
 if [ "${DisplayDescription}" == "true" ]; then
   DynamicEcho "$COMMAND_NAME"
