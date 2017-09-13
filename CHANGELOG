@@ -7,6 +7,7 @@
   fixed error message in stop-web when php_server is not running
   apache_intaller will now place backups config files prior to modifying the configs.
   fixed manager always saying its out of date
+  help command now displays all available commands in the manager/ directory, with descriptions of each.
 
 1.2.2
   fixed Player data retrieval script, was not getting all players
