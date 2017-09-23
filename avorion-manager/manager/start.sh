@@ -43,7 +43,14 @@ if [ ! -z $GameIPAddress ]; then
   GameIPAddress="--ip ${GameIPAddress}"
 fi
 
-LogToManagerLog "tmux new-session -d -s ${TMUX_SESSION} bin/${SERVER} --port ${PORT} ${GameIPAddress} --steam-query-port ${SteamQueryPort} --steam-master-port ${SteamMasterPort} --Listed ${Listed} --rcon-ip ${RconIPAddress} --rcon-port ${RconPort} --rcon-password ${RconPassword} --galaxy-name ${GALAXY} ${GalaxyDirectory} --max-players ${MAX_PLAYERS}  ${PARAMS}";
+if [ ! -z $SteamQueryPort ]; then
+  SteamQueryPort="--steam-query-port ${SteamQueryPort}"
+fi
+if [ ! -z $SteamMasterPort ]; then
+  SteamMasterPort="--steam-master-port ${SteamMasterPort}"
+fi
+
+LogToManagerLog "tmux new-session -d -s ${TMUX_SESSION} bin/${SERVER} --port ${PORT} ${GameIPAddress} ${SteamQueryPort} ${SteamMasterPort} --listed ${Listed} --rcon-ip ${RconIPAddress} --rcon-port ${RconPort} --rcon-password ${RconPassword} --galaxy-name ${GALAXY} ${GalaxyDirectory} --max-players ${MAX_PLAYERS}  ${PARAMS}";
 cd "${INSTALL_DIR}"
 
 touch ${SCRIPTPATH}'/console.log'
@@ -51,7 +58,7 @@ cat ${SCRIPTPATH}'/console.log' | grep '^<.*>' | grep -v '^<Rusty>' >> ${SCRIPTP
 > ${SCRIPTPATH}'/console.log'
 > ${SCRIPTPATH}'/server.log'
 
-tmux new-session -d -s ${TMUX_SESSION} bin/${SERVER} --port ${PORT} ${GameIPAddress} --steam-query-port ${SteamQueryPort} --steam-master-port ${SteamMasterPort} --Listed ${Listed} --rcon-ip ${RconIPAddress} --rcon-port ${RconPort} --rcon-password ${RconPassword} --galaxy-name ${GALAXY} ${GalaxyDirectory} --max-players ${MAX_PLAYERS}  ${PARAMS} 2> ${SCRIPTPATH}/tmux-error.log
+tmux new-session -d -s ${TMUX_SESSION} bin/${SERVER} --port ${PORT} ${GameIPAddress} ${SteamQueryPort} ${SteamMasterPort} --listed ${Listed} --rcon-ip ${RconIPAddress} --rcon-port ${RconPort} --rcon-password ${RconPassword} --galaxy-name ${GALAXY} ${GalaxyDirectory} --max-players ${MAX_PLAYERS}  ${PARAMS} 2> ${SCRIPTPATH}/tmux-error.log
 
 # Thanks https://github.com/GameServerManagers/LinuxGSM
 # tmux pipe-pane not supported in tmux versions < 1.6
@@ -80,7 +87,7 @@ LoadFile "core_status.sh"
 if [ "${status}" == "0" ]; then
   DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} could not be started!"
   if [ "$verbose" = true ]; then
-    DynamicEcho "tmux new-session -d -s ${TMUX_SESSION} bin/${SERVER} --port ${PORT} --galaxy-name ${GALAXY} --max-players ${MAX_PLAYERS}  ${PARAMS}"
+    DynamicEcho "tmux new-session -d -s ${TMUX_SESSION} bin/${SERVER} --port ${PORT} ${GameIPAddress} ${SteamQueryPort} ${SteamMasterPort} --listed ${Listed} --rcon-ip ${RconIPAddress} --rcon-port ${RconPort} --rcon-password ${RconPassword} --galaxy-name ${GALAXY} ${GalaxyDirectory} --max-players ${MAX_PLAYERS}  ${PARAMS}"
     DynamicEcho "==============================================================="
     DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Console.log:"
     DynamicEcho "==============================================================="
@@ -99,7 +106,7 @@ if [ "${status}" != "0" ]; then
   DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} has started with pid ${YELLOW}$(pidof ${SERVER})${NOCOLOR}"
 
   if [ "$verbose" = true ]; then
-    DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} has started with params: --port ${PORT} --galaxy-name ${GALAXY} ${GalaxyDirectory} --max-players ${MAX_PLAYERS}  ${PARAMS}"
+    DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} has started with params: --port ${PORT} ${GameIPAddress} ${SteamQueryPort} ${SteamMasterPort} --listed ${Listed} --rcon-ip ${RconIPAddress} --rcon-port ${RconPort} --rcon-password ${RconPassword} --galaxy-name ${GALAXY} ${GalaxyDirectory} --max-players ${MAX_PLAYERS}  ${PARAMS}"
   fi
 
   VER=`wget -O - -o /dev/null https://api.github.com/repos/dirtyredz/Dirty-Server-Manager/releases/latest | grep tag_name | sed -e 's/.*://g' -e 's/"//g' -e 's/,//g' | tr -d '[:blank:]'`

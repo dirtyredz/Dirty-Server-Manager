@@ -74,7 +74,7 @@ class ViewController extends CommonController
    */
   public function Index()
   {
-    $this->Data['IPAddress'] = $this->ManagerConfig['GameIPAddress'];
+    $this->Data['IPAddress'] = $this->getGameIPAddress();
     //Default all links to be disabled
     $this->Data['ConsoleAccess'] = 'Disabled';
     $this->Data['AccessServerConfigPage'] = 'Disabled';
@@ -498,7 +498,7 @@ class ViewController extends CommonController
     }
 
 
-    $this->Data['IPAddress'] = $this->ManagerConfig['GameIPAddress'];
+    $this->Data['IPAddress'] = $this->getGameIPAddress();
     //Loads page
     $this->LoadView('Home');
   }

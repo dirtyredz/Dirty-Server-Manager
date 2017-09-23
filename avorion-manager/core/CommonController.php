@@ -183,44 +183,105 @@ class CommonController
  }
 
  /**
+  * Gets the active games IP address
+  * @method getGameIPAddress
+  * @return string IPAddress
+  */
+  public function getGameIPAddress(){
+
+    if(empty($this->ManagerConfig['GameIPAddress'])){
+      if(defined('CurledIP')){
+        return CurledIP;
+      }
+      $curl_handle=curl_init();
+      curl_setopt($curl_handle, CURLOPT_URL,'http://checkip.dyndns.com/');
+      curl_setopt($curl_handle, CURLOPT_HEADER, 0);
+      curl_setopt($curl_handle, CURLOPT_CONNECTTIMEOUT, 2);
+      curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, 1);
+      curl_setopt($curl_handle, CURLOPT_USERAGENT, 'Dirty Server Manager');
+      $query = curl_exec($curl_handle);
+      curl_close($curl_handle);
+      preg_match('/Current IP Address: \[?([:.0-9a-fA-F]+)\]?/', $query, $m);
+      $externalIp = $m[1];
+
+      if (!defined('CurledIP')) define('CurledIP', $externalIp);
+      return $externalIp;
+    }
+
+    return $this->ManagerConfig['GameIPAddress'];
+  }
+
+  /**
+   * Gets the Rcon IP address
+   * @method getRconIPAddress
+   * @return string IPAddress
+   */
+   public function getRconIPAddress(){
+     if(empty($this->ManagerConfig['RconIPAddress'])){ return $this->getGameIPAddress(); }
+     return $this->ManagerConfig['RconIPAddress'];
+   }
+
+  /**
+   * Gets steasm qeury port set at runtime
+   * @method getSteamQueryPort
+   * @return string port
+   */
+   public function getSteamQueryPort(){
+     if(empty($this->ManagerConfig['SteamQueryPort'])){ return 27020; }
+     return $this->ManagerConfig['SteamQueryPort'];
+   }
+
+   /**
+    * Gets the RCON port set at runtime
+    * @method getRconPort
+    * @return string port
+    */
+    public function getRconPort(){
+      if(empty($this->ManagerConfig['RconPort'])){ return 27015; }
+      return $this->ManagerConfig['RconPort'];
+    }
+
+ /**
   * gets the online/offline status of the process
   * @method onlineStatus
   * @return string online/offline
   */
   public function onlineStatus(){
-
+    $rtn = 'Offline';
     require __DIR__ . '/../SourceQuery/bootstrap.php';
 
     $Query = new SourceQuery( );
 
-    try
-    {
-      $Query->Connect( '69.30.246.170', 27020, 1, SourceQuery::SOURCE );
+    try{
+      $Query->Connect( $this->getGameIPAddress(), $this->getSteamQueryPort(), 1, SourceQuery::SOURCE );
+      $Info = $Query->GetInfo( );
       error_log('INFO');
-      foreach ($Query->GetInfo( ) as $key => $value) {
+      foreach ($Info as $key => $value) {
         error_log($key.' => '.$value);
       }
-      error_log('PLAYERS');
-      foreach ($Query->GetPlayers( ) as $key => $value) {
-        foreach ($value as $key2 => $value2) {
-          error_log($key2.' => '.$value2);
-        }
-      }
-      error_log('RULES');
-      foreach ($Query->GetRules( ) as $key => $value) {
-        error_log($key.' => '.$value);
-      }
-      return 'Online';
+
+      $rtn = 'Online';
     }
-    catch( Exception $e )
-    {
+    catch( Exception $e ){
       error_log($e->getMessage( ));
-      return 'Offline';
+
+      try{
+        $Query->Disconnect( );
+        $Query->Connect( $this->getRconIPAddress(), $this->getRconPort(), 1, SourceQuery::SOURCE );
+        $Query->SetRconPassword( 'Testing' );
+
+        error_log($Query->Rcon( 'status' ));
+        $rtn = 'Online';
+      }
+      catch( Exception $a ){
+        error_log($a->getMessage( ));
+      }
+
     }
-    finally
-    {
+    finally{
       $Query->Disconnect( );
     }
 
+    return $rtn;
   }
 }
