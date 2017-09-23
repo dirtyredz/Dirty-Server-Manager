@@ -1,4 +1,6 @@
 <?php
+
+use xPaw\SourceQuery\SourceQuery;
 /**
  * Common methods and variables to all controllers
  */
@@ -180,26 +182,45 @@ class CommonController
    }
  }
 
-/**
- * Runs pifof on running process (galaxyname_server)
- * @method returnPid
- * @return string current running process pid number
- */
- public function returnPid(){
-   $ServerProcess = $this->Data['GalaxyName'].'_Server';
-   return `pidof {$ServerProcess} | tr -d '\n'`;
- }
-
  /**
   * gets the online/offline status of the process
   * @method onlineStatus
   * @return string online/offline
   */
   public function onlineStatus(){
-    $Status = `{$this->Config['Manager']} core_status -v -o PHP | tr -d '\n'`;
-    if($Status == '1'){
+
+    require __DIR__ . '/../SourceQuery/bootstrap.php';
+
+    $Query = new SourceQuery( );
+
+    try
+    {
+      $Query->Connect( '69.30.246.170', 27020, 1, SourceQuery::SOURCE );
+      error_log('INFO');
+      foreach ($Query->GetInfo( ) as $key => $value) {
+        error_log($key.' => '.$value);
+      }
+      error_log('PLAYERS');
+      foreach ($Query->GetPlayers( ) as $key => $value) {
+        foreach ($value as $key2 => $value2) {
+          error_log($key2.' => '.$value2);
+        }
+      }
+      error_log('RULES');
+      foreach ($Query->GetRules( ) as $key => $value) {
+        error_log($key.' => '.$value);
+      }
       return 'Online';
     }
-    return 'Offline';
+    catch( Exception $e )
+    {
+      error_log($e->getMessage( ));
+      return 'Offline';
+    }
+    finally
+    {
+      $Query->Disconnect( );
+    }
+
   }
 }
