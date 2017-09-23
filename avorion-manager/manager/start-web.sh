@@ -26,7 +26,7 @@ fi
 
 DynamicEcho "starting PHP Server"
 
-tmux new-session -d -s ${GALAXY}_php "php -S ${IPAddress}:${WEBPORT} -t ${SCRIPTPATH}/avorion-manager/webroot ${SCRIPTPATH}/avorion-manager/webroot/index.php" 2> ${SCRIPTPATH}/tmux-error.log
+tmux new-session -d -s ${GALAXY}_php "php -S ${WebIPAddress}:${WebPort} -t ${SCRIPTPATH}/avorion-manager/webroot ${SCRIPTPATH}/avorion-manager/webroot/index.php" 2> ${SCRIPTPATH}/tmux-error.log
 
 sleep 1
 
@@ -34,7 +34,7 @@ status=$(tmux list-sessions 2>&1 | awk '{print $1}' | grep -Ec "^${GALAXY}_php:"
 
 if [ "${status}" == "0" ]; then
   DynamicEcho "${PURPLE}PHP Web Server${NOCOLOR} Failed to start"
-  php -S ${IPAddress}:${WEBPORT} -t ${SCRIPTPATH}/avorion-manager/webroot ${SCRIPTPATH}/avorion-manager/webroot/index.php 2> ${SCRIPTPATH}/tmux-error.log
+  php -S ${WebIPAddress}:${WebPort} -t ${SCRIPTPATH}/avorion-manager/webroot ${SCRIPTPATH}/avorion-manager/webroot/index.php 2> ${SCRIPTPATH}/tmux-error.log
   if [ "$verbose" = true ]; then
     if [ -s "${SCRIPTPATH}/tmux-error.log" ]; then
       DynamicEcho "============================tmux-error.log==================================="
@@ -48,4 +48,4 @@ if [ "${status}" == "0" ]; then
   LoadFile "core_exit.sh"
 fi
 
-DynamicEcho "PHP Server started on server: http://${IPAddress}"':'"${WEBPORT}"
+DynamicEcho "PHP Server started on server: http://${WebIPAddress}"':'"${WebPort}"

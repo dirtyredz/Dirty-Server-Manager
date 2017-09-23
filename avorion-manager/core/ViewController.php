@@ -74,7 +74,7 @@ class ViewController extends CommonController
    */
   public function Index()
   {
-    $this->Data['IPAddress'] = $this->ManagerConfig['IPAddress'];
+    $this->Data['IPAddress'] = $this->ManagerConfig['GameIPAddress'];
     //Default all links to be disabled
     $this->Data['ConsoleAccess'] = 'Disabled';
     $this->Data['AccessServerConfigPage'] = 'Disabled';
@@ -146,7 +146,6 @@ class ViewController extends CommonController
       $this->Data['AccessProfileParserPage'] = '';
     }
     //Prepare additional data to put on the page and load the page
-    $this->Data['IPAddress'] = $this->ManagerConfig['IPAddress'];
     $DefaultPage = $this->Config['DefaultPage'];
     $AllowedPages = array('Home','Factions','Players','DiscoveredMap','FactionsMap','Graphs','SignIn','About');
     if($this->Config['DefaultPage'] == 'SignIn' && $this->Data['LoggedIn'] || !in_array($DefaultPage,$AllowedPages)){
@@ -187,7 +186,7 @@ class ViewController extends CommonController
    */
   public function Account()
   {
-    $this->Data['IPAddress'] = $this->ManagerConfig['IPAddress'];
+    $this->Data['IPAddress'] = $this->ManagerConfig['GameIPAddress'];
     //No need to check for role here, if they dont have a session at all redirect them
     $this->SessionRequired();
     //Loads the page
@@ -499,7 +498,7 @@ class ViewController extends CommonController
     }
 
 
-    $this->Data['IPAddress'] = $this->ManagerConfig['IPAddress'];
+    $this->Data['IPAddress'] = $this->ManagerConfig['GameIPAddress'];
     //Loads page
     $this->LoadView('Home');
   }
@@ -613,7 +612,7 @@ class ViewController extends CommonController
    */
   public function SignIn()
   {
-    $this->Data['IPAddress'] = $this->ManagerConfig['IPAddress'];
+    $this->Data['IPAddress'] = $this->ManagerConfig['GameIPAddress'];
     $this->LoadView('SignIn');
   }
 
@@ -646,7 +645,7 @@ class ViewController extends CommonController
       $RefreshModel = new RefreshModel;
       //Settup data for page to display
       $this->Data['ServerLoad'] = $RefreshModel->GetCurrentServerLoad();
-      $this->Data['IPAddress'] = $this->ManagerConfig['IPAddress'];
+      $this->Data['IPAddress'] = $this->ManagerConfig['GameIPAddress'];
       $this->Data['GalaxyName'] = $this->ManagerConfig['GALAXY'];//`grep GALAXY {$this->Config['ManagerConfig']} | sed -e 's/.*=//g'`;
       $this->Data['OnlineStatus'] = $this->onlineStatus();
       $this->Data['ShowOnlinePlayerCount'] = $this->Config['ShowOnlinePlayerCount'];

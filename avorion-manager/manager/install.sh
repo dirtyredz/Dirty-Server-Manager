@@ -143,9 +143,9 @@ echo "DailyRestart=${DailyRestartInput}" >> manager-config.ini
 echo ";To use BETA avorion or not, set before installing/updating. Default: false" >> manager-config.ini
 echo "BETA=${BetaInput}" >> manager-config.ini
 echo ";Webport to access web interface. Default: 8080" >> manager-config.ini
-echo "WEBPORT=8080" >> manager-config.ini
+echo "WebPort=8080" >> manager-config.ini
 echo ";IP to access web interface, and additional server startup requirments. Default: 0.0.0.0" >> manager-config.ini
-echo "IPAddress=${IPAddressInput}" >> manager-config.ini
+echo "WebIPAddress=${IPAddressInput}" >> manager-config.ini
 echo ";Cron Hour setting to run Sector Parsing.(0,6,12,18 will run every 6 hours) Default: 0,6,12,18" >> manager-config.ini
 echo 'GetSectorDataInterval="0,12"' >> manager-config.ini
 echo ";Cron Minute setting to run Player parsing.(0,30 will run every hour at the 0 and 30 minute mark) Default: 0,30" >> manager-config.ini

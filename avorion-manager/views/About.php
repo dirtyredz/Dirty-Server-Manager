@@ -204,7 +204,7 @@ Added Scripts memory graphs</br>
 <h4>1.0.9</h4>
   Added Apache web server support</br>
   changed Router.php to index.php</br>
-  Changed PHPPort to WEBPORT in manager-config.ini</br>
+  Changed PHPPort to WebPort in manager-config.ini</br>
   Added 'ampersand' charecter escaping in UpdateManager</br>
   Updated manager to use unique tmux identifier</br>
   Added Memory Usage graph</br>

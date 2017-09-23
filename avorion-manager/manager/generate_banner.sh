@@ -21,4 +21,4 @@ else
   status='Offline'
   OnlinePlayers="0/$MAX_PLAYERS"
 fi
-php -f ${SCRIPTPATH}/avorion-manager/manager/BannerGenerator.php "${status}" "${IPAddress}" "${GALAXY}" "${OnlinePlayers}"
+php -f ${SCRIPTPATH}/avorion-manager/manager/BannerGenerator.php "${status}" "${GameIPAddress}" "${GALAXY}" "${OnlinePlayers}"

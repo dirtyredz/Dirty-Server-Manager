@@ -39,8 +39,11 @@ fi
 if [ ! -z $GalaxyDirectory ]; then
   GalaxyDirectory="--datapath ${GalaxyDirectory}"
 fi
+if [ ! -z $GameIPAddress ]; then
+  GameIPAddress="--ip ${GameIPAddress}"
+fi
 
-LogToManagerLog "tmux new-session -d -s ${TMUX_SESSION} bin/${SERVER} --port ${PORT} --galaxy-name ${GALAXY} ${GalaxyDirectory} --max-players ${MAX_PLAYERS}  ${PARAMS}";
+LogToManagerLog "tmux new-session -d -s ${TMUX_SESSION} bin/${SERVER} --port ${PORT} ${GameIPAddress} --steam-query-port ${SteamQueryPort} --steam-master-port ${SteamMasterPort} --Listed ${Listed} --rcon-ip ${RconIPAddress} --rcon-port ${RconPort} --rcon-password ${RconPassword} --galaxy-name ${GALAXY} ${GalaxyDirectory} --max-players ${MAX_PLAYERS}  ${PARAMS}";
 cd "${INSTALL_DIR}"
 
 touch ${SCRIPTPATH}'/console.log'
@@ -48,7 +51,7 @@ cat ${SCRIPTPATH}'/console.log' | grep '^<.*>' | grep -v '^<Rusty>' >> ${SCRIPTP
 > ${SCRIPTPATH}'/console.log'
 > ${SCRIPTPATH}'/server.log'
 
-tmux new-session -d -s ${TMUX_SESSION} bin/${SERVER} --port ${PORT} --galaxy-name ${GALAXY} ${GalaxyDirectory} --max-players ${MAX_PLAYERS} ${PARAMS} 2> ${SCRIPTPATH}/tmux-error.log
+tmux new-session -d -s ${TMUX_SESSION} bin/${SERVER} --port ${PORT} ${GameIPAddress} --steam-query-port ${SteamQueryPort} --steam-master-port ${SteamMasterPort} --Listed ${Listed} --rcon-ip ${RconIPAddress} --rcon-port ${RconPort} --rcon-password ${RconPassword} --galaxy-name ${GALAXY} ${GalaxyDirectory} --max-players ${MAX_PLAYERS}  ${PARAMS} 2> ${SCRIPTPATH}/tmux-error.log
 
 # Thanks https://github.com/GameServerManagers/LinuxGSM
 # tmux pipe-pane not supported in tmux versions < 1.6

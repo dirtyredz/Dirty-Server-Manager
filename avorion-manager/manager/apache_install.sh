@@ -62,7 +62,7 @@ echo ''
 
 echo "Mdoifying Apache's ports.conf to reflect chosen port number..."
 echo "Listen 80" >> $ApachePortsConf
-echo "Listen ${WEBPORT}" > $ApachePortsConf
+echo "Listen ${WebPort}" > $ApachePortsConf
 echo "<IfModule ssl_module>" >> $ApachePortsConf
 echo "    Listen 443" >> $ApachePortsConf
 echo "</IfModule>" >> $ApachePortsConf
@@ -85,14 +85,14 @@ echo ""
 
 echo "Creating virtual host..."
 
-echo "<VirtualHost ${IPAddress}:${WEBPORT}>" > $AvorionConf
-echo "    ServerName ${IPAddress}:${WEBPORT}" >> $AvorionConf
+echo "<VirtualHost ${WebIPAddress}:${WebPort}>" > $AvorionConf
+echo "    ServerName ${WebIPAddress}:${WebPort}" >> $AvorionConf
 echo "    ServerAdmin webmaster@localhost" >> $AvorionConf
 echo "    DocumentRoot ${PWD}/avorion-manager/webroot" >> $AvorionConf
 echo "    ErrorLog ${PWD}/avorion-manager/webroot/error.log" >> $AvorionConf
 echo "    CustomLog ${PWD}/avorion-manager/webroot/access.log combined" >> $AvorionConf
 if [ "$SSLEnable" == "true" ]; then
-  echo "    Redirect permanent \"/\" \"https://${IPAddress}/\"" >> $AvorionConf
+  echo "    Redirect permanent \"/\" \"https://${WebIPAddress}/\"" >> $AvorionConf
 fi
 echo "    <ifmodule mpm_itk_module>" >> $AvorionConf
 echo "        AssignUserID ${UserNameInput} ${GroupNameInput}" >> $AvorionConf
@@ -122,7 +122,7 @@ service apache2 restart
 if [ "$SSLEnable" == "true" ]; then
   echo "You have chosen to add SSL we will generate a self signed certificate."
   echo ""
-  openssl req -x509 -nodes -days 365 -subj "/C=NA/ST=NA/L=NA/CN=${IPAddress}" -newkey rsa:2048 -keyout /etc/ssl/private/${GALAXY}-avorion-selfsigned.key -out /etc/ssl/certs/${GALAXY}-avorion-selfsigned.crt
+  openssl req -x509 -nodes -days 365 -subj "/C=NA/ST=NA/L=NA/CN=${WebIPAddress}" -newkey rsa:2048 -keyout /etc/ssl/private/${GALAXY}-avorion-selfsigned.key -out /etc/ssl/certs/${GALAXY}-avorion-selfsigned.crt
   openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
 
   echo "Setting up Apache's SSL Parameters..."
@@ -149,7 +149,7 @@ if [ "$SSLEnable" == "true" ]; then
   echo "<IfModule mod_ssl.c>" > $AvorionSSLConf
   echo "        <VirtualHost _default_:443>" >> $AvorionSSLConf
   echo "                ServerAdmin your_email@example.com" >> $AvorionSSLConf
-  echo "                ServerName ${IPAddress}:443" >> $AvorionSSLConf
+  echo "                ServerName ${WebIPAddress}:443" >> $AvorionSSLConf
   echo "" >> $AvorionSSLConf
   echo "                DocumentRoot ${PWD}/avorion-manager/webroot" >> $AvorionSSLConf
   echo "" >> $AvorionSSLConf
@@ -203,7 +203,7 @@ fi
 echo ""
 echo "Apache installation complete."
 if [ "$SSLEnable" == "true" ]; then
-  echo "Vistit: http://${IPAddress}:${WEBPORT}    You will automatically be redirected to https://${IPAddress}"
+  echo "Vistit: http://${WebIPAddress}:${WebPort}    You will automatically be redirected to https://${WebIPAddress}"
 else
-  echo "Vistit: http://${IPAddress}:${WEBPORT}"
+  echo "Vistit: http://${WebIPAddress}:${WebPort}"
 fi

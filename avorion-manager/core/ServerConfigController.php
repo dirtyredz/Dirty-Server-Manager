@@ -387,7 +387,29 @@ class ServerConfigController extends CommonController
           'Definition' => 'The parameters used to start the server.',
           'Type' => 'text'),
     'PORT' => array(
-          'Definition' => 'The port the server listens to.',
+          'Definition' => 'The port the server listens to. Defaults to 27000',
+          'Type' => 'text'),
+    'Listed' => array(
+          'Definition' => 'True means server is listed on the servers list, and allows for server queries. [Warning, if set to false may lose functionality with DSM See WIKI for more info]',
+          'Type' => 'select',
+          'Values' => array('True'=>'true','False'=>'false')),
+    'SteamQueryPort' => array(
+          'Definition' => 'The port that steam and other queries can access [required]. defaults to 27020',
+          'Type' => 'text'),
+    'SteamMasterPort' => array(
+          'Definition' => 'The port that steam uses [required]. defaults to 27021',
+          'Type' => 'text'),
+    'GameIPAddress' => array(
+          'Definition' => 'The server address used to connect players to your server. Defaults to standard network IP address, only needed for multiple instances of avorion on same machine.',
+          'Type' => 'text'),
+    'RconIPAddress' => array(
+          'Definition' => 'The server address this servres RCON will listen on.',
+          'Type' => 'text'),
+    'RconPassword' => array(
+          'Definition' => 'Password to use RCON.',
+          'Type' => 'text'),
+    'RconPort' => array(
+          'Definition' => 'The port that RCON listens to.',
           'Type' => 'text'),
     'LOG_ROTATION' => array(
           'Definition' => 'The number of days to maintain manager logs.',
@@ -405,10 +427,10 @@ class ServerConfigController extends CommonController
           'Definition' => 'If enabled will install/update the server with the Beta version of the game.',
           'Type' => 'select',
           'Values' => array('True'=>'true','False'=>'false')),
-    'WEBPORT' => array(
+    'WebPort' => array(
           'Definition' => 'The port the web interface will listen to.',
           'Type' => 'text'),
-    'IPAddress' => array(
+    'WebIPAddress' => array(
           'Definition' => 'IP Address to be used for the web interface.',
           'Type' => 'text'),
     'GetSectorDataInterval' => array(
