@@ -240,14 +240,20 @@ LoadFile(){
     SecondCommand="${2}"
   fi
 
-  file_path="${SCRIPTPATH}/avorion-manager/manager/${requested_file}"
+  file_path="${SCRIPTPATH}/avorion-manager/manager/${requested_file}.sh"
+
   if [ -f "${file_path}" ]; then
     chmod +x "${file_path}"
     LogToManagerLog "Executing: ${requested_file}";
     source "${file_path}"
   else
-    DisplayHelp;
+    file_path="${SCRIPTPATH}/avorion-manager/manager/${requested_file}.php"
+    if  [ -f "${file_path}" ]; then
+      php -f ${file_path} "${SecondCommand}"
+    else
+      DisplayHelp;
+    fi
   fi
 }
 
-LoadFile "${RequiredCommand}.sh"
+LoadFile "${RequiredCommand}"

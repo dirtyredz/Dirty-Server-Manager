@@ -12,7 +12,7 @@ COMMAND_DESCRIPTION="Parses through all alliance files."
 if [ "${DisplayDescription}" == "true" ]; then
   DynamicEcho "$COMMAND_NAME"
   DynamicEcho "$COMMAND_DESCRIPTION"
-  LoadFile "core_exit.sh"
+  LoadFile "core_exit"
 fi
 
 #Log to manager.log
@@ -44,7 +44,7 @@ for file in ${GalaxyDirectoryPath}${GALAXY}/alliances/alliance_*; do
   if [ "$verbose" = true ]; then
     DynamicEcho "\rParsing file: ${file}" "DONTLOG"
   fi
-  
+
   AllianceSeen=false
   for i in ${SeenAlliance[@]} ; do
       if [ $i == $AllianceIndex ] ; then

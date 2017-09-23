@@ -1,4 +1,4 @@
-#!/bin/bash
+<?php
 # Project: Dirty Server Manager
 # Author: Dirtyredz | David McCLain
 # License: MIT License, Copyright (c) 2017 David McCLain
@@ -6,13 +6,7 @@
 # Documentation: https://github.com/dirtyredz/Dirty-Server-Manager
 # Website: https://github.com/dirtyredz/Dirty-Server-Manager
 
-COMMAND_NAME="version"
-COMMAND_DESCRIPTION="Returns the managers current version"
+if (!defined('COMMAND_NAME')) define('COMMAND_NAME', 'get_player_data');
+if (!defined('COMMAND_DESCRIPTION')) define('COMMAND_DESCRIPTION', 'Parses through all player files.');
 
-if [ "${DisplayDescription}" == "true" ]; then
-  DynamicEcho "$COMMAND_NAME"
-  DynamicEcho "$COMMAND_DESCRIPTION"
-  LoadFile "core_exit"
-fi
-
-echo ${VERSION}
+echo COMMAND_NAME;

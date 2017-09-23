@@ -12,12 +12,12 @@ COMMAND_DESCRIPTION="parses through admin.xml and displays group name of provide
 if [ "${DisplayDescription}" == "true" ]; then
   DynamicEcho "$COMMAND_NAME"
   DynamicEcho "$COMMAND_DESCRIPTION"
-  LoadFile "core_exit.sh"
+  LoadFile "core_exit"
 fi
 
 if [ -z "$SecondCommand" ]; then
   DynamicEcho "Second paremeter required, expeted username."
-  LoadFile "core_exit.sh"
+  LoadFile "core_exit"
 fi
 
 GroupName=''

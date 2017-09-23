@@ -12,7 +12,7 @@ COMMAND_DESCRIPTION="Installs Steamcmd, Avorion files, and Manager-config.ini"
 if [ "${DisplayDescription}" == "true" ]; then
   DynamicEcho "$COMMAND_NAME"
   DynamicEcho "$COMMAND_DESCRIPTION"
-  LoadFile "core_exit.sh"
+  LoadFile "core_exit"
 fi
 
 LogToManagerLog "Ran Install command.";
@@ -196,4 +196,4 @@ echo "StopWait=30" >> manager-config.ini
 mkdir -p $STEAM_DIR
 wget --no-check-certificate https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz
 tar -zxvf steamcmd_linux.tar.gz -C $STEAM_DIR
-LoadFile "update.sh"
+LoadFile "update"

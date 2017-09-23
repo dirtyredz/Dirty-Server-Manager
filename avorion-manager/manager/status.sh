@@ -12,35 +12,35 @@ COMMAND_DESCRIPTION="runs /status onto the server and displays its results."
 if [ "${DisplayDescription}" == "true" ]; then
   DynamicEcho "$COMMAND_NAME"
   DynamicEcho "$COMMAND_DESCRIPTION"
-  LoadFile "core_exit.sh"
+  LoadFile "core_exit"
 fi
 
 # if server is offline
-LoadFile "core_status.sh"
+LoadFile "core_status"
 if [ "${status}" == "0" ]; then
   #GenerateBrowser 'Offline';
-  LoadFile "generate_banner.sh"
+  LoadFile "generate_banner"
   # if status was run by cron
   if [ "$output" = "CRON" ]; then
     DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} has detected a crash."
     # if auto restart is enabled
     if [ "$AutoRestart" = true ]; then
       DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} will restart."
-      LoadFile "start.sh"
+      LoadFile "start"
     else
       DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} AutoRestart is disabled, edit manager-config.ini to change this."
     fi
   else
     DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} is not running."
   fi
-  LoadFile "core_exit.sh"
+  LoadFile "core_exit"
 fi
 
 ServerPid=$(pidof ${SERVER})
 
 if [ -z $ServerPid ]; then
   DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} is not running."
-  LoadFile "core_exit.sh"
+  LoadFile "core_exit"
 fi
 # Generate date for a unique grep search
 D='Server Time is: '"$(date +"%F %H-%M-%S")"
@@ -99,7 +99,7 @@ if [ "${success}" = false ]; then
     if [ "${SaveStatus}" ]; then
       DynamicEcho "\r" "DONTLOG"
       DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Saved, Recieved server response."
-      LoadFile "core_exit.sh"
+      LoadFile "core_exit"
       break;
     fi
     let time++
@@ -114,8 +114,8 @@ if [ "${success}" = false ]; then
   DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Unable to retrieve a status or save response from the server."
   if [ "$AutoRestart" = true ]; then
     DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} will restart the server."
-    LoadFile "restart.sh"
-    LoadFile "core_exit.sh"
+    LoadFile "restart"
+    LoadFile "core_exit"
   fi
 
 else
@@ -156,6 +156,6 @@ find ${SCRIPTPATH}/avorion-manager/logs/*_status.log -mtime +${LOG_ROTATION} -ty
 find ${SCRIPTPATH}/avorion-manager/logs/*_playerchat.log -mtime +${LOG_ROTATION} -type f -delete 2> /dev/null
 
 #Generate data for the browser
-LoadFile "generate_banner.sh"
+LoadFile "generate_banner"
 
 cat /proc/${ServerPid}/fd/3 > ${SCRIPTPATH}/server.log

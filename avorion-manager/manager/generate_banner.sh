@@ -10,7 +10,7 @@ COMMAND_NAME="generate_banner"
 COMMAND_DESCRIPTION="Generates the status banner"
 
 if [ -z ${status} ]; then
-  LoadFile "core_status.sh"
+  LoadFile "core_status"
 fi
 
 if [ "${status}" != "0" ]; then

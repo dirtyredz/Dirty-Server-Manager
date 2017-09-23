@@ -12,7 +12,7 @@ COMMAND_DESCRIPTION="Backs up the entire galaxy directory"
 if [ "${DisplayDescription}" == "true" ]; then
   DynamicEcho "$COMMAND_NAME"
   DynamicEcho "$COMMAND_DESCRIPTION"
-  LoadFile "core_exit.sh"
+  LoadFile "core_exit"
 fi
 
 MaxBackupsDays=10

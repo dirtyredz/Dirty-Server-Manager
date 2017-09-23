@@ -12,14 +12,14 @@ COMMAND_DESCRIPTION="Starts the server."
 if [ "${DisplayDescription}" == "true" ]; then
   DynamicEcho "$COMMAND_NAME"
   DynamicEcho "$COMMAND_DESCRIPTION"
-  LoadFile "core_exit.sh"
+  LoadFile "core_exit"
 fi
 
 # if server already running
-LoadFile "core_status.sh"
+LoadFile "core_status"
 if [ "${status}" != "0" ]; then
   DynamicEcho "Server is already running, with pid ${YELLOW}$(pidof ${SERVER})${NOCOLOR}"
-  LoadFile "core_exit.sh"
+  LoadFile "core_exit"
 fi
 
 # remove the cron job just incase
@@ -27,7 +27,7 @@ DeleteCronJobs;
 
 #MOTD
 if [ "${MOTD}" = true ]; then
-  LoadFile "enable_login_callback.sh"
+  LoadFile "enable_login_callback"
 fi
 
 
@@ -83,7 +83,7 @@ DynamicEcho "starting ${PURPLE}${SERVER}${NOCOLOR} on ${YELLOW}${PORT}${NOCOLOR}
 
 # Server failed to start
 sleep 1
-LoadFile "core_status.sh"
+LoadFile "core_status"
 if [ "${status}" == "0" ]; then
   DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} could not be started!"
   if [ "$verbose" = true ]; then
@@ -99,7 +99,7 @@ if [ "${status}" == "0" ]; then
       cat "${SCRIPTPATH}/tmux-error.log"
     fi
   fi
-  LoadFile "core_exit.sh"
+  LoadFile "core_exit"
 fi
 
 if [ "${status}" != "0" ]; then
@@ -119,5 +119,5 @@ fi
 
 #Generate jpg
 PlayersCount='0'
-LoadFile "generate_banner.sh"
+LoadFile "generate_banner"
 CreateCronJobs;

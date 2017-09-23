@@ -12,14 +12,14 @@ COMMAND_DESCRIPTION="attaches your terminal to the servers console"
 if [ "${DisplayDescription}" == "true" ]; then
   DynamicEcho "$COMMAND_NAME"
   DynamicEcho "$COMMAND_DESCRIPTION"
-  LoadFile "core_exit.sh"
+  LoadFile "core_exit"
 fi
 
 # if server is offline
-LoadFile "core_status.sh"
+LoadFile "core_status"
 if [ "${status}" == "0" ]; then
   DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} is not running."
-  LoadFile "core_exit.sh"
+  LoadFile "core_exit"
 fi
 
 DynamicEcho "press ${RED}Ctrl+B${NOCOLOR} then ${RED}D${NOCOLOR} to detach. Confirm to continue..."

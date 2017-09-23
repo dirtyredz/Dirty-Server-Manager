@@ -12,7 +12,7 @@ COMMAND_DESCRIPTION="parses through admin.xml and displays all groups"
 if [ "${DisplayDescription}" == "true" ]; then
   DynamicEcho "$COMMAND_NAME"
   DynamicEcho "$COMMAND_DESCRIPTION"
-  LoadFile "core_exit.sh"
+  LoadFile "core_exit"
 fi
 
 DynamicEcho $(grep "group name=" ${GalaxyDirectoryPath}${GALAXY}/admin.xml | sed -e 's/<group name="//g' -e 's/">//g' -e 's/\r//g' | tr -d '[:blank:]' | awk '{print $0}' ORS=',' | awk '{print $1"Admin"}')

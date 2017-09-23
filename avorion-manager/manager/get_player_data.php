@@ -1,4 +1,4 @@
-#!/bin/bash
+<?php
 # Project: Dirty Server Manager
 # Author: Dirtyredz | David McCLain
 # License: MIT License, Copyright (c) 2017 David McCLain
@@ -6,13 +6,15 @@
 # Documentation: https://github.com/dirtyredz/Dirty-Server-Manager
 # Website: https://github.com/dirtyredz/Dirty-Server-Manager
 
-COMMAND_NAME="get_player_data"
-COMMAND_DESCRIPTION="Parses through all player files."
+if (!defined('COMMAND_NAME')) define('COMMAND_NAME', 'get_player_data');
+if (!defined('COMMAND_DESCRIPTION')) define('COMMAND_NAME', 'Parses through all player files.');
 
+echo COMMAND_NAME
+?>
 if [ "${DisplayDescription}" == "true" ]; then
   DynamicEcho "$COMMAND_NAME"
   DynamicEcho "$COMMAND_DESCRIPTION"
-  LoadFile "core_exit"
+  LoadFile "core_exit.sh"
 fi
 
 #Log to manager.log
@@ -69,7 +71,7 @@ for file in ${GalaxyDirectoryPath}${GALAXY}/players/player_*; do
   if [ "${StartingPositionName}" ]; then
     ID=$(echo $OriginalFile | sed -e 's/.*_//g' -e 's/.dat.*//g')
     Name=$(xxd -ps -l 50 -seek ${StartingPositionName} "${file}" | xxd -r -p | head -n1 | sed -e 's/\$/\\$/g' -e 's/\"/\\"/g' )
-    LoadFile "admin_parser" "${Name}"
+    LoadFile "admin_parser.sh" "${Name}"
     Group="$GroupName"
     LastSeenConsole=$(grep -m 1 -e "${Name} joined" console.log)
     LastSeen='Unkown'

@@ -12,7 +12,7 @@ COMMAND_DESCRIPTION="Dynamically adds Player Login callback to server.lua."
 if [ "${DisplayDescription}" == "true" ]; then
   DynamicEcho "$COMMAND_NAME"
   DynamicEcho "$COMMAND_DESCRIPTION"
-  LoadFile "core_exit.sh"
+  LoadFile "core_exit"
 fi
 
 if [ "$verbose" = true ]; then

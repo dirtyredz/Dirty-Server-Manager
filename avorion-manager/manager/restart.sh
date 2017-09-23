@@ -12,7 +12,7 @@ COMMAND_DESCRIPTION="Stops then Starts the server (Restart)"
 if [ "${DisplayDescription}" == "true" ]; then
   DynamicEcho "$COMMAND_NAME"
   DynamicEcho "$COMMAND_DESCRIPTION"
-  LoadFile "core_exit.sh"
+  LoadFile "core_exit"
 fi
 
 LogToManagerLog "Ran Restart command.";
@@ -21,14 +21,14 @@ OLDPID=$(pidof ${SERVER})
 
 DisableCoreExit=true
 
-LoadFile "stop.sh"
+LoadFile "stop"
 DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Waiting 30 seconds, before attempting start. (sometimes its takes a little bit for the os, to close the process)"
 sleep 30
 Tries=0
 while true; do
-  LoadFile "start.sh"
+  LoadFile "start"
   sleep 1
-  LoadFile "core_status.sh"
+  LoadFile "core_status"
   NEWPID=$(pidof ${SERVER})
 
   if [ "${status}" != "0" ]; then
@@ -38,7 +38,7 @@ while true; do
       DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} has successfully restarted with same pid. Did the server restart?"
     fi
     DisableCoreExit=''
-    LoadFile "core_exit.sh"
+    LoadFile "core_exit"
   fi
 
   if [ "${status}" == "0" ]; then
@@ -46,7 +46,7 @@ while true; do
     sleep 30
     if [ $Tries -gt 9 ]; then
       DisableCoreExit=''
-      LoadFile "core_exit.sh"
+      LoadFile "core_exit"
     fi
     let Tries++
   fi

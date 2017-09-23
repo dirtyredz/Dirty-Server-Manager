@@ -12,25 +12,25 @@ COMMAND_DESCRIPTION="Attempts to save then stops the server"
 if [ "${DisplayDescription}" == "true" ]; then
   DynamicEcho "$COMMAND_NAME"
   DynamicEcho "$COMMAND_DESCRIPTION"
-  LoadFile "core_exit.sh"
+  LoadFile "core_exit"
 fi
 
 LogToManagerLog "Ran Stop command.";
 # remove the cron job just incase
 DeleteCronJobs;
 
-LoadFile "core_status.sh"
+LoadFile "core_status"
 if [ "${status}" == "0" ]; then
   DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} is not running currently!"
-  LoadFile "core_exit.sh"
+  LoadFile "core_exit"
 fi
 
 if [ "${force}" == "true" ]; then
   DynamicEcho "${PURPLE}${SERVER}${NOCOLOR} Forcing Shutdown."
   tmux kill-session -t ${TMUX_SESSION}
   #Generate Offline jpg
-  LoadFile "generate_banner.sh"
-  LoadFile "core_exit.sh"
+  LoadFile "generate_banner"
+  LoadFile "core_exit"
 fi
 
 ServerPid=$(pidof ${SERVER})
@@ -82,4 +82,4 @@ fi
 
 status=0
 #Generate Offline jpg
-LoadFile "generate_banner.sh"
+LoadFile "generate_banner"

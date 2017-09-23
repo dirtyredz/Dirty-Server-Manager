@@ -12,7 +12,7 @@ COMMAND_DESCRIPTION="Stops PHP's Web Server"
 if [ "${DisplayDescription}" == "true" ]; then
   DynamicEcho "$COMMAND_NAME"
   DynamicEcho "$COMMAND_DESCRIPTION"
-  LoadFile "core_exit.sh"
+  LoadFile "core_exit"
 fi
 
 LogToManagerLog "Ran Stop-web command.";

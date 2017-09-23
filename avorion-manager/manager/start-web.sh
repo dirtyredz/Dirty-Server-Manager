@@ -12,7 +12,7 @@ COMMAND_DESCRIPTION="Starts PHP's Web Server"
 if [ "${DisplayDescription}" == "true" ]; then
   DynamicEcho "$COMMAND_NAME"
   DynamicEcho "$COMMAND_DESCRIPTION"
-  LoadFile "core_exit.sh"
+  LoadFile "core_exit"
 fi
 
 LogToManagerLog "Ran Start-web command.";
@@ -21,7 +21,7 @@ status=$(tmux list-sessions 2>&1 | awk '{print $1}' | grep -Ec "^${GALAXY}_php:"
 
 if [ "${status}" != "0" ]; then
   DynamicEcho "${PURPLE}PHP Web Server${NOCOLOR} is already online."
-  LoadFile "core_exit.sh"
+  LoadFile "core_exit"
 fi
 
 DynamicEcho "starting PHP Server"
@@ -45,7 +45,7 @@ if [ "${status}" == "0" ]; then
     tmux ls
     DynamicEcho "============================================================================="
   fi
-  LoadFile "core_exit.sh"
+  LoadFile "core_exit"
 fi
 
 DynamicEcho "PHP Server started on server: http://${WebIPAddress}"':'"${WebPort}"

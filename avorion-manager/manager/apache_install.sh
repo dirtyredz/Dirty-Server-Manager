@@ -12,13 +12,13 @@ COMMAND_DESCRIPTION="installs apache configurations with default setting."
 if [ "${DisplayDescription}" == "true" ]; then
   DynamicEcho "$COMMAND_NAME"
   DynamicEcho "$COMMAND_DESCRIPTION"
-  LoadFile "core_exit.sh"
+  LoadFile "core_exit"
 fi
 
 # Only Root, were using sudo commands for apache
 if [[ $EUID -ne 0 ]]; then
    DynamicEcho "This function must be run as root" 1>&2
-   LoadFile "core_exit.sh"
+   LoadFile "core_exit"
 fi
 
 echo ""
@@ -38,7 +38,7 @@ SSLParams=/etc/apache2/conf-available/ssl-params.conf
 [ -e SSLParams ] && mv SSLParams SSLParams.bckup
 
 echo "Stopping PHP Web Server incase its running..."
-LoadFile "stop-web.sh"
+LoadFile "stop-web"
 
 echo ''
 read -p "User name to set apache to use for this website (Needs to be same user who owns the manager file) [default avorion]"  UserNameInput
