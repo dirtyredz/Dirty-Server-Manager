@@ -35,6 +35,45 @@ class CommonController
     }
   }
 
+  public function scan_dir($dir) {
+      $ignored = array('.', '..', '.svn', '.htaccess');
+
+      $files = array();
+      foreach (scandir($dir) as $file) {
+          if (in_array($file, $ignored)) continue;
+          $files[$file] = filemtime($dir . '/' . $file);
+      }
+
+      arsort($files);
+      $files = array_keys($files);
+
+      return ($files) ? $files : false;
+  }
+
+  public function GetBinaryVariable(string $haystack, string $needle, $offset = 8, $length = null, $debug = false){
+    if($debug){
+      echo bin2hex(substr($haystack, strpos($haystack, $needle), 20)) . PHP_EOL;
+    }
+    $NeedleLength = strlen($needle);
+    $VariableLengthStart = strpos($haystack, $needle) + $NeedleLength + $offset;
+    $VariableLength = ord(substr($haystack, $VariableLengthStart, 4));
+
+    $ReturnValue = substr($haystack, $VariableLengthStart + 4, $VariableLength);
+    if($debug){
+      echo bin2hex($ReturnValue) . PHP_EOL;
+    }
+    return $ReturnValue;
+  }
+
+  public function GetBinaryVariableLength(string $haystack, string $needle, $offset = 8 , $length = 4){
+
+    $NeedleLength = strlen($needle);
+    $VariableLengthStart = strpos($haystack, $needle) + $NeedleLength + $offset;
+    $VariableLength = substr($haystack, $VariableLengthStart, $length);
+
+    return $VariableLength;
+  }
+
   /**
    * Checks if a Session "login" Exsists if not echos redirect script
    * @method SessionRequired
@@ -140,7 +179,7 @@ class CommonController
    * @method getUserIP
    * @return string Clients IPAddress
    */
-  public function getUserIP()
+  public function getUserIP($console = false)
   {
     $ipaddress = '';
     if (isset($_SERVER['HTTP_CLIENT_IP']))
@@ -157,6 +196,8 @@ class CommonController
        $ipaddress = $_SERVER['HTTP_FORWARDED'];
     else if(isset($_SERVER['REMOTE_ADDR']))
        $ipaddress = $_SERVER['REMOTE_ADDR'];
+   else if($console)
+      $ipaddress = 'Console';
     else
        $ipaddress = 'UNKNOWN';
 
@@ -169,16 +210,16 @@ class CommonController
   * @method LogMessage
   * @param  string $str Message to log to manager.log
   */
- public function LogMessage($str)
+ public function LogMessage($str,$console = false)
  {
    //need to seperate message construction to validate IPAppres, getUserIP() can return UNKOWN
    //if todays manager.log already exsists then append message
    if(is_file(dirname(__FILE__).'/../logs/'.date('d-m-Y').'_manager.log')){
      //append todays manager.log with message
-     file_put_contents(dirname(__FILE__).'/../logs/'.date('d-m-Y').'_manager.log', date('Y-m-d H-i-s').'|[PHP]: '.$this->getUserIP().': '.$str."\r\n", FILE_APPEND);
+     file_put_contents(dirname(__FILE__).'/../logs/'.date('d-m-Y').'_manager.log', date('Y-m-d H-i-s').'|[PHP]: '.$this->getUserIP($console).': '.$str."\r\n", FILE_APPEND);
    }else{
      //Create todays manager.log with message
-     file_put_contents(dirname(__FILE__).'/../logs/'.date('d-m-Y').'_manager.log', date('Y-m-d H-i-s').'|[PHP]: '.$this->getUserIP().': '.$str."\r\n");
+     file_put_contents(dirname(__FILE__).'/../logs/'.date('d-m-Y').'_manager.log', date('Y-m-d H-i-s').'|[PHP]: '.$this->getUserIP($console).': '.$str."\r\n");
    }
  }
 
