@@ -249,7 +249,7 @@ LoadFile(){
   else
     file_path="${SCRIPTPATH}/avorion-manager/manager/${requested_file}.php"
     if  [ -f "${file_path}" ]; then
-      php -f ${file_path} "${SecondCommand}"
+      php -f ${file_path} "${verbose}" "${output}" "${broadcast}" "${delay}" "${force}" "${DisplayDescription}" "${SecondCommand}"
     else
       DisplayHelp;
     fi
