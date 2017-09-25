@@ -23,6 +23,40 @@ if($DisplayDescription == 'true'){
   exit;
 }
 
+//Database setup
+require __DIR__ . '/../core/MySQLite.php';
+$db = new MySQLite();
+
+//Table Setup
+$TableColumns = array(
+  'ID' => array('INTEGER', 'NOT NULL', 'UNIQUE', 'PRIMARY KEY'),
+  'Name' => 'TEXT',
+  'MailCount' => 'INTEGER',
+  'MailMoney' => 'INTEGER',
+  'MailIron' => 'INTEGER',
+  'MailTitanium' => 'INTEGER',
+  'MailNaonite' => 'INTEGER',
+  'MailTrinium' => 'INTEGER',
+  'MailXanion' => 'INTEGER',
+  'MailOgonite' => 'INTEGER',
+  'MailAvorion' => 'INTEGER',
+  'SteamID' => 'INTEGER',
+  'PlayTime' => 'INTEGER',
+  'Money' => 'INTEGER',
+  'Iron' => 'INTEGER',
+  'Titanium' => 'INTEGER',
+  'Naonite' => 'INTEGER',
+  'Trinium' => 'INTEGER',
+  'Xanion' => 'INTEGER',
+  'Ogonite' => 'INTEGER',
+  'Avorion' => 'INTEGER',
+  'Alliance' => 'INTEGER',
+  'GroupName' => 'TEXT'
+);
+
+//Create dynamic table so if future updates adds a new field
+$db->create_dynamic_table('players', $TableColumns);
+
 //So we know where the galaxy directory is at
 require __DIR__ . '/../core/CommonController.php';
 $Common = new CommonController( );
@@ -51,23 +85,13 @@ if($verbose == 'true'){
 $SeenPlayerData = array();
 
 //Parse Admins.xml file and build array of groups=>names
-$AdminXml = $Common->ManagerConfig['GalaxyDirectory'] . "/" . $Common->ManagerConfig['GALAXY'] . "/admin.xml";
-$xml = simplexml_load_file($AdminXml);
-$AdminXMLNames = array();
-foreach ($xml->administration->administrators->admin as $key => $value) {
-  $name = $value->attributes();
-  $AdminXMLNames['admin'][] = (string)$name['name'];
-}
-foreach ($xml->administration->authorizationGroups->group as $key => $value) {
-  $group = (string)$value->attributes()['name'];
-  $AdminXMLNames[$group] = array();
-  foreach ($value->users->user as $key2 => $value2) {
-    $AdminXMLNames[$group][] = (string)$value2->attributes()['name'];
-  }
-}
+$AdminsFile = $Common->ManagerConfig['GalaxyDirectory'] . "/" . $Common->ManagerConfig['GALAXY'] . "/admin.xml";
+require __DIR__ . '/../core/AdminsXML.php';
+$AdminsXML = new AdminsXML( $AdminsFile );
 
 require __DIR__ . '/../core/BinaryHelper.php';
 
+//Loop through EACH player file.
 foreach ($PlayerFiles as $key => $file) {
   //Dont parse directorys
   if($file == '.' or $file == '..'){ unset($PlayerFiles[$key]); }
@@ -80,6 +104,7 @@ foreach ($PlayerFiles as $key => $file) {
 
   //Use Player index as key
   $SeenPlayerData[$Index] = array();
+  $SeenPlayerData[$Index]['ID'] = $Index;
 
   if($verbose == 'true'){
     //echo "Parsing file: " . $file . "\r";
@@ -175,11 +200,12 @@ foreach ($PlayerFiles as $key => $file) {
   $SeenPlayerData[$Index]['Alliance'] = $BinaryHelper->ConvertBin($BinaryHelper->GetByte());
 
   //Get Group data
-  $SeenPlayerData[$Index]['Group'] = '';
+  $AdminXMLNames = $AdminsXML->GetAll();
+  $SeenPlayerData[$Index]['GroupName'] = '';
   foreach ($AdminXMLNames as $group => $namesArray) {
     foreach ($namesArray as $name) {
       if($PlayerName == $name){
-        $SeenPlayerData[$Index]['Group'] = $group;
+        $SeenPlayerData[$Index]['GroupName'] = $group;
         break 2;
       }
     }
@@ -187,5 +213,21 @@ foreach ($PlayerFiles as $key => $file) {
 
 }
 
+//Update the database
+foreach ($SeenPlayerData as $index => $data) {
+  $stmt = $db->prepare('SELECT ID FROM players WHERE ID=:ID');
+  $stmt->bindValue(':ID', $index, SQLITE3_INTEGER);
+  $result = $stmt->execute();
+  if ($result->fetchArray()) {
+    unset($data['ID']);
+    $db->update('players', array('ID' => $index), $data);
+  } else {
+    $db->insert('players', $data);
+  }
+}
 
-print_r($SeenPlayerData);
+$db->close();
+
+//Log this event
+$Common->LogMessage("Finished GetPlayerData()",true);
+echo "Finished GetPlayerData()" . PHP_EOL;
