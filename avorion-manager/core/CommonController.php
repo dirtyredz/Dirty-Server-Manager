@@ -52,6 +52,30 @@ class CommonController
       return ($files) ? $files : false;
   }
 
+  public function BackupDB(){
+    if($this->ManagerConfig['BackupDB']){
+      if (!file_exists(__DIR__.'/../databackups')) {
+        mkdir(__DIR__.'/../databackups', 0777, true);
+      }
+      $this->LogMessage("Backing Up DB",true);
+      echo "Backing Up DB" . PHP_EOL;
+      $date = new DateTime();
+      if (!copy(__DIR__.'/../DSM.db', __DIR__.'/../databackups/'.$date->format('d-m-Y_H-00-00').'_DSM.db')) {
+        echo "failed to copy $file...\n";
+      }
+      $files = $this->scan_dir(__DIR__.'/../databackups');
+      $now   = time();
+
+      foreach ($files as $file) {
+        if (is_file($file)) {
+          if ($now - filemtime($file) >= 60 * 60 * 24 * $this->ManagerConfig['BackupDBDays']) {
+            unlink($file);
+          }
+        }
+      }
+    }
+  }
+
   /**
    * Checks if a Session "login" Exsists if not echos redirect script
    * @method SessionRequired

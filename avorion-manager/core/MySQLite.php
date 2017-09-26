@@ -24,14 +24,26 @@ class MySQLite extends SQLite3
       $this->close();
     }
 
+    /**
+     * Checks if a table exsists
+     * @method table_exsists
+     * @param  string $TableName Name of the Table
+     * @return  bool if successful
+     * @return  null if failed
+     */
     public function table_exsists(string $TableName){
       return $this->querySingle("SELECT 1 FROM sqlite_master WHERE type='table' AND name='".$TableName."';");
     }
 
+    /**
+     * Creates a table if the table doesnt already exsists, and if it does creates Columns for any missing Columns
+     * @method create_dynamic_table
+     * @param  string $TableName Name of the Table
+     * @param  array $Data Data to create the table with
+     */
     public function create_dynamic_table(string $TableName, array $Data){
       if($this->table_exsists($TableName)){
         foreach ($Data as $ColumnName => $Schema) {
-          echo $ColumnName.PHP_EOL;
           try {
             $this->enableExceptions(true);
             $result = $this->querySingle("SELECT ".$ColumnName." FROM ".$TableName.";");
@@ -45,6 +57,13 @@ class MySQLite extends SQLite3
       }
     }
 
+    /**
+     * Creates a table into the DB, if it does not exsists
+     * @method create_table
+     * @param  string $TableName Name of the Table
+     * @param  array $Data Data to create the table with
+     * @return bool
+     */
     public function create_table(string $TableName, array $Data){
 
       if( !$TableName || !$Data )
@@ -76,6 +95,13 @@ class MySQLite extends SQLite3
       return true;
     }
 
+    /**
+     * Insert data array into table
+     * @method insert
+     * @param  string $TableName Name of the Table
+     * @param  array $Data Data to insert into the table
+     * @return bool
+     */
     public function insert(string $TableName, array $Data){
 
       if( !$TableName || !$Data )
@@ -114,6 +140,14 @@ class MySQLite extends SQLite3
       return true;
     }
 
+    /**
+     * Updates Data for specific rows into table
+     * @method update
+     * @param  string $TableName Name of the Table
+     * @param  array $Where Data to determine which rows in the table will be updated
+     * @param  array $Data Data to insert into the table
+     * @return bool
+     */
     public function update(string $TableName, array $Where, array $Data){
       //check all necessary arguments
   		if( !$TableName || !$Where || !$Data )
@@ -159,6 +193,13 @@ class MySQLite extends SQLite3
       $this->exec($query);
     }
 
+    /**
+     * Returns all rows for which the Where data was matched to the table
+     * @method GetRow
+     * @param  string $TableName Name of the Table
+     * @param  array $Where Data to determine which rows in the table will be updated
+     * @return array
+     */
     public function GetRow(string $TableName, array $Where){
       //check all necessary arguments
   		if( !$TableName || !$Where )

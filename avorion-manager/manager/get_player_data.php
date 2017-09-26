@@ -244,27 +244,7 @@ foreach ($SeenPlayerData as $index => $data) {
 $db->close();
 
 //Backup DB
-if($Common->ManagerConfig['KeepDataFiles']){
-  if (!file_exists(__DIR__.'/../databackups')) {
-    mkdir(__DIR__.'/../databackups', 0777, true);
-  }
-  $Common->LogMessage("Backing Up DB",true);
-  echo "Backing Up DB" . PHP_EOL;
-  $date = new DateTime();
-  if (!copy(__DIR__.'/../DSM.db', __DIR__.'/../databackups/'.$date->format('d-m-Y_H-00-00').'_DSM.db')) {
-    echo "failed to copy $file...\n";
-  }
-  $files = $Common->scan_dir(__DIR__.'/../databackups');
-  $now   = time();
-
-  foreach ($files as $file) {
-    if (is_file($file)) {
-      if ($now - filemtime($file) >= 60 * 60 * 24 * $Common->ManagerConfig['KeepDataFilesDays']) {
-        unlink($file);
-      }
-    }
-  }
-}
+$Common->BackupDB();
 
 //Log this event
 $Common->LogMessage("Finished GetPlayerData()",true);
