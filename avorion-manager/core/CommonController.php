@@ -35,11 +35,13 @@ class CommonController
     }
   }
 
+
   public function scan_dir($dir) {
       $ignored = array('.', '..', '.svn', '.htaccess');
 
       $files = array();
       foreach (scandir($dir) as $file) {
+          if(!is_file($dir . '/' . $file)) continue;
           if (in_array($file, $ignored)) continue;
           $files[$file] = filemtime($dir . '/' . $file);
       }
@@ -48,30 +50,6 @@ class CommonController
       $files = array_keys($files);
 
       return ($files) ? $files : false;
-  }
-
-  public function GetBinaryVariable(string $haystack, string $needle, $offset = 8, $length = null, $debug = false){
-    if($debug){
-      echo bin2hex(substr($haystack, strpos($haystack, $needle), 20)) . PHP_EOL;
-    }
-    $NeedleLength = strlen($needle);
-    $VariableLengthStart = strpos($haystack, $needle) + $NeedleLength + $offset;
-    $VariableLength = ord(substr($haystack, $VariableLengthStart, 4));
-
-    $ReturnValue = substr($haystack, $VariableLengthStart + 4, $VariableLength);
-    if($debug){
-      echo bin2hex($ReturnValue) . PHP_EOL;
-    }
-    return $ReturnValue;
-  }
-
-  public function GetBinaryVariableLength(string $haystack, string $needle, $offset = 8 , $length = 4){
-
-    $NeedleLength = strlen($needle);
-    $VariableLengthStart = strpos($haystack, $needle) + $NeedleLength + $offset;
-    $VariableLength = substr($haystack, $VariableLengthStart, $length);
-
-    return $VariableLength;
   }
 
   /**

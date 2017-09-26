@@ -192,4 +192,5 @@ class MySQLite extends SQLite3
 
       return $result->fetchArray();
     }
+
 }

@@ -536,14 +536,11 @@ class ViewController extends CommonController
    */
   public function Players($PHPFile = null)
   {
-    if(is_dir(__DIR__ ."/../databackups/players")){
-      $dir    = __DIR__ ."/../databackups/players";
-      $files1 = scandir($dir);
-      foreach ($files1 as $key => $value) {
-        if($value == '.' || $value == '..'){
-          unset($files1[$key]);
-        }
-      }
+
+    if(is_dir(__DIR__ ."/../databackups")){
+      $dir    = __DIR__ ."/../databackups";
+      $files1 = $this->scan_dir($dir);
+
       $files1 = array_values($files1);
       array_unshift($files1, 'Current');
       $NewArr = array();
@@ -551,15 +548,15 @@ class ViewController extends CommonController
 
         if($value == 'Current'){
           if($PHPFile){
-            $NewArr[] = array('FileName' => $value,'Date'=> date('d-m-Y_H-i-00'),'Selected' => false);
+            $NewArr[] = array('FileName' => $value,'Date'=> date('d-m-Y_H-00-00'),'Selected' => false);
           }else{
-            $NewArr[] = array('FileName' => $value,'Date'=> date('d-m-Y_H-i-00'),'Selected' => true);
+            $NewArr[] = array('FileName' => $value,'Date'=> date('d-m-Y_H-00-00'),'Selected' => true);
           }
         }else{
-          if($PHPFile && ($PHPFile.'.php') == $value){
-            $NewArr[] = array('FileName' => preg_replace('/.php/','',$value),'Date'=> preg_replace('/PlayerData_|.php/','',$value),'Selected' => true);
+          if($PHPFile && ($PHPFile.'.db') == $value){
+            $NewArr[] = array('FileName' => preg_replace('/.db/','',$value),'Date'=> preg_replace('/_DSM|.db/','',$value),'Selected' => true);
           }else{
-            $NewArr[] = array('FileName' => preg_replace('/.php/','',$value),'Date'=> preg_replace('/PlayerData_|.php/','',$value),'Selected' => false);
+            $NewArr[] = array('FileName' => preg_replace('/.db/','',$value),'Date'=> preg_replace('/_DSM|.db/','',$value),'Selected' => false);
           }
         }
 
@@ -582,21 +579,25 @@ class ViewController extends CommonController
     }else{
       $this->Data['AccessGranted'] = false;
     }
-    //Includes the PlayerData.php page, and pass to the page
+    //Loads the requested DB and grabs all the PlayerData
+    require __DIR__ . '/../core/ViewModel.php';
     if($PHPFile){
-      if(is_file(__DIR__ ."/../databackups/players/".$PHPFile.".php")){
-        //echo 'Loaded: '.$PHPFile;
-        include __DIR__ ."/../databackups/players/".$PHPFile.".php";
-        $this->Data['PlayerData'] = $PlayerData;
+      if(is_file(__DIR__ ."/../databackups/".$PHPFile.".db")){
+        $ViewModel = new ViewModel(__DIR__ ."/../databackups/".$PHPFile.".db");
+        $Players = $ViewModel->GetAllPlayerData();
+
+        $this->Data['PlayerData'] = $Players;
       }else{
-        //echo 'Error Loading: '.$PHPFile;
-        include __DIR__ ."/../PlayerData.php";
-        $this->Data['PlayerData'] = $PlayerData;
+        $ViewModel = new ViewModel();
+        $Players = $ViewModel->GetAllPlayerData();
+        $this->Data['PlayerData'] = $Players;
       }
     }else{
-      //echo 'Loaded: PlayerData.php';
-      include __DIR__ ."/../PlayerData.php";
-      $this->Data['PlayerData'] = $PlayerData;
+      $ViewModel = new ViewModel();
+      $Players = $ViewModel->GetAllPlayerData();
+
+      //include __DIR__ ."/../PlayerData.php";
+      $this->Data['PlayerData'] = $Players;
     }
     //Includes the AllianceData.php page, and pass to the page
     include __DIR__ ."/../AllianceData.php";

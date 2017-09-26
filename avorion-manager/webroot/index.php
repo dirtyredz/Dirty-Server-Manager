@@ -5,6 +5,8 @@ if (preg_match('/\.(?:png|jpg|jpeg|gif|css|js)$/', $uri_parts['path'])) {
     return false;
 } else {
     include __DIR__ .'/../core/CommonController.php';
+    include __DIR__ .'/../core/MySQLite.php';
+
     if($uri_parts['path'] == '/GetData'){
       include __DIR__ .'/../core/RefreshController.php';
       $RefreshController = new RefreshController;

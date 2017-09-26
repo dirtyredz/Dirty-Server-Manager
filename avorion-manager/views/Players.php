@@ -116,14 +116,14 @@ Click Column Head to sort.
       echo '<tr>';
 
       echo '<td>'.$value['Name'].'</td>';
-      $Seconds = base_convert(implode('',array_reverse(str_split($value['PlayTime'],2))),16,10);
+      $Seconds = $value['PlayTime'];
       $hours = floor($Seconds / 3600);
       $mins = floor($Seconds / 60 % 60);
       $secs = floor($Seconds % 60);
       echo '<td>'.$hours.':'.$mins.':'.$secs.'</td>';
       echo '<td>'.$value['LastSeen'].'</td>';
       echo '<td>'.$value['Group'].'</td>';
-      $AllianceID = base_convert(implode('',array_reverse(str_split($value['Alliance'],2))),16,10);
+      $AllianceID = $value['Alliance'];
       $HasAllianceName = false;
       if($AllianceID != 0){
         foreach ($Data['AllianceData'] as $AllianceKey => $AllianceArray) {
@@ -141,14 +141,14 @@ Click Column Head to sort.
       }
 
 
-      $Money = base_convert(implode('',array_reverse(str_split($value['Money'],2))),16,10);
-      $Iron = base_convert(implode('',array_reverse(str_split($value['Iron'],2))),16,10);
-      $Titanium = base_convert(implode('',array_reverse(str_split($value['Titanium'],2))),16,10);
-      $Naonite = base_convert(implode('',array_reverse(str_split($value['Naonite'],2))),16,10);
-      $Trinium = base_convert(implode('',array_reverse(str_split($value['Trinium'],2))),16,10);
-      $Xanion = base_convert(implode('',array_reverse(str_split($value['Xanion'],2))),16,10);
-      $Ogonite = base_convert(implode('',array_reverse(str_split($value['Ogonite'],2))),16,10);
-      $Avorion = base_convert(implode('',array_reverse(str_split($value['Avorion'],2))),16,10);
+      $Money = $value['Money'];
+      $Iron = $value['Iron'];
+      $Titanium = $value['Titanium'];
+      $Naonite = $value['Naonite'];
+      $Trinium = $value['Trinium'];
+      $Xanion = $value['Xanion'];
+      $Ogonite = $value['Ogonite'];
+      $Avorion = $value['Avorion'];
       $NetWorth = $Money + ($Iron * 0.740741) + ($Titanium * 1) + ($Naonite * 1.35) + ($Trinium * 1.8225) + ($Xanion * 2.46038) + ($Ogonite * 3.32151) + ($Avorion * 4.48903);
       $MailMoney=0;
       foreach ($value['MailMoney'] as $key2 => $value2) {
@@ -203,7 +203,7 @@ Click Column Head to sort.
         echo '<td>'.$MailXanion.'</td>';
         echo '<td>'.$MailOgonite.'</td>';
         echo '<td>'.$MailAvorion.'</td>';
-        $SteamID = base_convert(implode('',array_reverse(str_split($value['SteamID'],2))),16,10);
+        $SteamID = $value['SteamID'];
         echo '<td>'.'<a target="_blank" href="http://steamcommunity.com/profiles/'.$SteamID.'/">'.$SteamID.'</a></td>';
       }
       echo '</tr>';
