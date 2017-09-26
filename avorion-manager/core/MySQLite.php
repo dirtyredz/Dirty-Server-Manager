@@ -123,7 +123,7 @@ class MySQLite extends SQLite3
       $i=0;
       foreach ($Data as $value) {
         if(!is_numeric($value)){
-          $query .= " '".$value."'";
+          $query .= " '".$this->escapeString($value)."'";
         }else{
           $query .= " ".$value;
         }
@@ -135,7 +135,7 @@ class MySQLite extends SQLite3
       }
 
       $query .= ");";
-
+      echo $query.PHP_EOL;
       $this->exec($query);
       return true;
     }
@@ -159,7 +159,7 @@ class MySQLite extends SQLite3
       foreach ($Data as $name => $value) {
         $query .= " ".$name." = ";
         if(!is_numeric($value)){
-          $query .= " '".$value."'";
+          $query .= " '".$this->escapeString($value)."'";
         }else{
           $query .= $value;
         }
@@ -177,7 +177,7 @@ class MySQLite extends SQLite3
         $query .= $key." = ";
 
         if(!is_numeric($value)){
-          $query .= "'".$value."'";
+          $query .= "'".$this->escapeString($value)."'";
         }else{
           $query .= $value;
         }

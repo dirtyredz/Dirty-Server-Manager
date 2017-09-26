@@ -94,8 +94,6 @@ require __DIR__ . '/../core/BinaryHelper.php';
 
 //Loop through EACH player file.
 foreach ($PlayerFiles as $key => $file) {
-  //Dont parse directorys
-  if($file == '.' or $file == '..'){ unset($PlayerFiles[$key]); }
 
   //Extract Index from file name
   $Index = preg_replace('(^player_|.dat.*)', '', $file);
