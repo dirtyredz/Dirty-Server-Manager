@@ -158,4 +158,38 @@ class MySQLite extends SQLite3
 
       $this->exec($query);
     }
+
+    public function GetRow(string $TableName, array $Where){
+      //check all necessary arguments
+  		if( !$TableName || !$Where )
+  			return FALSE;
+
+      $query = "SELECT * FROM ".$TableName." WHERE ";
+      $i=0;
+      $DataSize = count( $Where );
+      foreach ($Where as $key => $value) {
+        $query .= $key." = :".$key;
+
+        if( $i < $DataSize - 1)
+          $query .= ',';
+
+        $i++;
+      }
+
+      $query .= ";";
+
+      $stmt = $this->prepare($query);
+
+      foreach ($Where as $key => $value) {
+        if(!is_numeric($value)){
+          $Type = SQLITE3_TEXT;
+        }else{
+          $Type = SQLITE3_INTEGER;
+        }
+        $stmt->bindValue(':'.$key, $value, $Type);
+      }
+      $result = $stmt->execute();
+
+      return $result->fetchArray();
+    }
 }

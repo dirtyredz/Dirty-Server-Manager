@@ -51,6 +51,7 @@ $TableColumns = array(
   'Ogonite' => 'INTEGER',
   'Avorion' => 'INTEGER',
   'Alliance' => 'INTEGER',
+  'LastSeen' => 'INTEGER',
   'GroupName' => 'TEXT'
 );
 
@@ -208,6 +209,20 @@ foreach ($PlayerFiles as $key => $file) {
         $SeenPlayerData[$Index]['GroupName'] = $group;
         break 2;
       }
+    }
+  }
+
+//Get LastSeen
+  $SeenPlayerData[$Index]['LastSeen'] = 'Unkown';
+  $ConsoleLog = file_get_contents(__DIR__.'/../../console.log');
+  $InConsoleLog = strpos($ConsoleLog, $PlayerName.' joined');
+  if($InConsoleLog !== false){
+    $date = new DateTime();
+    $SeenPlayerData[$Index]['LastSeen'] = $date->getTimestamp();
+  }else{
+    $PlayerDB = $db->GetRow('players',array('ID'=>$Index));
+    if($PlayerDB['LastSeen']){
+      $SeenPlayerData[$Index]['LastSeen'] = $PlayerDB['LastSeen'];
     }
   }
 
