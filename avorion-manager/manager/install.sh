@@ -162,14 +162,10 @@ echo ";Cron job to be applied at start, and removed at stop." >> manager-config.
 echo "CustomCronjob_4=''" >> manager-config.ini
 echo ";Cron job to be applied at start, and removed at stop." >> manager-config.ini
 echo "CustomCronjob_5=''" >> manager-config.ini
-echo ";Will store past data parsings to be compared with current. Default: false" >> manager-config.ini
-echo "KeepDataFiles=false" >> manager-config.ini
-echo ";Number of days worth of parsings to keep. Default: 2" >> manager-config.ini
-echo "KeepDataFilesDays='2'" >> manager-config.ini
-echo ";will apply KeepDataFiles to players data.(KeepDataFiles must be true) Default: true" >> manager-config.ini
-echo "KeepDataFilesPlayers=true" >> manager-config.ini
-echo ";will apply KeepDataFiles to alliance data.(KeepDataFiles must be true) Default: true" >> manager-config.ini
-echo "KeepDataFilesAlliances=true" >> manager-config.ini
+echo ";Will backup the DB so it can be compared with current. Default: false (This is not a players.dat backup feature)" >> manager-config.ini
+echo "BackupDB=false" >> manager-config.ini
+echo ";Number of days worth of backing up the DB. Default: 2" >> manager-config.ini
+echo "BackupDBDays='2'" >> manager-config.ini
 echo ";Disable or Enable MOTD on server startup" >> manager-config.ini
 echo "MOTD=false" >> manager-config.ini
 echo ";MOTD Message to broadcast to player when they enter the galaxy" >> manager-config.ini

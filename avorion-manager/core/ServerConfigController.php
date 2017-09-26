@@ -457,22 +457,14 @@ class ServerConfigController extends CommonController
     'CustomCronjob_5' => array(
           'Definition' => 'Custom Cronjob to be started/stopped with the server.',
           'Type' => 'text'),
-    'KeepDataFiles' => array(
-          'Definition' => 'Optional feature to store the parsed data files into a seperate direcctory, to later be reviewed by the web interface. (This is not a players.dat backup feature)',
+    'BackupDB' => array(
+          'Definition' => 'Will backup the DB so it can be compared with current. Default: false (This is not a players.dat backup feature)',
           'Type' => 'select',
           'Values' => array('True'=>'true','False'=>'false')),
-    'KeepDataFilesDays' => array(
-          'Definition' => 'How many days of backed up Parsed data to keep',
+    'BackupDBDays' => array(
+          'Definition' => 'Number of days worth of backing up the DB. Default: 2',
           'Type' => 'number',
           'Range' => array('step'=>'1','min'=>1,'max'=>10)),
-    'KeepDataFilesPlayers' => array(
-          'Definition' => 'To back up the parsed player file. KeepDataFiles - needs to be true',
-          'Type' => 'select',
-          'Values' => array('True'=>'true','False'=>'false')),
-    'KeepDataFilesAlliances' => array(
-          'Definition' => 'To back up the parsed alliance file. KeepDataFiles - needs to be true',
-          'Type' => 'select',
-          'Values' => array('True'=>'true','False'=>'false')),
     'MOTD' => array(
           'Definition' => 'Disable or Enable MOTD on server startup.',
           'Type' => 'select',
