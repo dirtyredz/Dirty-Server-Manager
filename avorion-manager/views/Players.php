@@ -122,7 +122,7 @@ Click Column Head to sort.
       $secs = floor($Seconds % 60);
       echo '<td>'.$hours.':'.$mins.':'.$secs.'</td>';
       echo '<td>'.$value['LastSeen'].'</td>';
-      echo '<td>'.$value['Group'].'</td>';
+      echo '<td>'.$value['GroupName'].'</td>';
       $AllianceID = $value['Alliance'];
       $HasAllianceName = $value['AllianceName'];
       if($AllianceID != 0){
@@ -154,7 +154,7 @@ Click Column Head to sort.
       $MailOgonite=$value['MailOgonite'];
       $MailAvorion=$value['MailAvorion'];
       $MailNetWorth = $MailMoney + ($MailIron * 0.740741) + ($MailTitanium * 1) + ($MailNaonite * 1.35) + ($MailTrinium * 1.8225) + ($MailXanion * 2.46038) + ($MailOgonite * 3.32151) + ($MailAvorion * 4.48903);
-      
+
       echo '<td>'.(floor($NetWorth)+floor($MailNetWorth)).'</td>';
       echo '<td>'.$value['MailCount'].'</td>';
       if($Data['AccessGranted']) {
