@@ -82,34 +82,23 @@ Click Column Head to sort.
       echo '<tr>';
 
       echo '<td>'.$value['Name'].'</td>';
-      $Leader = base_convert(implode('',array_reverse(str_split($value['Leader'],2))),16,10);
-      $NumberOfPlayers = 0;
-      $LeaderName = '';
-      foreach ($Data['PlayerData'] as $PlayerArray => $Player) {
-        if($Player['ID'] == $Leader){
-          $LeaderName = $Player['Name'];
-        }
-        $AllianceID = base_convert(implode('',array_reverse(str_split($Player['Alliance'],2))),16,10);
-        if($AllianceID == $value['ID']){
-          $NumberOfPlayers +=1;
-        }
-      }
+      $LeaderName = $value['LeaderName'];
       if($LeaderName == ''){
-        echo '<td style="color: rgba(255,255,255,0.3);">-'.$Leader.'-</td>';
+        echo '<td style="color: rgba(255,255,255,0.3);">-'.$value['Leader'].'-</td>';
       }else{
         echo '<td>'.$LeaderName.'</td>';
       }
-      
-      echo '<td>'.$NumberOfPlayers.'</td>';
 
-      $Money = base_convert(implode('',array_reverse(str_split($value['Money'],2))),16,10);
-      $Iron = base_convert(implode('',array_reverse(str_split($value['Iron'],2))),16,10);
-      $Titanium = base_convert(implode('',array_reverse(str_split($value['Titanium'],2))),16,10);
-      $Naonite = base_convert(implode('',array_reverse(str_split($value['Naonite'],2))),16,10);
-      $Trinium = base_convert(implode('',array_reverse(str_split($value['Trinium'],2))),16,10);
-      $Xanion = base_convert(implode('',array_reverse(str_split($value['Xanion'],2))),16,10);
-      $Ogonite = base_convert(implode('',array_reverse(str_split($value['Ogonite'],2))),16,10);
-      $Avorion = base_convert(implode('',array_reverse(str_split($value['Avorion'],2))),16,10);
+      echo '<td>'.$value['NumPlayers'].'</td>';
+
+      $Money = $value['Money'];
+      $Iron = $value['Iron'];
+      $Titanium = $value['Titanium'];
+      $Naonite = $value['Naonite'];
+      $Trinium = $value['Trinium'];
+      $Xanion = $value['Xanion'];
+      $Ogonite = $value['Ogonite'];
+      $Avorion = $value['Avorion'];
       $NetWorth = $Money + ($Iron * 0.740741) + ($Titanium * 1) + ($Naonite * 1.35) + ($Trinium * 1.8225) + ($Xanion * 2.46038) + ($Ogonite * 3.32151) + ($Avorion * 4.48903);
       echo '<td>'.floor($NetWorth).'</td>';
       if($Data['AccessGranted']) {

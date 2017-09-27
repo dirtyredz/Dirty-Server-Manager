@@ -124,22 +124,16 @@ Click Column Head to sort.
       echo '<td>'.$value['LastSeen'].'</td>';
       echo '<td>'.$value['Group'].'</td>';
       $AllianceID = $value['Alliance'];
-      $HasAllianceName = false;
+      $HasAllianceName = $value['AllianceName'];
       if($AllianceID != 0){
-        foreach ($Data['AllianceData'] as $AllianceKey => $AllianceArray) {
-          if($AllianceArray['ID'] == $AllianceID){
-            echo '<td>'.$AllianceArray['Name'].'</td>';
-            $HasAllianceName = true;
-            break;
-          }
-        }
         if(!$HasAllianceName){
           echo '<td style="color: rgba(255,255,255,0.3);">-'.$AllianceID.'-</td>';
+        }else{
+          echo '<td>'.$HasAllianceName.'</td>';
         }
       }else{
         echo '<td></td>';
       }
-
 
       $Money = $value['Money'];
       $Iron = $value['Iron'];
@@ -150,39 +144,17 @@ Click Column Head to sort.
       $Ogonite = $value['Ogonite'];
       $Avorion = $value['Avorion'];
       $NetWorth = $Money + ($Iron * 0.740741) + ($Titanium * 1) + ($Naonite * 1.35) + ($Trinium * 1.8225) + ($Xanion * 2.46038) + ($Ogonite * 3.32151) + ($Avorion * 4.48903);
-      $MailMoney=0;
-      foreach ($value['MailMoney'] as $key2 => $value2) {
-        $MailMoney+=base_convert(implode('',array_reverse(str_split($value2,2))),16,10);
-      }
-      $MailIron=0;
-      foreach ($value['MailIron'] as $key2 => $value2) {
-        $MailIron+=base_convert(implode('',array_reverse(str_split($value2,2))),16,10);
-      }
-      $MailTitanium=0;
-      foreach ($value['MailTitanium'] as $key2 => $value2) {
-        $MailTitanium+=base_convert(implode('',array_reverse(str_split($value2,2))),16,10);
-      }
-      $MailNaonite=0;
-      foreach ($value['MailNaonite'] as $key2 => $value2) {
-        $MailNaonite+=base_convert(implode('',array_reverse(str_split($value2,2))),16,10);
-      }
-      $MailTrinium=0;
-      foreach ($value['MailTrinium'] as $key2 => $value2) {
-        $MailTrinium+=base_convert(implode('',array_reverse(str_split($value2,2))),16,10);
-      }
-      $MailXanion=0;
-      foreach ($value['MailXanion'] as $key2 => $value2) {
-        $MailXanion+=base_convert(implode('',array_reverse(str_split($value2,2))),16,10);
-      }
-      $MailOgonite=0;
-      foreach ($value['MailOgonite'] as $key2 => $value2) {
-        $MailOgonite+=base_convert(implode('',array_reverse(str_split($value2,2))),16,10);
-      }
-      $MailAvorion=0;
-      foreach ($value['MailAvorion'] as $key2 => $value2) {
-        $MailAvorion+=base_convert(implode('',array_reverse(str_split($value2,2))),16,10);
-      }
+
+      $MailMoney=$value['MailMoney'];
+      $MailIron=$value['MailIron'];
+      $MailTitanium=$value['MailTitanium'];
+      $MailNaonite=$value['MailNaonite'];
+      $MailTrinium=$value['MailTrinium'];
+      $MailXanion=$value['MailXanion'];
+      $MailOgonite=$value['MailOgonite'];
+      $MailAvorion=$value['MailAvorion'];
       $MailNetWorth = $MailMoney + ($MailIron * 0.740741) + ($MailTitanium * 1) + ($MailNaonite * 1.35) + ($MailTrinium * 1.8225) + ($MailXanion * 2.46038) + ($MailOgonite * 3.32151) + ($MailAvorion * 4.48903);
+      
       echo '<td>'.(floor($NetWorth)+floor($MailNetWorth)).'</td>';
       echo '<td>'.$value['MailCount'].'</td>';
       if($Data['AccessGranted']) {

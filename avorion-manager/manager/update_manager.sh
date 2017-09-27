@@ -38,7 +38,7 @@ if [ "${VERSION}" != "${LatestVERSION}" ] || [ "${force}" == "true" ]; then
     cp ${SCRIPTPATH}/avorion-manager/PHPConfig.ini ${SCRIPTPATH}/avorion-manager/PHPConfig.ini.backup
   fi
 
-  tar -xvf UpdateDirtyServerManager.tar.gz --exclude='avorion-manager/Database.php' --exclude='avorion-manager/HighScore.php' --exclude='avorion-manager/AllianceData.php' --exclude='avorion-manager/PlayerData.php' --exclude='avorion-manager/SectorData.php' --exclude='avorion-manager/logs'
+  tar -xvf UpdateDirtyServerManager.tar.gz --exclude='avorion-manager/Database.php' --exclude='avorion-manager/HighScore.php' --exclude='avorion-manager/SectorData.php' --exclude='avorion-manager/logs'
 
   OldFilePath=${SCRIPTPATH}/manager-config.ini.backup
   NewFilePath=${SCRIPTPATH}/manager-config.ini

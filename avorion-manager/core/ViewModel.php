@@ -13,16 +13,21 @@ class ViewModel extends MySQLite
   }
 
   public function GetAllPlayerData(){
-    $results = $this->query('SELECT * FROM players');
+    $results = $this->query('SELECT DISTINCT players.*, alliances.Name as AllianceName FROM players LEFT OUTER JOIN alliances ON players.Alliance = alliances.ID');
     $rtn_array = array();
-    while ($row = $results->fetchArray()) {
+    while ($row = $results->fetchArray(SQLITE3_ASSOC)) {
         $rtn_array[] = $row;
     }
     return $rtn_array;
   }
 
   public function GetSimplePlayerData(){
-    //names and id's only
+    $results = $this->query('SELECT ID, Name FROM players');
+    $rtn_array = array();
+    while ($row = $results->fetchArray(SQLITE3_ASSOC)) {
+        $rtn_array[] = $row;
+    }
+    return $rtn_array;
   }
 
   public function GetAllSectorData(){
@@ -42,11 +47,21 @@ class ViewModel extends MySQLite
   }
 
   public function GetAllAllianceData(){
-    //
+    $results = $this->query('SELECT alliances.*, COUNT(*) as NumPlayers, leader.Name AS LeaderName FROM players INNER JOIN alliances ON alliances.ID = players.Alliance INNER JOIN players as leader ON leader.ID = alliances.Leader GROUP BY players.Alliance');
+    $rtn_array = array();
+    while ($row = $results->fetchArray(SQLITE3_ASSOC)) {
+        $rtn_array[] = $row;
+    }
+    return $rtn_array;
   }
 
   public function GetSimpleAllianceData(){
-
+    $results = $this->query('SELECT ID, Name FROM alliances');
+    $rtn_array = array();
+    while ($row = $results->fetchArray(SQLITE3_ASSOC)) {
+        $rtn_array[] = $row;
+    }
+    return $rtn_array;
   }
 
 }

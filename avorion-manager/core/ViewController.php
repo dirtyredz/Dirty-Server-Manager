@@ -520,11 +520,10 @@ class ViewController extends CommonController
     }else{
       $this->Data['AccessGranted'] = false;
     }
-    include __DIR__ ."/../PlayerData.php";
-    $this->Data['PlayerData'] = $PlayerData;
-    //Includes the AllianceData.php page, and pass to the page
-    include __DIR__ ."/../AllianceData.php";
-    $this->Data['AllianceData'] = $AllianceData;
+    require __DIR__ . '/../core/ViewModel.php';
+    $ViewModel = new ViewModel();
+    $Alliances = $ViewModel->GetAllAllianceData();
+    $this->Data['AllianceData'] = $Alliances;
     //Loads the page
     $this->LoadView('Alliances');
   }
@@ -545,7 +544,6 @@ class ViewController extends CommonController
       array_unshift($files1, 'Current');
       $NewArr = array();
       foreach ($files1 as $key => $value) {
-
         if($value == 'Current'){
           if($PHPFile){
             $NewArr[] = array('FileName' => $value,'Date'=> date('d-m-Y_H-00-00'),'Selected' => false);
@@ -559,7 +557,6 @@ class ViewController extends CommonController
             $NewArr[] = array('FileName' => preg_replace('/.db/','',$value),'Date'=> preg_replace('/_DSM|.db/','',$value),'Selected' => false);
           }
         }
-
       }
       function date_compare($a, $b)
       {
@@ -581,27 +578,15 @@ class ViewController extends CommonController
     }
     //Loads the requested DB and grabs all the PlayerData
     require __DIR__ . '/../core/ViewModel.php';
-    if($PHPFile){
-      if(is_file(__DIR__ ."/../databackups/".$PHPFile.".db")){
-        $ViewModel = new ViewModel(__DIR__ ."/../databackups/".$PHPFile.".db");
-        $Players = $ViewModel->GetAllPlayerData();
-
-        $this->Data['PlayerData'] = $Players;
-      }else{
-        $ViewModel = new ViewModel();
-        $Players = $ViewModel->GetAllPlayerData();
-        $this->Data['PlayerData'] = $Players;
-      }
+    if($PHPFile and is_file(__DIR__ ."/../databackups/".$PHPFile.".db")){
+      $ViewModel = new ViewModel(__DIR__ ."/../databackups/".$PHPFile.".db");
+      $Players = $ViewModel->GetAllPlayerData();
+      $this->Data['PlayerData'] = $Players;
     }else{
       $ViewModel = new ViewModel();
       $Players = $ViewModel->GetAllPlayerData();
-
-      //include __DIR__ ."/../PlayerData.php";
       $this->Data['PlayerData'] = $Players;
     }
-    //Includes the AllianceData.php page, and pass to the page
-    include __DIR__ ."/../AllianceData.php";
-    $this->Data['AllianceData'] = $AllianceData;
     //Loads the page
     $this->LoadView('Players');
   }
