@@ -52,6 +52,10 @@ class CommonController
       return ($files) ? $files : false;
   }
 
+  public function preg_grep_keys($pattern, $input, $flags = 0) {
+      return array_intersect_key($input, array_flip(preg_grep($pattern, array_keys($input), $flags)));
+  }
+
   public function BackupDB(){
     if($this->ManagerConfig['BackupDB']){
       if (!file_exists(__DIR__.'/../databackups')) {

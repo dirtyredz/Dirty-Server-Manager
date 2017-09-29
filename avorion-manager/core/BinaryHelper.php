@@ -46,6 +46,12 @@ class BinaryHelper
     return $rtn;
   }
 
+  public function GetBits(int $Bits){
+    $rtn = substr($this->haystack, $this->Pointer, $Bits);
+    $this->MovePointerForward($Bits);
+    return $rtn;
+  }
+
   public function GetString(int $length){
     $rtn = substr($this->haystack, $this->Pointer, $length);
     $this->MovePointerForward($length);
@@ -68,12 +74,29 @@ class BinaryHelper
   public function ConvertBinArrayCount(array $arr){
     $Count = 0;
     foreach ($arr as $key => $value) {
-      $Count += base_convert(implode('',array_reverse(str_split($value,2))),16,10);
+      $Count += base_convert($this->RotateEndian($value),16,10);
     }
     return $Count;
   }
 
+  public function RotateEndian($Hex){
+    return implode('',array_reverse(str_split($Hex,2)));
+  }
+
   public function ConvertBin($hexcode){
-    return base_convert(implode('',array_reverse(str_split(bin2hex($hexcode),2))),16,10);
+    return base_convert($this->RotateEndian(bin2hex($hexcode)),16,10);
+  }
+
+  public function ConvertSignedBin($BinCode){
+    $Unsigned = $this->ConvertBin($BinCode);
+    if ($Unsigned>0x7FFFFFFF){ $Unsigned-=0x100000000; }
+    return $Unsigned;
+  }
+
+  public function ConvertFloatBin($hexcode){
+    $v = hexdec($this->RotateEndian(bin2hex($hexcode)));
+    $x = ($v & ((1 << 23) - 1)) + (1 << 23) * ($v >> 31 | 1);
+    $exp = ($v >> 23 & 0xFF) - 127;
+    return $x * pow(2, $exp - 23);
   }
 }

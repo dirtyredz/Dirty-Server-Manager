@@ -8,6 +8,15 @@ $force = $argv[5];
 $DisplayDescription = $argv[6];
 $SecondCommand = $argv[7];
 
+if (!defined('COMMAND_NAME')) define('COMMAND_NAME', 'zlib_Uncompress');
+if (!defined('COMMAND_DESCRIPTION')) define('COMMAND_DESCRIPTION', 'Uncompress a data file.');
+
+if($DisplayDescription == 'true'){
+  echo COMMAND_NAME . PHP_EOL;
+  echo COMMAND_DESCRIPTION . PHP_EOL;
+  exit;
+}
+
 if (file_exists($SecondCommand)) {
   /*Remove first 44 bytes
     koonschi - 06/12/2017

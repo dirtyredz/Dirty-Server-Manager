@@ -95,7 +95,7 @@ DisableCoreExit=''
 shift
 
 # skip past the second command
-valid='[-.]'
+valid='[]'
 if [[ ! "$1" =~ $valid ]]; then
   SecondCommand=$1
   shift
@@ -249,6 +249,7 @@ LoadFile(){
   else
     file_path="${SCRIPTPATH}/avorion-manager/manager/${requested_file}.php"
     if  [ -f "${file_path}" ]; then
+
       php -f ${file_path} "${verbose}" "${output}" "${broadcast}" "${delay}" "${force}" "${DisplayDescription}" "${SecondCommand}"
     else
       DisplayHelp;
@@ -256,4 +257,4 @@ LoadFile(){
   fi
 }
 
-LoadFile "${RequiredCommand}"
+LoadFile "${RequiredCommand}" "${SecondCommand}"
