@@ -1,21 +1,25 @@
 <?php
-$input = $argv[1];
-$output = $argv[2];
 
-if (file_exists($input)) {
+$verbose = $argv[1];
+$output = $argv[2];
+$broadcast = $argv[3];
+$delay = $argv[4];
+$force = $argv[5];
+$DisplayDescription = $argv[6];
+$SecondCommand = $argv[7];
+
+if (file_exists($SecondCommand)) {
   /*Remove first 44 bytes
     koonschi - 06/12/2017
     there's 44 bytes of metadata before the actual compressed data. you should be able to uncompress the data with zlib
   */
-  shell_exec("dd if={$input} bs=1 skip=44 of={$input}.tmp > /dev/null 2>&1");
-  $Decompress = @zlib_decode(file_get_contents($input.'.tmp'));
-  if(false === $Decompress){
-    echo 'Unable to decompress file: '.$input.'.tmp'.PHP_EOL;
+  $DecompressedFile = @zlib_decode(file_get_contents($SecondCommand, NULL, NULL, 44));
+  if(false === $DecompressedFile){
+    echo 'Unable to decompress file: ' . $SecondCommand . PHP_EOL;
+    exit;
   }
-  file_put_contents($output,$Decompress);
-  //Destroy tmp file
-  unlink($input.'.tmp');
+  file_put_contents($SecondCommand.'.dat',$DecompressedFile);
 } else {
-  echo 'File does not exsist: '.$input.'.tmp';
+  echo 'File does not exsist: '.$SecondCommand;
   exit;
 }

@@ -135,9 +135,9 @@ class MySQLite extends SQLite3
       }
 
       $query .= ");";
-      echo $query.PHP_EOL;
+
       $this->exec($query);
-      return true;
+      return $this->lastInsertRowID();
     }
 
     /**
@@ -183,7 +183,7 @@ class MySQLite extends SQLite3
         }
 
         if( $i < $DataSize - 1)
-          $query .= ',';
+          $query .= ' AND ';
 
         $i++;
       }
