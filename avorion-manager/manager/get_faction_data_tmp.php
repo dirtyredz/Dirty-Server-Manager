@@ -202,5 +202,5 @@ $db->close();
 $Common->BackupDB();
 
 //Log this event
-$Common->LogMessage("Finished GetAllianceData()",true);
-echo "Finished GetAllianceData()" . PHP_EOL;
+$Common->LogMessage("Finished GetFactionData()",true);
+echo "Finished GetFactionData()" . PHP_EOL;

@@ -10,6 +10,9 @@ class CommonController
   public $Config;
   /** @var array $ManagerConfig array built by parsing manager-config.ini making it accesible to all controllers */
   public $ManagerConfig;
+  /** @var array $ServerConfig array built by parsing server.ini making it accesible to all controllers */
+  public $ServerConfig;
+
   /**
    * Settup controller and builds $Config
    * @method __construct
@@ -35,6 +38,12 @@ class CommonController
     }
   }
 
+  public function ParseServerOptions(){
+    //Parse server.ini
+    $ServerINIFile = $this->ManagerConfig['GalaxyDirectory'] . "/" . $this->ManagerConfig['GALAXY'] . "/server.ini";
+    $this->ServerConfig = parse_ini_file($ServerINIFile, true, INI_SCANNER_TYPED);//$Config;
+    return $this->ServerConfig;
+  }
 
   public function scan_dir($dir) {
       $ignored = array('.', '..', '.svn', '.htaccess');
@@ -50,6 +59,17 @@ class CommonController
       $files = array_keys($files);
 
       return ($files) ? $files : false;
+  }
+
+  public function GetFileLines($File){
+    $Lines = array();
+    if ($file = fopen($File, "r")) {
+        while(!feof($file)) {
+            $Lines[] = fgets($file);
+        }
+        fclose($file);
+    }
+    return $Lines;
   }
 
   public function preg_grep_keys($pattern, $input, $flags = 0) {

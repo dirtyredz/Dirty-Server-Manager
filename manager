@@ -95,8 +95,8 @@ DisableCoreExit=''
 shift
 
 # skip past the second command
-valid='[]'
-if [[ ! "$1" =~ $valid ]]; then
+if [[ ! $1 =~ -. ]]; then
+  echo 'Skipping'
   SecondCommand=$1
   shift
 fi
