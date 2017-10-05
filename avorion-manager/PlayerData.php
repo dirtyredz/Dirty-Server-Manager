@@ -1,3 +1,0 @@
-<?php
-$PlayerData = array(
-);

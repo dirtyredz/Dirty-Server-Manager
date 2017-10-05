@@ -31,7 +31,12 @@ class ViewModel extends MySQLite
   }
 
   public function GetAllSectorData(){
-
+    $results = $this->query('SELECT DISTINCT sectors.*, factions.Name as FactionName FROM sectors LEFT OUTER JOIN factions ON sectors.FactionID = factions.ID');
+    $rtn_array = array();
+    while ($row = $results->fetchArray(SQLITE3_ASSOC)) {
+        $rtn_array[] = $row;
+    }
+    return $rtn_array;
   }
 
   public function GetSimpleSectorData(){
@@ -39,7 +44,17 @@ class ViewModel extends MySQLite
   }
 
   public function GetAllFactionData(){
-
+    $results = $this->query('SELECT * FROM factions');
+    $rtn_array = array();
+    while ($row = $results->fetchArray(SQLITE3_ASSOC)) {
+      $stmt = $this->prepare('SELECT sum(Crafts) as Crafts, sum(Stations) as Stations, sum(Asteroids) as Asteroids, sum(Wrecks) as Wrecks, sum(Influence) as Influence FROM sectors WHERE FactionID=:FactionID');
+      $stmt->bindValue(':FactionID', $row['ID'], SQLITE3_INTEGER);
+      $SectorsResult = $stmt->execute();
+        $SectorRow = $SectorsResult->fetchArray(SQLITE3_ASSOC);
+        $row = array_merge($row,$SectorRow);
+        $rtn_array[] = $row;
+    }
+    return $rtn_array;
   }
 
   public function GetSimpleFactionData(){

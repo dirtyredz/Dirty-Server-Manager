@@ -144,6 +144,13 @@ foreach ($FactionFiles as $key => $file) {
 
 //Grab only Main Factions, to build the traits table
 $TwoPlus = $Common->preg_grep_keys('[200*]',$SeenFactionData);
+foreach ($TwoPlus as $key => $value) {
+  if(count($value['TraitNames']) == 0){
+    unset($TwoPlus[$key]);
+  } else {
+    break;
+  }
+}
 
 $TraitsTableColumns = array('FactionID' => array('INTEGER', 'NOT NULL','PRIMARY KEY'));
 

@@ -297,9 +297,10 @@ class ViewController extends CommonController
     //Role required in comparison to the config, if not redirect
     $this->RoleRequired($this->Config['AccessDiscoveredMapPage']);//Role required to view page
     //Loades Sector Data into php for parsing
-    include __DIR__ ."/../SectorData.php";
-    //Send sector data to JS so it can manipulate it
-    $this->Data['SectorData'] = json_encode( $SectorData );
+    require __DIR__ . '/../core/ViewModel.php';
+    $ViewModel = new ViewModel();
+    $Factions = $ViewModel->GetAllSectorData();
+    $this->Data['SectorData'] = json_encode($Factions);
     $this->LoadView('DiscoveredMap');
   }
 
@@ -313,9 +314,16 @@ class ViewController extends CommonController
     //Role required in comparison to the config, if not redirect
     $this->RoleRequired($this->Config['AccessFactionsPage']);//Role required to view page
     //Loades Sector Data into php for parsing
-    include __DIR__ ."/../SectorData.php";
-    //Send sector data to page so it can manipulate it
-    $this->Data['SectorData'] = $SectorData;
+    require __DIR__ . '/../core/ViewModel.php';
+    $ViewModel = new ViewModel();
+    $Factions = $ViewModel->GetAllFactionData();
+    $this->Data['FactionData'] = $Factions;
+
+    foreach ($Factions as $value) {
+      foreach ($value as $key => $val) {
+        echo $key . ' => ' . $val . '</br>';
+      }
+    }
     $this->LoadView('Factions');
   }
 
@@ -329,9 +337,10 @@ class ViewController extends CommonController
     //Role required in comparison to the config, if not redirect
     $this->RoleRequired($this->Config['AccessFactionsMapPage']);//Role required to view page
     //Loades Sector Data into php for parsing
-    include __DIR__ ."/../SectorData.php";
-    //Send sector data to JS so it can manipulate it
-    $this->Data['SectorData'] = json_encode( $SectorData );
+    require __DIR__ . '/../core/ViewModel.php';
+    $ViewModel = new ViewModel();
+    $Factions = $ViewModel->GetAllSectorData();
+    $this->Data['SectorData'] = json_encode($Factions);
     $this->LoadView('FactionsMap');
   }
 

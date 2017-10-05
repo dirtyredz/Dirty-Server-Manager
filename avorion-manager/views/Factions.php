@@ -68,36 +68,36 @@
     /** @var array $Faction The array of sector data to display */
     $Faction = array();
     //Parse through the Galaxies sectors data
-    foreach ($Data['SectorData'] as $key => $value) {
+    foreach ($Data['FactionData'] as $key => $value) {
       /** @var array $value A sub array contianing all the sector data */
 
       //If the sector has a faction name, then there is a faction present in the sector
-      if(isset($value['FactionName'])){
+      if(isset($value['Name'])){
         //Default to 0
         $Crafts = $Wrecks = $Asteroids = $Stations = $Influence = 0;
         //If weve a;ready visited this Faction in the parsing grab the values so we can math them
-        if(array_key_exists($value['FactionIndex'],$Faction)){
-          $Crafts = $Faction[$value['FactionIndex']]['Crafts'];
-          $Wrecks = $Faction[$value['FactionIndex']]['Wrecks'];
-          $Asteroids = $Faction[$value['FactionIndex']]['Asteroids'];
-          $Stations = $Faction[$value['FactionIndex']]['Stations'];
-          $Influence = $Faction[$value['FactionIndex']]['Influence'];
+        if(array_key_exists($value['ID'],$Faction)){
+          $Crafts = $Faction[$value['ID']]['Crafts'];
+          $Wrecks = $Faction[$value['ID']]['Wrecks'];
+          $Asteroids = $Faction[$value['ID']]['Asteroids'];
+          $Stations = $Faction[$value['ID']]['Stations'];
+          $Influence = $Faction[$value['ID']]['Influence'];
         }
         //Reset this factions array to empty values
-        $Faction[$value['FactionIndex']] = array('Crafts'=>'','Wrecks'=>'','Asteroids'=>'','Stations'=>'','Influence'=>'','FactionName'=>'');
+        $Faction[$value['ID']] = array('Crafts'=>'','Wrecks'=>'','Asteroids'=>'','Stations'=>'','Influence'=>'','Name'=>'');
         //Perform math and reassign value to faction array
-        $Faction[$value['FactionIndex']]['Crafts'] = ($Crafts + intval($value['Crafts']));
-        $Faction[$value['FactionIndex']]['Wrecks'] += ($Wrecks + intval($value['Wrecks']));
-        $Faction[$value['FactionIndex']]['Asteroids'] += ($Asteroids + intval($value['Asteroids']));
-        $Faction[$value['FactionIndex']]['Stations'] += ($Stations + intval($value['Stations']));
-        $Faction[$value['FactionIndex']]['Influence'] += ($Influence + intval($value['Influence']));
-        $Faction[$value['FactionIndex']]['FactionName'] = $value['FactionName'];
+        $Faction[$value['ID']]['Crafts'] = ($Crafts + intval($value['Crafts']));
+        $Faction[$value['ID']]['Wrecks'] += ($Wrecks + intval($value['Wrecks']));
+        $Faction[$value['ID']]['Asteroids'] += ($Asteroids + intval($value['Asteroids']));
+        $Faction[$value['ID']]['Stations'] += ($Stations + intval($value['Stations']));
+        $Faction[$value['ID']]['Influence'] += ($Influence + intval($value['Influence']));
+        $Faction[$value['ID']]['Name'] = $value['Name'];
       }
     }
     //Display the data in a table format
     foreach ($Faction as $key => $value) {
       echo '<tr>';
-      echo '<td>'.$value['FactionName'].'</td>';
+      echo '<td>'.$value['Name'].'</td>';
       echo '<td>'.$key.'</td>';
       echo '<td>'.$value['Stations'].'</td>';
       echo '<td>'.$value['Asteroids'].'</td>';

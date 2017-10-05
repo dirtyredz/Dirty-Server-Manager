@@ -1,3 +1,0 @@
-<?php
-$SectorData = array(
-);

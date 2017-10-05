@@ -113,8 +113,8 @@
             var Influence = '';
             var FactionIndex = '';
             SectorData.forEach(function(Sector) {
-                if(Sector['X'] == d.x){
-                  if(Sector['Y'] == d.y){
+                if(Sector['SectorX'] == d.x){
+                  if(Sector['SectorY'] == d.y){
                     if(("FactionName" in Sector)){
                       FactionName = '<br/>FactionName: '+Sector['FactionName'];
                     }
