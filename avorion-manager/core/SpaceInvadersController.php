@@ -6,7 +6,7 @@ class SpaceInvadersController extends CommonController
 {
   /** @var array [description] */
   public $HighScore = array();
-
+  public $DB;
   /**
    * Grabs HighScores from HighScores.php and store values into $HighScores array
    * @method __construct
@@ -16,6 +16,18 @@ class SpaceInvadersController extends CommonController
     parent::__construct();
     include __DIR__ .'/../HighScore.php';
     $this->HighScore = $HighScore;
+
+    $HighScoresColumns = array(
+      'ID' => array('INTEGER', 'NOT NULL', 'PRIMARY KEY AUTOINCREMENT'),
+      'IPAddress' => 'TEXT',
+      'Score' => 'TEXT'
+    );
+
+    //Database setup
+    require_once __DIR__ . '/../core/MySQLite.php';
+    $this->DB = new MySQLite();
+    //Create dynamic table so if future updates adds a new field
+    $this->DB->create_dynamic_table('highscores', $HighScoresColumns);
   }
 
   /**
@@ -30,17 +42,19 @@ class SpaceInvadersController extends CommonController
     $IPAddress = str_replace('var1=','',htmlspecialchars($Query[1]));
     $Score = str_replace('var2=','',htmlspecialchars($Query[2]));
     //If IPAddress already has a high score
-    if(array_key_exists($IPAddress,$this->HighScore)){
-      //Check if new score is better then previoes high score
-      if($this->HighScore[$IPAddress] < $Score){
-        $this->HighScore[$IPAddress] = $Score;
+
+
+    $stmt = $this->DB->prepare('SELECT * FROM highscores WHERE IPAddress=:IPAddress');
+    $stmt->bindValue(':IPAddress', $IPAddress, SQLITE3_TEXT);
+    $result = $stmt->execute();
+    $User = $result->fetchArray(SQLITE3_ASSOC);
+    if ($User) {
+      if($User['Score'] < $Score){
+        $this->DB->update('highscores', array('ID' => $User['ID']) ,array('IPAddress' => $IPAddress, 'Score' => $Score));
       }
     }else{
-      //New high score
-      $this->HighScore[$IPAddress] = $Score;
+      $this->DB->insert('highscores', array('IPAddress' => $IPAddress, 'Score' => $Score));
     }
-    //Store $HighScore array
-    $this->StoreHighScore();
   }
 
   /**
@@ -50,25 +64,9 @@ class SpaceInvadersController extends CommonController
    */
   public function GetScore()
   {
-    //Sorts highscores with Highest first
-    arsort($this->HighScore);
-    //echo out each high score
-    foreach ($this->HighScore as $IP => $Score) {
-      echo $IP.'~'.$Score.'~';
+    $results = $this->DB->query('SELECT * FROM highscores ORDER BY Score ASC');
+    while ($row = $results->fetchArray(SQLITE3_ASSOC)) {
+        echo $row['IPAddress'].'~'.$row['Score'].'~';
     }
-  }
-
-  /**
-   * Stores $HighScore array into HighScore.PHPConfig
-   *
-   * @method StoreHighScore
-   * @return void
-   */
-  private function StoreHighScore()
-  {
-    //Generates content to be put into file
-    $file = "<?php\n\n\$HighScore=".var_export($this->HighScore, TRUE).";";
-    //puts contents into file
-    file_put_contents(__DIR__ .'/../HighScore.php', $file);
   }
 }
