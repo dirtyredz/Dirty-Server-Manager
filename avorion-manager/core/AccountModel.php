@@ -4,15 +4,40 @@
  */
 class AccountModel extends CommonController
 {
-  /** @var array $Login holds the entire account database */
-  public $Login = array();
+  public $DB;
+
   function __construct(){
     parent::__construct();
 
-    //Get the database and store it in $Login
-    include __DIR__ .'/../Database.php';
-    $this->Login = $Login;
     $this->Secret = "";
+
+    $AccountsColumns = array(
+      'ID' => array('INTEGER', 'NOT NULL', 'PRIMARY KEY AUTOINCREMENT'),
+      'Name' => 'TEXT',
+      'Hash' => 'TEXT',
+      'Role' => 'INTEGER'
+    );
+
+    $TokensColumns = array(
+      'ID' => array('INTEGER', 'NOT NULL', 'PRIMARY KEY AUTOINCREMENT'),
+      'UserID' => 'INTEGER',
+      'Token' => 'TEXT',
+      'Key' => 'TEXT'
+    );
+
+    //Database setup
+    require_once __DIR__ . '/../core/MySQLite.php';
+    $this->DB = new MySQLite();
+    //Create dynamic table so if future updates adds a new field
+    $this->DB->create_dynamic_table('accounts', $AccountsColumns);
+    $this->DB->create_dynamic_table('tokens', $TokensColumns);
+
+    $stmt = $this->DB->prepare('SELECT ID FROM accounts WHERE ID=:ID');
+    $stmt->bindValue(':ID', 1, SQLITE3_INTEGER);
+    $result = $stmt->execute();
+    if (!$result->fetchArray()) {
+      $this->DB->insert('accounts', array('ID' => 1, 'Name' => 'ADMIN', 'Hash' => '$2y$10$MoNHGw.CAeDClZfttf5ykutDh1wws/M82EAz704lSYqqrfDe6GTCu', 'Role' => 100));
+    }
   }
 
   /**
@@ -23,9 +48,20 @@ class AccountModel extends CommonController
    */
   public function GetUserRole($Username)
   {
-    //need type verification
-    //also array key verification
-    return $this->Login[$Username]['Role'];
+    if(!is_string($Username)){
+      return false;
+    }
+    $Username = strtoupper($Username);
+    $Username = htmlspecialchars($Username);
+
+    $stmt = $this->DB->prepare('SELECT Role FROM accounts WHERE Name=:Name');
+    $stmt->bindValue(':Name', $Username, SQLITE3_TEXT);
+    $result = $stmt->execute();
+    $User = $result->fetchArray(SQLITE3_ASSOC);
+    if ($User) {
+      return $User['Role'];
+    }
+    return false;
   }
 
   /**
@@ -40,17 +76,15 @@ class AccountModel extends CommonController
     list ($Key, $token, $mac) = explode(':', $cookie);
     //if Key and Token Hashed equals the third part of the cookie($mac)
     if (hash_hmac('sha256', $Key . ':' . $token, $this->Secret) == $mac) {
-      //Loop through users searching for a user with a matching key
-      foreach ($this->Login as $Username => $UserArray) {
-        if(array_key_exists('Token',$UserArray) && array_key_exists($Key,$UserArray['Token'])){
-          //if a user with a token is found check if the token matches whats inside the key
-          if($UserArray['Token'][$Key] == $token){
-            //Cookie verified, log user in.
-            $this->LogMessage($Username.' Cookie data validated!');
-            $this->LogIn($Username,false);
-            return true;
-          }
-        }
+
+      $stmt = $this->DB->prepare('SELECT accounts.Name FROM tokens INNER JOIN accounts ON tokens.UserID = accounts.ID WHERE tokens.Token=:Token');
+      $stmt->bindValue(':Token', $token, SQLITE3_TEXT);
+      $result = $stmt->execute();
+      $User = $result->fetchArray(SQLITE3_ASSOC);
+      if ($User) {
+        $this->LogMessage($User['Name'].' Cookie data validated!');
+        $this->LogIn($User['Name'],false);
+        return true;
       }
     }
     //Cookie was found but failed verification
@@ -78,6 +112,8 @@ class AccountModel extends CommonController
     $Username = strtoupper($Username);
     //if forever boolean then set up cookie
     if(isset($forever) && ($forever == true)) {
+      $this->LogMessage($Username.' Signed In. with Forever option.');
+
       //destroy old cookie
       if (isset($_COOKIE['rememberme'])) {
           unset($_COOKIE['rememberme']);
@@ -111,11 +147,20 @@ class AccountModel extends CommonController
    */
   public function VerifyPassword($Username,$Password)
   {
-    //Upper case Username
+    if(!is_string($Username) and !is_string($Password)){
+      return false;
+    }
     $Username = strtoupper($Username);
-    //Verify password
-    if(password_verify($Password,$this->Login[$Username]['Hash'])) {
-      return true;
+    $Username = htmlspecialchars($Username);
+
+    $stmt = $this->DB->prepare('SELECT Hash FROM accounts WHERE Name=:Name');
+    $stmt->bindValue(':Name', $Username, SQLITE3_TEXT);
+    $result = $stmt->execute();
+    $User = $result->fetchArray(SQLITE3_ASSOC);
+    if ($User) {
+      if(password_verify($Password,$User['Hash'])) {
+        return true;
+      }
     }
     return false;
   }
@@ -132,24 +177,22 @@ class AccountModel extends CommonController
   {
     //Log message
     $this->LogMessage($Username.' Generated Token.');
-    //if user already has a token set.
-    if(array_key_exists('Token',$this->Login[$Username])){
-      //if the user has more then 5 tokens
-      if(count($this->Login[$Username]['Token']) >= 5){
-        //push the last token out and put the new one in
-        $newArr = array($key => $Token);
-        $this->Login[$Username]['Token'] = array_merge($newArr,$this->Login[$Username]['Token']);
-        $this->Login[$Username]['Token'] = array_slice($this->Login[$Username]['Token'], 0, 5);
-      }else{
-        //add the token
-        $this->Login[$Username]['Token'][$Key] = $Token;
-      }
-    }else{
-      //Add token/key to users database
-      $this->Login[$Username]['Token'] = array($Key => $Token);
+
+    if(!is_string($Username)){
+      $this->LogMessage('SetToken Failed.');
+      return false;
     }
-    //Store into database
-    $this->StoreDatabase();
+    $Username = strtoupper($Username);
+    $Username = htmlspecialchars($Username);
+
+    $stmt = $this->DB->prepare('SELECT ID FROM accounts WHERE Name=:Name');
+    $stmt->bindValue(':Name', $Username, SQLITE3_TEXT);
+    $result = $stmt->execute();
+    $User = $result->fetchArray(SQLITE3_ASSOC);
+    if ($User) {
+      $this->DB->insert('tokens', array('UserID' => $User['ID'], 'Key' => $Key, 'Token' => $Token));
+    }
+    return false;
   }
 
   /**
@@ -166,9 +209,20 @@ class AccountModel extends CommonController
     //if loging out when signed in with a cookie
     if ($AllLocations || isset($_COOKIE['rememberme'])) {
       //remove all tokens
-      unset($this->Login[$Username]['Token']);
-      //store database
-      $this->StoreDatabase();
+      if(is_string($Username)){
+        $Username = strtoupper($Username);
+        $Username = htmlspecialchars($Username);
+
+        $stmt = $this->DB->prepare('SELECT ID FROM accounts WHERE Name=:Name');
+        $stmt->bindValue(':Name', $Username, SQLITE3_TEXT);
+        $result = $stmt->execute();
+        $User = $result->fetchArray(SQLITE3_ASSOC);
+        if ($User) {
+          $stmt = $this->DB->prepare('DELETE FROM tokens WHERE UserID=:UserID');
+          $stmt->bindValue(':UserID', $User['ID'], SQLITE3_TEXT);
+          $stmt->execute();
+        }
+      }
       //destroy cookie
       unset($_COOKIE['rememberme']);
       setcookie('rememberme', null, -1, '/');
@@ -193,15 +247,21 @@ class AccountModel extends CommonController
    */
   public function ResetPassword($Username)
   {
-    /** @var string $Username Username of user force all Caps */
+    if(!is_string($Username)){
+      return false;
+    }
     $Username = strtoupper($Username);
-    //Log message
-    $this->LogMessage('Password Reset for: '.$Username);
-    //Sets users password to the hashed version of "123456789"
-    $this->Login[$Username]['Hash'] = password_hash('123456789', PASSWORD_DEFAULT);
-    //Store it in the database
-    $this->StoreDatabase();
-    return true;
+    $Username = htmlspecialchars($Username);
+
+    $stmt = $this->DB->prepare('SELECT ID FROM accounts WHERE Name=:Name');
+    $stmt->bindValue(':Name', $Username, SQLITE3_TEXT);
+    $result = $stmt->execute();
+    $User = $result->fetchArray(SQLITE3_ASSOC);
+    if ($User) {
+      $this->DB->update('accounts', array('ID' => $User['ID']), array('Hash' => password_hash('123456789', PASSWORD_DEFAULT)));
+      return true;
+    }
+    return false;
   }
 
   /**
@@ -214,20 +274,23 @@ class AccountModel extends CommonController
    */
   public function ChangePassword($Username,$OldPass,$NewPass)
   {
-    /** @var string $Username Username of user force all Caps */
-    $Username = strtoupper($Username);
-    //logs message
-    $this->LogMessage('Password Reset for: '.$Username);
-    //Verifies $OldPass
-    if(password_verify($OldPass,$this->Login[$Username]['Hash'])) {
-        //if password is verifies then hash $NewPass
-        $this->Login[$Username]['Hash'] = password_hash($NewPass, PASSWORD_DEFAULT);
-        //Store Database
-        $this->StoreDatabase();
-        return true;
-    }else {
+    if(!is_string($Username) and !is_string($OldPass) and !is_string($NewPass)){
       return false;
     }
+    $Username = strtoupper($Username);
+    $Username = htmlspecialchars($Username);
+
+    $stmt = $this->DB->prepare('SELECT ID, Hash FROM accounts WHERE Name=:Name');
+    $stmt->bindValue(':Name', $Username, SQLITE3_TEXT);
+    $result = $stmt->execute();
+    $User = $result->fetchArray(SQLITE3_ASSOC);
+    if ($User) {
+      if(password_verify($OldPass,$User['Hash'])){
+        $this->DB->update('accounts', array('ID' => $User['ID']), array('Hash' => password_hash($NewPass, PASSWORD_DEFAULT)));
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
@@ -241,11 +304,15 @@ class AccountModel extends CommonController
     //Logs message
     $this->LogMessage('Account Deleted for user: '.$Username);
     /** @var string $Username Force username to all caps */
+    if(!is_string($Username)){
+      return false;
+    }
     $Username = strtoupper($Username);
-    //remove username from database array
-    unset($this->Login[$Username]);
-    //store database
-    $this->StoreDatabase();
+    $Username = htmlspecialchars($Username);
+
+    $stmt = $this->DB->prepare('DELETE FROM accounts WHERE Name=:Name');
+    $stmt->bindValue(':Name', $Username, SQLITE3_TEXT);
+    $stmt->execute();
     return true;
   }
 
@@ -260,11 +327,22 @@ class AccountModel extends CommonController
   {
     //logs message
     $this->LogMessage('Role changed for user: '.$Username);
-    //Sets the role to the database array
-    $this->Login[$Username]['Role'] = $Role;
-    //Stores the database
-    $this->StoreDatabase();
-    return true;
+
+    if(!is_string($Username) and !is_numeric($Role)){
+      return false;
+    }
+    $Username = strtoupper($Username);
+    $Username = htmlspecialchars($Username);
+
+    $stmt = $this->DB->prepare('SELECT ID FROM accounts WHERE Name=:Name');
+    $stmt->bindValue(':Name', $Username, SQLITE3_TEXT);
+    $result = $stmt->execute();
+    $User = $result->fetchArray(SQLITE3_ASSOC);
+    if ($User) {
+      $this->DB->update('accounts', array('ID' => $User['ID']), array('Role' => $Role));
+      return true;
+    }
+    return false;
   }
 
   /**
@@ -274,20 +352,26 @@ class AccountModel extends CommonController
    * @param  string $Role role of the new user
    * @return boolean always true
    */
-  public function AddUser($Username,$Role = '10')
+  public function AddUser($Username,$Role = 10)
   {
     //logs message
     $this->LogMessage('Account Created for user: '.$Username.', With role level: '.$Role);
-    /** @var string $Username Force username to all caps */
+
+    if(!is_string($Username) and !is_int($Role)){
+      return false;
+    }
     $Username = strtoupper($Username);
-    //hashes default password "123456789"
-    //Consider a config option for default password
-    //Sets password and role to the database array
-    $this->Login[$Username]['Hash'] = password_hash('123456789', PASSWORD_DEFAULT);
-    $this->Login[$Username]['Role'] = $Role;
-    //stores the database
-    $this->StoreDatabase();
-    return true;
+    $Username = htmlspecialchars($Username);
+
+    $stmt = $this->DB->prepare('SELECT ID FROM accounts WHERE Name=:Name');
+    $stmt->bindValue(':Name', $Username, SQLITE3_TEXT);
+    $result = $stmt->execute();
+    $User = $result->fetchArray(SQLITE3_ASSOC);
+    if (!$User) {
+      $this->DB->insert('accounts', array('Name' => $Username, 'Hash' => password_hash('123456789', PASSWORD_DEFAULT), 'Role' => $Role));
+      return true;
+    }
+    return false;
   }
 
   /**
@@ -298,13 +382,19 @@ class AccountModel extends CommonController
    */
   public function UserExsists($Username)
   {
-    /** @var string $Username Force username to all caps */
+    if(!is_string($Username)){
+      return false;
+    }
     $Username = strtoupper($Username);
-    //if the user exsists return true
-    if(array_key_exists ($Username,$this->Login)){
+    $Username = htmlspecialchars($Username);
+
+    $stmt = $this->DB->prepare('SELECT ID FROM accounts WHERE Name=:Name');
+    $stmt->bindValue(':Name', $Username, SQLITE3_TEXT);
+    $result = $stmt->execute();
+    $User = $result->fetchArray(SQLITE3_ASSOC);
+    if ($User) {
       return true;
     }
-    //if the user does not exsists
     return false;
   }
 
@@ -318,29 +408,16 @@ class AccountModel extends CommonController
   {
     //logs message
     $this->LogMessage('Listing users!');
-    /** @var array $returnArray Sets up the return list */
+
     $returnArray = array();
-    //foreach user in the database user
-    foreach ($this->Login as $Username => $value) {
-      //if user is not in the $Exclude array
-      if(!in_array($Username,$Exclude)){
-        //add username as key and role as value to return array
-        $returnArray[$Username] = $this->GetUserRole($Username);
-      }
+
+    $stmt = $this->DB->prepare('SELECT Name, Role FROM accounts');
+    $result = $stmt->execute();
+    while ($User = $result->fetchArray(SQLITE3_ASSOC)) {
+        if(!in_array($User['Name'],$Exclude)){
+          $returnArray[$User['Name']] = $User['Role'];
+        }
     }
     return $returnArray;
-  }
-
-  /**
-   * Takes the Database array and stores the variable into Database.php
-   * @method StoreDatabase
-   * @return void
-   */
-  private function StoreDatabase()
-  {
-    //Generates file contents
-    $file = "<?php\n\n\$Login=".var_export($this->Login, TRUE).";";
-    //Put the contents into the file
-    file_put_contents(__DIR__ .'/../Database.php', $file);
   }
 }
