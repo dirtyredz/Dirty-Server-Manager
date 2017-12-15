@@ -22,25 +22,37 @@ class CommonController
     //include __DIR__ . '/../Config.php';
     //$this->Config = $Config;
     //Parse PHPConfig.ini
-    $this->Config = parse_ini_file(__DIR__ . '/../PHPConfig.ini', true, INI_SCANNER_TYPED);//$Config;
+    $this->Config = parse_ini_file(__DIR__ . DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'PHPConfig.ini', true, INI_SCANNER_TYPED);//$Config;
     //prepend these config options to reflect current directory in relation to PHPConfig.ini and not this file
-    $this->Config['ConsoleLog'] = __DIR__.'/..'.$this->Config['ConsoleLog'];
-    $this->Config['ServerLog'] = __DIR__.'/..'.$this->Config['ServerLog'];
-    $this->Config['Manager'] = __DIR__.'/..'.$this->Config['Manager'];
-    $this->Config['ManagerConfig'] = __DIR__.'/..'.$this->Config['ManagerConfig'];
-    $this->Config['LogsDir'] = __DIR__.'/..'.$this->Config['LogsDir'];
-    $this->Config['StatusBannerDir'] = __DIR__.'/..'.$this->Config['StatusBannerDir'];
+    $this->Config['ConsoleLog'] = __DIR__.DIRECTORY_SEPARATOR.'..'.$this->Config['ConsoleLog'];
+    $this->Config['ServerLog'] = __DIR__.DIRECTORY_SEPARATOR.'..'.$this->Config['ServerLog'];
+    $this->Config['Manager'] = __DIR__.DIRECTORY_SEPARATOR.'..'.$this->Config['Manager'];
+    $this->Config['ManagerConfig'] = __DIR__.DIRECTORY_SEPARATOR.'..'.$this->Config['ManagerConfig'];
+    $this->Config['LogsDir'] = __DIR__.DIRECTORY_SEPARATOR.'..'.$this->Config['LogsDir'];
+    $this->Config['StatusBannerDir'] = __DIR__.DIRECTORY_SEPARATOR.'..'.$this->Config['StatusBannerDir'];
     //Parse manager-config.ini
     $this->ManagerConfig = parse_ini_file($this->Config['ManagerConfig'], true, INI_SCANNER_TYPED);//$Config;
 
     if(empty($this->ManagerConfig['GalaxyDirectory'])){
-      $this->ManagerConfig['GalaxyDirectory'] = __DIR__.'/../../.avorion/galaxies';
+      $this->ManagerConfig['GalaxyDirectory'] = $this->GetDefaultGalaxiesDirectory();
+    }
+  }
+
+  public function GetDefaultGalaxiesDirectory(){
+    if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+        if (array_key_exists("HOMEDRIVE",$_SERVER) && array_key_exists("HOMEPATH",$_SERVER)){
+            return $_SERVER['HOMEDRIVE'] . $_SERVER['HOMEPATH'] . DIRECTORY_SEPARATOR . "AppData" . DIRECTORY_SEPARATOR . "Roaming" . DIRECTORY_SEPARATOR . "Avorion" . DIRECTORY_SEPARATOR . "galaxies";
+        }else {
+            return 'ERROR!';
+        }
+    } else {
+        return __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'.avorion'.DIRECTORY_SEPARATOR.'galaxies';
     }
   }
 
   public function ParseServerOptions(){
     //Parse server.ini
-    $ServerINIFile = $this->ManagerConfig['GalaxyDirectory'] . "/" . $this->ManagerConfig['GALAXY'] . "/server.ini";
+    $ServerINIFile = $this->ManagerConfig['GalaxyDirectory'] . DIRECTORY_SEPARATOR . $this->ManagerConfig['GALAXY'] . DIRECTORY_SEPARATOR."server.ini";
     $this->ServerConfig = parse_ini_file($ServerINIFile, true, INI_SCANNER_TYPED);//$Config;
     return $this->ServerConfig;
   }
@@ -49,10 +61,11 @@ class CommonController
       $ignored = array('.', '..', '.svn', '.htaccess');
 
       $files = array();
-      foreach (scandir($dir) as $file) {
-          if(!is_file($dir . '/' . $file)) continue;
+      $DirFiles = scandir($dir);
+      foreach ($DirFiles as $file) {
+          if(!is_file($dir . DIRECTORY_SEPARATOR . $file)) continue;
           if (in_array($file, $ignored)) continue;
-          $files[$file] = filemtime($dir . '/' . $file);
+          $files[$file] = filemtime($dir . DIRECTORY_SEPARATOR . $file);
       }
 
       arsort($files);
@@ -321,6 +334,7 @@ class CommonController
 
     try{
       $Query->Connect( $this->getGameIPAddress(), $this->getSteamQueryPort(), 1, SourceQuery::SOURCE );
+
       $Info = $Query->GetInfo( );
       error_log('INFO');
       foreach ($Info as $key => $value) {
@@ -330,12 +344,12 @@ class CommonController
       $rtn = 'Online';
     }
     catch( Exception $e ){
-      error_log($e->getMessage( ));
+      error_log($e->getMessage( ).PHP_EOL);
 
       try{
         $Query->Disconnect( );
         $Query->Connect( $this->getRconIPAddress(), $this->getRconPort(), 1, SourceQuery::SOURCE );
-        $Query->SetRconPassword( 'Testing' );
+        $Query->SetRconPassword( 'password' );
 
         error_log($Query->Rcon( 'status' ));
         $rtn = 'Online';
@@ -351,4 +365,32 @@ class CommonController
 
     return $rtn;
   }
+
+  /**
+   * Send command to RCON
+   * @method RconSend
+   * @return string online/offline
+   */
+   public function RconSend($Cmd){
+     $rtn = "Failed to send ".$Cmd;
+     require __DIR__ . '/../SourceQuery/bootstrap.php';
+
+     $Query = new SourceQuery( );
+
+     try{
+       $Query->Disconnect( );
+       $Query->Connect( $this->getRconIPAddress(), $this->getRconPort(), 1, SourceQuery::SOURCE );
+       $Query->SetRconPassword( 'password' );
+
+       $rtn = $Query->Rcon( $Cmd );
+     }
+     catch( Exception $a ){
+       $rtn = $a->getMessage( );
+     }
+     finally{
+       $Query->Disconnect( );
+     }
+
+     return $rtn;
+   }
 }

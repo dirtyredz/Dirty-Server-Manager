@@ -59,7 +59,7 @@ $TableColumns = array(
 $db->create_dynamic_table('players', $TableColumns);
 
 //So we know where the galaxy directory is at
-require __DIR__ . '/../core/CommonController.php';
+require __DIR__ . DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'core'.DIRECTORY_SEPARATOR.'CommonController.php';
 $Common = new CommonController( );
 
 //Log this event
@@ -67,8 +67,8 @@ $Common->LogMessage("Starting GetPlayerData()",true);
 echo "Starting GetPlayerData()" . PHP_EOL;
 
 //The players directory where the player files are stored
-$PlayerDirectory = $Common->ManagerConfig['GalaxyDirectory'] . "/" . $Common->ManagerConfig['GALAXY'] . "/players/";
-
+$PlayerDirectory = $Common->ManagerConfig['GalaxyDirectory'] . DIRECTORY_SEPARATOR . $Common->ManagerConfig['GALAXY'] . DIRECTORY_SEPARATOR."players".DIRECTORY_SEPARATOR;
+echo $_SERVER['HOMEDRIVE'] . $_SERVER['HOMEPATH']. PHP_EOL;
 if($verbose == 'true'){
   echo "Searching for player files in: " . $PlayerDirectory . PHP_EOL;
 }
@@ -212,17 +212,20 @@ foreach ($PlayerFiles as $key => $file) {
 
   //Get LastSeen
   $SeenPlayerData[$Index]['LastSeen'] = 'Unkown';
-  $ConsoleLog = file_get_contents(__DIR__.'/../../console.log');
-  $InConsoleLog = strpos($ConsoleLog, $PlayerName.' joined');
-  if($InConsoleLog !== false){
-    $date = new DateTime();
-    $SeenPlayerData[$Index]['LastSeen'] = $date->getTimestamp();
-  }else{
-    $PlayerDB = $db->GetRow('players',array('ID'=>$Index));
-    if($PlayerDB['LastSeen']){
-      $SeenPlayerData[$Index]['LastSeen'] = $PlayerDB['LastSeen'];
-    }
+  if(is_file(__DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'console.log')){
+      $ConsoleLog = file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'console.log');
+      $InConsoleLog = strpos($ConsoleLog, $PlayerName.' joined');
+      if($InConsoleLog !== false){
+        $date = new DateTime();
+        $SeenPlayerData[$Index]['LastSeen'] = $date->getTimestamp();
+      }else{
+        $PlayerDB = $db->GetRow('players',array('ID'=>$Index));
+        if($PlayerDB['LastSeen']){
+          $SeenPlayerData[$Index]['LastSeen'] = $PlayerDB['LastSeen'];
+        }
+      }
   }
+
 
 }//End foreach player files
 

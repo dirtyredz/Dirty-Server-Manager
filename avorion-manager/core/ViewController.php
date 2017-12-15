@@ -544,34 +544,35 @@ class ViewController extends CommonController
    */
   public function Players($PHPFile = null)
   {
-
-    if(is_dir(__DIR__ ."/../databackups")){
-      $dir    = __DIR__ ."/../databackups";
+    $dir = __DIR__ .DIRECTORY_SEPARATOR."..".DIRECTORY_SEPARATOR."databackups";
+    $NewArr = array();
+    
+    if(is_dir($dir)){
       $files1 = $this->scan_dir($dir);
-
-      $files1 = array_values($files1);
-      array_unshift($files1, 'Current');
-      $NewArr = array();
-      foreach ($files1 as $key => $value) {
-        if($value == 'Current'){
-          if($PHPFile){
-            $NewArr[] = array('FileName' => $value,'Date'=> date('d-m-Y_H-00-00'),'Selected' => false);
-          }else{
-            $NewArr[] = array('FileName' => $value,'Date'=> date('d-m-Y_H-00-00'),'Selected' => true);
+      if ($files1 && count($files1) > 0){
+          $files1 = array_values($files1);
+          array_unshift($files1, 'Current');
+          foreach ($files1 as $key => $value) {
+            if($value == 'Current'){
+              if($PHPFile){
+                $NewArr[] = array('FileName' => $value,'Date'=> date('d-m-Y_H-00-00'),'Selected' => false);
+              }else{
+                $NewArr[] = array('FileName' => $value,'Date'=> date('d-m-Y_H-00-00'),'Selected' => true);
+              }
+            }else{
+              if($PHPFile && ($PHPFile.'.db') == $value){
+                $NewArr[] = array('FileName' => preg_replace('/.db/','',$value),'Date'=> preg_replace('/_DSM|.db/','',$value),'Selected' => true);
+              }else{
+                $NewArr[] = array('FileName' => preg_replace('/.db/','',$value),'Date'=> preg_replace('/_DSM|.db/','',$value),'Selected' => false);
+              }
+            }
           }
-        }else{
-          if($PHPFile && ($PHPFile.'.db') == $value){
-            $NewArr[] = array('FileName' => preg_replace('/.db/','',$value),'Date'=> preg_replace('/_DSM|.db/','',$value),'Selected' => true);
-          }else{
-            $NewArr[] = array('FileName' => preg_replace('/.db/','',$value),'Date'=> preg_replace('/_DSM|.db/','',$value),'Selected' => false);
+          function date_compare($a, $b)
+          {
+              return date_timestamp_get(date_create_from_format('d-m-Y_H-i-s', $a['Date'])) < date_timestamp_get(date_create_from_format('d-m-Y_H-i-s', $b['Date']));
           }
-        }
+          usort($NewArr, 'date_compare');
       }
-      function date_compare($a, $b)
-      {
-          return date_timestamp_get(date_create_from_format('d-m-Y_H-i-s', $a['Date'])) < date_timestamp_get(date_create_from_format('d-m-Y_H-i-s', $b['Date']));
-      }
-      usort($NewArr, 'date_compare');
     }
 
     $this->Data['DataList'] = $NewArr;

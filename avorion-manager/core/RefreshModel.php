@@ -19,9 +19,9 @@ class RefreshModel extends CommonController
   {
     parent::__construct();
     /** @var string $Timezone Timezone of the server per server configs */
-    $Timezone = `timedatectl status | grep "Time zone"`;
+    //$Timezone = `timedatectl status | grep "Time zone"`;
     //Set phps timezone to match servers
-    date_default_timezone_set(trim(preg_replace('/Time zone: | \(.*/','',$Timezone)));
+    date_default_timezone_set(date_default_timezone_get());
 
     //Settup Range Value
     //Were working with an html slider here so we convert 1-13 to how mnay 5 minute marks were grabbing

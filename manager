@@ -3,12 +3,14 @@ PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 # Absolute path to this script, e.g. /home/user/bin/foo.sh
 SCRIPT=$(readlink -f "$0")
+
 # Absolute path this script is in, thus /home/user/bin
 SCRIPTPATH=$(dirname "$SCRIPT")
+echo $SCRIPTPATH
 #http://stackoverflow.com/questions/242538/unix-shell-script-find-out-which-directory-the-script-file-resides
 #Pull values from config INI
-sed -i 's/^+//g' ${SCRIPTPATH}/manager-config.ini
-source <(grep = ${SCRIPTPATH}/manager-config.ini)
+sed -i 's/^+//g' "${SCRIPTPATH}/manager-config.ini"
+source <(grep = "${SCRIPTPATH}/manager-config.ini")
 #sed "s/;/#/g" manager-config.ini | source /dev/stdin
 MAX_PLAYERS=`echo ${MAX_PLAYERS} | sed -e 's/\r//g'`
 GALAXY=`echo ${GALAXY} | sed -e 's/\r//g'`
