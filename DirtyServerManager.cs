@@ -366,7 +366,6 @@ namespace DSM
             php.Close();
         }
 
-
         static void AvorionCaptureOutput(object sender, DataReceivedEventArgs e)
         {
             if (e.Data != null)

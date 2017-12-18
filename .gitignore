@@ -2,3 +2,5 @@ DirtyServerManager.tar.gz
 Thumbs.db
 /obj/Debug/
 /bin/Debug/
+/bin/
+/obj/
