@@ -9,6 +9,9 @@ using System.IO;
 using System.Net;
 using System.ComponentModel;
 using System.IO.Compression;
+using IniParser;
+using IniParser.Model;
+
 
 namespace DSM
 {
@@ -23,6 +26,7 @@ namespace DSM
         static System.Threading.Timer FactionTimer;
         public Process phpWeb = new Process();
         public ManualResetEvent MRE;
+        public Config DSMConfig;
 
         public static void Main(string[] args)
         {
@@ -30,9 +34,9 @@ namespace DSM
             DSM MyProgram = new DSM();
             MyProgram.Start();
         }
-
         private void Start()
         {
+            DSMConfig = new Config("manager-config.ini");
             StartWeb();
 
             bool Reading = true;
@@ -54,7 +58,14 @@ namespace DSM
                     {
                         case "/install":
                             {
-                                DownloadSteamCmd();
+                                DownloadFile("http://windows.php.net/downloads/releases/php-7.2.0-Win32-VC15-x86.zip", @"php-7.2.0-Win32-VC15-x86.zip","php.exe","php");
+                                SteamCmdUpdate();
+                                StartWeb();
+                                break;
+                            }
+                        case "/update":
+                            {
+                                SteamCmdUpdate();
                                 break;
                             }
                         case "/start":
@@ -118,46 +129,56 @@ namespace DSM
             Console.WriteLine("Dirty Server Manager, has shut down! Press any key to continue.");
             Console.ReadKey();
         }
-
-        public void DownloadSteamCmd()
+        
+        public void DownloadFile(string URL, string DownloadFileName, string FileName, string FilePath)
         {
-            DsmWriteLine("Downloading SteamCmd please wait....");
+            DsmWriteLine("Downloading " + DownloadFileName + " please wait....");
+
+            if (File.Exists(FilePath + "/" + FileName))
+            {
+                DsmWriteLine(FileName + " already exsists!");
+                return;
+            }
 
             MRE = new ManualResetEvent(false);
             MRE.Reset();
-            //INSTALL_DIR=$SCRIPTPATH/serverfiles
-            //STEAM_DIR=$SCRIPTPATH/steamcmd
-            //wget --no-check-certificate https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz
-            //tar -zxvf steamcmd_linux.tar.gz -C $STEAM_DIR
+
             WebClient myWebClient = new WebClient();
             myWebClient.DownloadFileCompleted += new AsyncCompletedEventHandler(DownloadFileCallback);
             myWebClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(DownloadProgressCallback);
-            myWebClient.DownloadFileAsync(new Uri("https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip"), @"SteamCmd.zip");
+            myWebClient.DownloadFileAsync(new Uri(URL), DownloadFileName);
 
-            //ExtractTGZ(@"c:\temp\test.tar.gz", @"C:\DestinationFolder");
             MRE.WaitOne();
 
-            string zipPath = @"SteamCmd.zip";
-            string extractPath = @"steamcmd";
-            if (File.Exists(@"steamcmd/steamcmd.exe"))
-            {
-                File.Delete(@"steamcmd/steamcmd.exe");
-            }
-            ZipFile.ExtractToDirectory(zipPath, extractPath);
-
-            SteamCmdUpdate();
+            ZipFile.ExtractToDirectory(DownloadFileName, FilePath);
         }
 
         public void SteamCmdUpdate()
         {
-            DsmWriteLine("Installing Avorion....");
+
+            bool Beta = DSMConfig.GetBool("Avorion Config", "BETA");
+
             Process SteamCmd = new Process();
             SteamCmd.StartInfo.UseShellExecute = false;
             //myProcess.StartInfo.RedirectStandardOutput = true;
             //myProcess.StartInfo.RedirectStandardInput = false;
             //.StartInfo.RedirectStandardError = true;
+            if (!File.Exists(@"steamcmd\\steamcmd.exe"))
+            {
+                DownloadFile("https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip","steamcmd.zip","steamcmd.exe","steamcmd");
+            }
+
             SteamCmd.StartInfo.FileName = "steamcmd\\steamcmd.exe";
-            SteamCmd.StartInfo.Arguments = "+login anonymous +force_install_dir ..\\serverfiles +app_update 565060 -beta beta validate +quit";
+            if (Beta)
+            {
+                SteamCmd.StartInfo.Arguments = "+login anonymous +force_install_dir ..\\serverfiles +app_update 565060 -beta beta validate +quit";
+                DsmWriteLine("Installing/Updating Avorion Beta");
+            }
+            else
+            {
+                SteamCmd.StartInfo.Arguments = "+login anonymous +force_install_dir ..\\serverfiles +app_update 565060 validate +quit";
+                DsmWriteLine("Installing/Updating Avorion");
+            }
             //myProcess.OutputDataReceived += AvorionCaptureOutput;
             SteamCmd.StartInfo.CreateNoWindow = false;
             //myProcess.ErrorDataReceived += AvorionCaptureError;
@@ -319,11 +340,16 @@ namespace DSM
 
         public void StartWeb()
         {
+            if (!File.Exists(@"php\php.exe"))
+            {
+                DsmWriteLine("PHP not installed, run /install to install php and avorion!");
+                return;
+            }
             DsmWriteLine("Starting Web Panel.");
             phpWeb.StartInfo.UseShellExecute = false;
             phpWeb.StartInfo.RedirectStandardOutput = true;
             phpWeb.StartInfo.RedirectStandardInput = true;
-            phpWeb.StartInfo.FileName = @"C:\php\php.exe";
+            phpWeb.StartInfo.FileName = @"php\php.exe";
             phpWeb.StartInfo.Arguments = "-S localhost:8080 -t \"D:\\My Files\\DirtyRedz\\Avorion Mods\\DirtyServerManager\\avorion-manager\\webroot\" \"D:\\My Files\\DirtyRedz\\Avorion Mods\\DirtyServerManager\\avorion-manager\\webroot\\index.php\"";
             phpWeb.StartInfo.CreateNoWindow = false;
             //phpWeb.OutputDataReceived += PHPCaptureOutput;
@@ -343,7 +369,7 @@ namespace DSM
             Process php = new Process();
             php.StartInfo.UseShellExecute = false;
             php.StartInfo.RedirectStandardOutput = true;
-            php.StartInfo.FileName = @"C:\php\php.exe";
+            php.StartInfo.FileName = @"php\php.exe";
             php.StartInfo.Arguments = "-f \"D:\\My Files\\DirtyRedz\\Avorion Mods\\DirtyServerManager\\avorion-manager\\manager\\" + Cmd + ".php\"";
             php.StartInfo.CreateNoWindow = false;
 
@@ -397,6 +423,33 @@ namespace DSM
         public void ProcessOnExited(object sender, System.EventArgs e)
         {
             Console.WriteLine("Exit time:    {0}\r\nExit code:    {1}", myProcess.ExitTime, myProcess.ExitCode);
+        }
+
+
+    }
+
+    class Config
+    {
+        public IniData ConfigData;
+        public Config(string file)
+        {
+            if (!File.Exists(file))
+            {
+                throw new ArgumentException("manager-config.ini does not exsist!");
+            }
+            var parser = new FileIniDataParser();
+            ConfigData = parser.ReadFile(file);
+        }
+
+        public bool GetBool(string section, string key)
+        {
+            string useFullScreenStr = GetString(section,key);
+            return bool.Parse(useFullScreenStr);
+        }
+
+        public string GetString(string section, string key)
+        {
+            return ConfigData[section][key];
         }
     }
 }

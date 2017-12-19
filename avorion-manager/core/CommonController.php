@@ -22,7 +22,7 @@ class CommonController
     //include __DIR__ . '/../Config.php';
     //$this->Config = $Config;
     //Parse PHPConfig.ini
-    $this->Config = parse_ini_file(__DIR__ . DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'PHPConfig.ini', true, INI_SCANNER_TYPED);//$Config;
+    $this->Config = parse_ini_file(__DIR__ . DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'PHPConfig.ini', false, INI_SCANNER_TYPED);//$Config;
     //prepend these config options to reflect current directory in relation to PHPConfig.ini and not this file
     $this->Config['ConsoleLog'] = __DIR__.DIRECTORY_SEPARATOR.'..'.$this->Config['ConsoleLog'];
     $this->Config['ServerLog'] = __DIR__.DIRECTORY_SEPARATOR.'..'.$this->Config['ServerLog'];
@@ -31,7 +31,7 @@ class CommonController
     $this->Config['LogsDir'] = __DIR__.DIRECTORY_SEPARATOR.'..'.$this->Config['LogsDir'];
     $this->Config['StatusBannerDir'] = __DIR__.DIRECTORY_SEPARATOR.'..'.$this->Config['StatusBannerDir'];
     //Parse manager-config.ini
-    $this->ManagerConfig = parse_ini_file($this->Config['ManagerConfig'], true, INI_SCANNER_TYPED);//$Config;
+    $this->ManagerConfig = parse_ini_file($this->Config['ManagerConfig'], false, INI_SCANNER_TYPED);//$Config;
 
     if(empty($this->ManagerConfig['GalaxyDirectory'])){
       $this->ManagerConfig['GalaxyDirectory'] = $this->GetDefaultGalaxiesDirectory();

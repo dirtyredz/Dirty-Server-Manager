@@ -4,3 +4,10 @@ Thumbs.db
 /bin/Debug/
 /bin/
 /obj/
+/packages/
+INIFileParser.dll
+INIFileParser.xml
+packages.config
+/Service Refrences/
+php*
+SteamCmd.zip
