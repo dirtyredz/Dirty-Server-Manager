@@ -23,14 +23,13 @@ module.exports = {
           options: {
             presets: [
               [
-                "@babel/preset-env", {
+                "babel-preset-env", {
                   "targets": {
                     "node": "current"
                   }
                 }
               ]
-            ],
-            plugins: ["dynamic-import-node-babel-7"]
+            ]
           }
         }
       }
