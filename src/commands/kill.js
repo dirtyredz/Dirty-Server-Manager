@@ -2,7 +2,7 @@ import child_process, { exec } from 'child_process';
 import path from 'path'
 import fs from 'fs'
 import localStorage from '../lib/localStorage'
-import isRunning from './helpers/serverOnline'
+import {GameServerOnline} from '../lib/serverOnline'
 
 // Command Name *required
 export const command = "kill"
@@ -18,7 +18,7 @@ export const description = "kills the server"
 
 // Command Action *required
 export const action = ()=>{
-  if(!isRunning()){
+  if(!GameServerOnline()){
     console.log('Server is already Offline')
     return;
   }

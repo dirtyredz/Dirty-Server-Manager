@@ -5,5 +5,7 @@ import * as send from './send.js'
 import * as status from './status.js'
 import * as attach from './attach.js'
 import * as stop from './stop.js'
+import * as startWeb from './start-web.js'
+import * as stopWeb from './stop-web.js'
 
-export { start, install, kill, send, attach, status, stop };
+export { start, install, kill, send, attach, status, stop, stopWeb, startWeb };

@@ -4,7 +4,8 @@ import Logger, {infoStream} from '../lib/logger'
 import * as globals from '../lib/globals'
 import net from 'net'
 import localStorage from '../lib/localStorage'
-import isRunning from './helpers/serverOnline'
+import {GameServerOnline} from '../lib/serverOnline'
+
 // Command Name *required
 export const command = "start"
 
@@ -19,7 +20,7 @@ export const description = "starts the server"
 
 // Command Action *required
 export const action = ()=>{
-  if(isRunning()){
+  if(GameServerOnline()){
     console.log('Server is already online')
     return;
   }

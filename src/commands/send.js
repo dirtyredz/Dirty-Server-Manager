@@ -2,7 +2,7 @@ import net from 'net'
 import os from 'os'
 import * as globals from '../lib/globals'
 import path from 'path'
-import isRunning from './helpers/serverOnline'
+import {GameServerOnline} from '../lib/serverOnline'
 
 // Command Name *required
 export const command = "send <message>"
@@ -18,7 +18,7 @@ export const description = "sends command to server"
 
 // Command Action *required
 export const action = (message)=>{
-  if(!isRunning()){
+  if(!GameServerOnline()){
     console.log('Server is Offline')
     return;
   }

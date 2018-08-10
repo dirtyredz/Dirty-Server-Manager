@@ -4,7 +4,7 @@ import * as globals from '../lib/globals'
 import path from 'path'
 import {send} from './send'
 import localStorage from '../lib/localStorage'
-import isRunning from './helpers/serverOnline'
+import {GameServerOnline} from '../lib/serverOnline'
 
 // Command Name *required
 export const command = "status"
@@ -20,7 +20,7 @@ export const description = "gets status from server"
 
 // Command Action *required
 export const action = ()=>{
-  if(!isRunning()){
+  if(!GameServerOnline()){
     console.log('Server is Offline')
     return;
   }

@@ -3,7 +3,7 @@ import readline from 'readline'
 import * as globals from '../lib/globals'
 import os from 'os'
 import path from 'path'
-import isRunning from './helpers/serverOnline'
+import {GameServerOnline} from '../lib/serverOnline'
 
 // Command Name *required
 export const command = "attach"
@@ -19,7 +19,7 @@ export const description = "attaches to server terminal (kinda)"
 
 // Command Action *required
 export const action = (message)=>{
-  if(!isRunning()){
+  if(!GameServerOnline()){
     console.log('Server is Offline')
     return;
   }

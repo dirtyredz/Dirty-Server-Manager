@@ -2,7 +2,7 @@ import MainConfig from '../lib/MainConfig'
 import child_process, { exec } from 'child_process';
 import path from 'path'
 import * as globals from '../lib/globals'
-import isRunning from './helpers/serverOnline'
+import {GameServerOnline} from '../lib/serverOnline'
 import installSteam from './helpers/steam'
 import {install} from './helpers/avorion'
  
@@ -18,7 +18,7 @@ export const description = "starts the server"
 
 // Command Action
 export const action = ()=>{
-  if(isRunning()){
+  if(GameServerOnline()){
     console.log('A server is currently running.')
     return;
   }
