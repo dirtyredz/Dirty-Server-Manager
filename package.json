@@ -32,6 +32,7 @@
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.5",
     "babel-preset-env": "^1.7.0",
+    "copyfiles": "^2.0.0",
     "uglifyjs-webpack-plugin": "^1.2.7",
     "webpack": "^4.16.3",
     "webpack-cli": "^3.1.0",
@@ -40,9 +41,11 @@
     "wrapper-webpack-plugin": "^2.0.0"
   },
   "scripts": {
-    "build": "webpack --config webpack.production.js",
-    "start": "webpack --config webpack.dev.js --progress --env.development",
+    "build": "npm run move:config && webpack --config webpack.production.js && npm run build:gatsby && npm run move:gatsby",
+    "build:gatsby": "cd src/website && npm run-script build",
+    "start": "npm run move:config && webpack --config webpack.dev.js --progress --env.development",
     "develop": "cd src/website && npm run-script develop",
-    "dev": "npx babel src --watch --out-dir dev"
+    "move:gatsby": "npx copyfiles --flat src/website/public/* dsm/public",
+    "move:config": "npx copyfiles --flat src/config.ini dsm"
   }
 }
