@@ -1,0 +1,13 @@
+# Node Modules obviouslt
+/node_modules
+
+# Installation directories
+/steam
+/avorion
+
+# Files created by the server
+dsm/storage/*
+dsm/logs/*
+
+# gitkeep so we keep the folder structure
+!.gitkeep
