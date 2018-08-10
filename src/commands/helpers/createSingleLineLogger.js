@@ -3,9 +3,9 @@ import stringWidth from 'string-width';
 const MOVE_LEFT = Buffer.from('1b5b3130303044', 'hex').toString();
 const MOVE_UP = Buffer.from('1b5b3141', 'hex').toString();
 const CLEAR_LINE = Buffer.from('1b5b304b', 'hex').toString();
-const stream = process.stdout;
+//const stream = process.stdout;
 
-export function createSingleLineLogger() {
+export function createSingleLineLogger(stream) {
   const write = stream.write;
   let str;
 
@@ -52,7 +52,7 @@ export function createMultiline(linesToKeep){
   let lines = []
   let Title = ''
   let MaxLines = linesToKeep
-  const singLine = createSingleLineLogger()
+  const singLine = createSingleLineLogger(process.stdout)
   let interval = setInterval(()=>{
     lines = lines.map(line=>line.replace("\n",""))
     const updatedLog = [ '','',Title, ...lines ];
@@ -77,5 +77,5 @@ export function createMultiline(linesToKeep){
       log('')
     }
   }
-  return { log, stop, writeTitle, clear, setHeight }
+  return { log, stop, writeTitle, clear }
 }

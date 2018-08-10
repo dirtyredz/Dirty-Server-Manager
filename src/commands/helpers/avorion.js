@@ -17,7 +17,8 @@ const linux = {
   args: []
 }
 
-const multiLog = createMultiline(5)
+let multiLog;
+
 const steamCmd = (onFinish) => {
   var isWin = process.platform === "win32";
 
@@ -31,9 +32,7 @@ const steamCmd = (onFinish) => {
   });
 
   rl.on('line', (line) => {
-    // console.log(line);
     multiLog.log(line)
-    // spinner.text = line
   });
   // steamCmd.stderr.on('data', (data) => {
   //   console.log(data);
@@ -47,11 +46,13 @@ const steamCmd = (onFinish) => {
 }
 
 const update = () => {
+  multiLog = createMultiline(5)
   console.group("Updating Avorion ...")
   steamCmd(()=>console.log('Finished Updating Avorion.'))
 
 }
 const install = () => {
+  multiLog = createMultiline(5)
   multiLog.writeTitle(colors.green('---------- Installing Avorion ----------'))
   let index = 0
   let inter = setInterval(()=>{
