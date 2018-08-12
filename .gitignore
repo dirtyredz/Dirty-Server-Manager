@@ -6,7 +6,7 @@
 /avorion
 
 # Files created by the server
-dsm/storage/*
+dsm/.storage/*
 dsm/logs/*
 
 # gitkeep so we keep the folder structure

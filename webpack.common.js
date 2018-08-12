@@ -1,18 +1,9 @@
 const path = require("path");
 const WrapperPlugin = require('wrapper-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const webpack = require('webpack');
 
-module.exports = {
-  target: 'node',
-  entry: {
-    dsm: "./src/bin/dsm.js",
-    serverWrapper: './src/bin/serverWrapper.js',
-    webServer: './src/bin/webServer.js',
-  },
-  output: {
-    path: path.resolve(__dirname, "dsm"),
-    filename: "[name].js",
-  },
+let config = {
   module: {
     rules: [
       {
@@ -22,8 +13,10 @@ module.exports = {
           loader: "babel-loader",
           options: {
             presets: [
+              "react",
               [
-                "babel-preset-env", {
+                "babel-preset-env",
+                {
                   "targets": {
                     "node": "current"
                   }
@@ -46,6 +39,19 @@ module.exports = {
       })
     ]
   },
+}
+
+let node = Object.assign({}, config, {
+  target: 'node',
+  entry: {
+    dsm: "./src/bin/dsm.js",
+    serverWrapper: './src/bin/serverWrapper.js',
+    webServer: './src/bin/webServer.js',
+  },
+  output: {
+    path: path.resolve(__dirname, "dsm"),
+    filename: "[name].js",
+  },
   plugins: [
     // strict mode for the whole bundle
     new WrapperPlugin({
@@ -56,4 +62,15 @@ module.exports = {
     })
   ],
   externals: (ctx, req, done) => (/^node-pty$/.test(req) ? done(null, `commonjs ${req}`) : done())
-};
+})
+
+let react = Object.assign({}, config, {
+  entry: {
+    webClient: './src/bin/public/webClient.js',
+  },
+  output: {
+    path: path.resolve(__dirname, "dsm/public"),
+    filename: "[name].js",
+  },
+})
+module.exports = [ react, node ]
