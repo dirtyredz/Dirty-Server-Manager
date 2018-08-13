@@ -63,14 +63,4 @@ let node = Object.assign({}, config, {
   ],
   externals: (ctx, req, done) => (/^node-pty$/.test(req) ? done(null, `commonjs ${req}`) : done())
 })
-
-let react = Object.assign({}, config, {
-  entry: {
-    webClient: './src/bin/public/webClient.js',
-  },
-  output: {
-    path: path.resolve(__dirname, "dsm/public"),
-    filename: "[name].js",
-  },
-})
-module.exports = [ react, node ]
+module.exports = node

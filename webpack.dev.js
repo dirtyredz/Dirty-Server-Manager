@@ -6,8 +6,8 @@ const WebpackShellPlugin = require('webpack-shell-plugin');
   watch: true,
   mode: 'development',
   plugins: [
-    new WebpackShellPlugin({onBuildEnd:['npm install -g ./']})
+    new WebpackShellPlugin({onBuildExit:['npm install -g ./']})
   ]
 };
 
-module.exports = [ merge(common[0],dev), merge(common[1],dev) ]
+module.exports = merge(common,dev)

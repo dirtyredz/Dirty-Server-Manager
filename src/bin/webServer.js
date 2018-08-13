@@ -13,10 +13,6 @@ localStorage.setItem('WebServerPid',process.pid)
 // server.use(express.static(path.join(__dirname, 'build')));
 server.use( '/public', express.static( path.resolve(globals.InstallationDir() + '/dsm/public') ) );
 
-server.get('/ping', function (req, res) {
- return res.send();
-});
-
 server.get( "/", ( req, res ) => {
   const jsx = ( <App /> );
   const reactDom = renderToString( jsx );
@@ -25,9 +21,7 @@ server.get( "/", ( req, res ) => {
   res.end( htmlTemplate( reactDom ) );
 } );
 
-
 server.listen(3000, () => console.log('Example app listening on port 3000!'))
-
 
 process.on('beforeExit',()=>{
   localStorage.clear()
@@ -40,12 +34,11 @@ function htmlTemplate( reactDom ) {
       <html>
       <head>
           <meta charset="utf-8">
-          <title>React SSR</title>
+          <title>ReR</title>
       </head>
-      
       <body>
           <div id="app">${ reactDom }</div>
-          <script src="./public/client.js"></script>
+          <script src="./public/webClient.js"></script>
       </body>
       </html>
   `;
