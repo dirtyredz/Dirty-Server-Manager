@@ -18,20 +18,38 @@ const startGameServer = (GameServerEmitter) => {
   // Main STDOUT
   GameServer.on('data', function(data) {
     // Remove unwanted char and log
-    console.log(data.replace(/(\u001b|\[0K|\[\?25l|\[\?25h|\[\?)/gm,""))//\u001b[0K\u001b[?25l
+    const cleanedData = data.replace(/(\u001b|\[0K|\[\?25l|\[\?25h|\[\?)/gm,"")
+    console.log(cleanedData)//\u001b[0K\u001b[?25l
 
     GameServerEmitter.emit('data', data);
 
     if(data.includes('Memory used by scripts')){
       GameServerEmitter.emit('status', data);
+      return
     }
 
     if(data.includes('Server startup complete')){
       GameServerEmitter.emit('startup', GameServer);
+      return
+    }
+
+    if(data.includes('DSM: Player Log Off')){ // DSM: Player Log Off, name:  Dirtyredz  index:  1
+      const name = cleanedData.substring(cleanedData.indexOf("  ") + 1,cleanedData.indexOf("  index:"))
+      const index = cleanedData.substring(cleanedData.lastIndexOf("  ") + 1,cleanedData.length)
+      GameServerEmitter.emit('logOff', name, index)
+      return
+    }
+
+    if(data.includes('DSM: Player Log On')){
+      const name = cleanedData.substring(cleanedData.indexOf("  ") + 1,cleanedData.indexOf("  index:"))
+      const index = cleanedData.substring(cleanedData.lastIndexOf("  ") + 1,cleanedData.length)
+      GameServerEmitter.emit('logOn', name, index)
+      return
     }
 
     if(data.includes('Server shutdown')){
       GameServerEmitter.emit('shutdown', GameServer);
+      return
     }
   });
 
