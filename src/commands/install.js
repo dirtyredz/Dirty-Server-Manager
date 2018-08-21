@@ -13,6 +13,9 @@ export const command = "install"
 // Command Alias
 export const alias = ""
 
+// Command Version
+export const version = "0.0.1"
+
 // Command Description
 export const description = "starts the server"
 
