@@ -49,6 +49,7 @@
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
     "clean-webpack-plugin": "^0.1.19",
+    "copy-webpack-plugin": "^4.5.2",
     "copyfiles": "^2.0.0",
     "css-loader": "^1.0.0",
     "file-loader": "^1.1.11",
@@ -70,10 +71,10 @@
     "wrapper-webpack-plugin": "^2.0.0"
   },
   "scripts": {
-    "build": "npm run move:config && webpack --config webpack.production.js",
-    "start": "npm run move:config && webpack --config webpack.dev.js --progress --env.development",
+    "start": "webpack --config webpack.dev.js --progress --env.development",
     "react": "webpack-dev-server --config webpack.react.js --hot",
-    "move:config": "npx copyfiles --flat src/config.ini dsm"
+    "move:config": "npx copyfiles --flat src/config.ini dsm",
+    "move:dsm": "npx copyfiles --flat src/dsm.lua dsm"
   },
   "postcss": {
     "map": false,

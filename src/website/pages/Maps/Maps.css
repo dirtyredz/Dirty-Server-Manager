@@ -14,7 +14,7 @@
 .MapContainer .Map{
   height: 1500px;
   width: 1500px;
-  background-image: url("../../public/static/img/Galaxy740Wider.png");
+  background-image: url("../../resources/Galaxy740Wider.png");
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center; 
@@ -22,7 +22,7 @@
 }
 .MapContainer svg{
   margin: 250px;
-  cursor: url("../../public/static/img/myCursor.png"), auto;
+  cursor: url("../../resources/myCursor.png"), auto;
 }
 .test{
   pointer-events: all;
