@@ -10,6 +10,9 @@ var isWin = process.platform === "win32";
 // Command Name
 export const command = "install"
 
+// Command Version
+export const version = "0.0.1"
+
 // Command Alias
 export const alias = ""
 
