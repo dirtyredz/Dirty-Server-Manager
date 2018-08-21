@@ -24,7 +24,9 @@ const startGameServer = (GameServerEmitter) => {
     GameServerEmitter.emit('data', data);
 
     if(data.includes('Memory used by scripts')){
-      GameServerEmitter.emit('status', data);
+      const dataArr = data.split('\n')
+      const newData = dataArr.slice(0,dataArr.findIndex(line=>line.includes('profiling')))
+      GameServerEmitter.emit('status', newData.join('\n'));
       return
     }
 
