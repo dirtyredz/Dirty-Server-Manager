@@ -5,6 +5,7 @@ import * as globals from '../lib/globals'
 import net from 'net'
 import localStorage from '../lib/localStorage'
 import {GameServerOnline} from '../lib/serverOnline'
+import {action as intergrate} from './intergrate'
 
 // Command Name *required
 export const command = "start"
@@ -27,6 +28,7 @@ export const action = ()=>{
   console.group('Starting Server')
   Logger.clear()
   localStorage.clear()
+  intergrate('on') // enable intergration on wrapper startup
 
   var childFilePath = path.resolve(globals.InstallationDir()+'/dsm/serverWrapper.js');
 
@@ -37,8 +39,4 @@ export const action = ()=>{
   };
   const steamCmd = child_process.spawn('node',[childFilePath],options)
   steamCmd.unref();
-
-
-
-
 }

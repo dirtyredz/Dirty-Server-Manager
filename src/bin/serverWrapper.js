@@ -17,7 +17,6 @@ console.log('DSM: Server Wrapper Initilized on pid: ' + process.pid)
 
 localStorage.setItem('WrapperPid',process.pid)
 
-
 // var lockFile = require('lockfile')
 // // opts is optional, and defaults to {}
 // lockFile.lock(path.resolve(globals.InstallationDir() + '/dsm/config.ini'), {}, function (er) {
