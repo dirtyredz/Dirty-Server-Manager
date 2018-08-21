@@ -1,21 +1,10 @@
-import React, { Component } from 'react';
-// import logo from './logo.svg';
-import './App.css';
-
-class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          {/* <img src={logo} className="App-logo" alt="logo" /> */}
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started
-        </p>
-      </div>
-    );
-  }
-}
-
-export default App;
+export { default as Home } from './Home/Home'
+export { default as Console } from './Console/Console'
+export { default as About } from './About/About'
+export { default as Account } from './Account/Account'
+export { default as Alliance } from './Alliance/Alliance'
+export { default as Factions } from './Factions/Factions'
+export { default as Graphs } from './Graphs/Graphs'
+export { default as Maps } from './Maps/Maps'
+export { default as Players } from './Players/Players'
+export { default as SpaceInvaders } from './SpaceInvaders/SpaceInvaders'

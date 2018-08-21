@@ -1,0 +1,11 @@
+.IconWrapper{
+  padding: 2px;
+  position: relative;
+  width: 40px;
+  fill: white;
+}
+
+.IconWrapper svg{
+  width: 100%;
+  height: 100%;
+}

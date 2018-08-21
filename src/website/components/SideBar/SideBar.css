@@ -1,0 +1,47 @@
+.SideBar{
+  background-color: #0e0e0e;
+  height: 100%;
+  min-height: 100vh;
+  position: relative;
+}
+
+.SideBar Header{
+  background-color: #233954;
+  height: 75px;
+  display: flex;
+  text-align: center;
+  font-weight: bold;
+  justify-content: center;
+  flex-direction: column;
+  color: white;
+  font-size: 200%;
+}
+
+.SideBar a{
+  display: flex;
+  width: calc(100% - 40px);
+  height: 30px;
+  padding: 10px 20px;
+  color: white;
+  font-size: 120%;
+  flex-direction: row;
+  text-decoration: none;
+  position: relative;
+  white-space: nowrap;
+}
+
+.SideBar a:visited{
+  color: white;
+}
+
+.SideBar a:hover{
+  background-color: #233954;
+  border-top: 1px solid #0e0e0e;
+  border-bottom: 1px solid #0e0e0e;
+}
+
+.SideBar a > span{
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
