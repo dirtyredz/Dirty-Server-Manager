@@ -7,6 +7,7 @@ const GameServerOnline = () => {
   if(WrapperPID === null){
     return false
   }
+  // this only checks if the wrapper is online, a game server could be inbetween restarts or hanging and will still report its online
 
   return isRunning(WrapperPID)
 }
