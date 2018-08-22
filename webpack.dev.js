@@ -20,7 +20,7 @@ const node = {
     filename: "[name].js",
   },
   plugins: [
-    new CleanWebpackPlugin(['dsm/dsm.lua','dsm/config.ini'],{watch: true}),
+    new CleanWebpackPlugin(['dsm/dsm.lua','dsm/config.ini']),
     new CopyWebpackPlugin([
       './src/dsm.lua',
       './src/config.ini'
@@ -34,8 +34,17 @@ const node = {
       }
     })
   ],
-  externals: (ctx, req, done) => (/^node-pty$/.test(req) ? done(null, `commonjs ${req}`) : done()),
+  externals: [
+    (ctx, req, done) => (/^node-pty$/.test(req) ? done(null, `commonjs ${req}`) : done()),
+    {uws: "uws"},
+  ],
+  // resolve: {
+  //   alias: {
+  //     'socket.io-client': path.join( path.join( __dirname, 'node_modules' ), 'socket.io-client', 'socket.io.js' )
+  //   }
+  // },
   module: {
+    // noParse: [ /socket.io-client/ ],
     rules: [
       {
         test: /\.js$/,
@@ -44,7 +53,6 @@ const node = {
           loader: "babel-loader",
           options: {
             presets: [
-              "react",
               [
                 "babel-preset-env",
                 {
