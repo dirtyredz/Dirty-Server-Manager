@@ -2,90 +2,41 @@ import React, { Component } from 'react';
 import './Maps.css';
 import { ContentWrapper } from '../../components'
 import {Helmet} from "react-helmet";
-import DragAndZoom from 'react-drag-and-zoom'
-import Konva from "konva";
-import { Stage, Layer, Rect, Text, Line } from "react-konva";
+import ReactTooltip from 'react-tooltip'
+// import DragAndZoom from 'react-drag-and-zoom'
+// import Konva from "konva";
+// import { Stage, Layer, Rect, Text, Line } from "react-konva";
 
 class Maps extends Component {
   state={
-    firstLayer: true,
-    secondLayer: false,
-    rects: [],
-    middleRects: [],
-    largeRects: [],
-
-    thirdLayer: false,
     scale: 0.5
   }
-  onZoom(z,e){
-    console.log(z)
-    e.preventDefault();
-        if(z <= 100)
-          this.setState({zoomStep: 30, secondLayer: null, firstLayer: true, thirdLayer: null})
-        if(z >= 500 && z < 1000 )
-          this.setState({zoomStep: 100, secondLayer: true, firstLayer: true, thirdLayer: null})
-        else if(z >= 1000 )
-          this.setState({zoomStep: 150, secondLayer: true, firstLayer: true, thirdLayer: true})
-  }
-  handleClick(e){
-    var x = e.nativeEvent.offsetX,
-    y = e.nativeEvent.offsetY;
 
-    let rects = this.state.rects
-    for(var i=0;i<rects.length;i++) { // check whether:
-        if(x > rects[i].x            // mouse x between x and x + width
-        && x < rects[i].x + rects[i].w
-        && y > rects[i].y            // mouse y between y and y + height
-        && y < rects[i].y + rects[i].h) {
-          console.log('Rectangle ' + i + ' clicked',rects[i].x,rects[i].y)
-        }
-    }
-  }
-  Draw(ctx,rects,scale){
-    // ctx.scale(scale,scale)
-    rects.map(rect=>{
-      ctx.beginPath();
-      // ctx.fillStyle = 'hsl(' + 360 * Math.random() + ', 50%, 50%)';
-      ctx.lineWidth = 5;
-      ctx.strokeStyle = 'white';
-      ctx.strokeRect(rect.x,rect.y,rect.h,rect.w)
-    })
-  }
-  componentDidMount() {
-
-    let rects = []
-    // Array.from({ length:1000 }, (v, x) => (
-    //   Array.from({ length:1000 }, (v, y) => {
-    //     rects.push({x:x*5,y:y*5,h:5,w:5})
-        
-    //   })
-    // ))
-    for (var x = -500; x < 500; x += 1) {
-      for (var y = -500; y < 500; y += 1) {
-        rects.push({x:x,y:y,h:5,w:5})
-      }
-    }
-    // this.Draw(this.LayerThree.getContext('2d'),rects,100)
+  snapToGrid(e){
+    var x = (e.nativeEvent.offsetX),
+    y = (e.nativeEvent.offsetY)
     let ctx = this.LayerThree.getContext('2d')
-    for (var x = 0.5; x < 5001; x += 5) {
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, 5000);
-      ctx.moveTo(0, x);
-      ctx.lineTo(5000, x);
-    }
+    ctx.clearRect(0, 0, 5000, 5000);
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = "rgba(255,255,255,1)";
     
-    
-    ctx.strokeStyle = "rgba(255,255,255,0.8)";
-    ctx.stroke();
+    ctx.strokeRect(Math.round(x/5)*5+0.5,Math.round(y/5)*5+0.5,5,5);
 
-    let middleRects = []
-    // Array.from({ length:100 }, (v, x) => (
-    //   Array.from({ length:100 }, (v, y) => {
-    //     middleRects.push({x:x*50.5,y:y*50.5,h:50,w:50})
-    //   })
-    // ))
-    // this.Draw(this.LayerTwo.getContext('2d'),middleRects,10)
-    ctx = this.LayerTwo.getContext('2d')
+    x = x/5-500
+    y = y/5-500
+
+    if(y < 0)
+      y = Math.abs(y)
+    else
+      y = -y
+    y = Math.round(y)
+    x = Math.round(x)
+    // console.log(x,y)
+    this.setState({x,y})
+  }
+
+  componentDidMount() {
+    let ctx = this.LayerTwo.getContext('2d')
     for (var x = 0.5; x < 5001; x += 50) {
       ctx.moveTo(x, 0);
       ctx.lineTo(x, 5000);
@@ -95,13 +46,6 @@ class Maps extends Component {
     ctx.strokeStyle = "rgba(255,255,255,0.8)";
     ctx.stroke();
 
-    let largeRects= []
-    // Array.from({ length:10 }, (v, x) => (
-    //   Array.from({ length:10 }, (v, y) => {
-    //     largeRects.push({x:x*500,y:y*500,h:500,w:500})
-    //   })
-    // ))
-    // this.Draw(this.LayerOne.getContext('2d'),largeRects,1)
     ctx = this.LayerOne.getContext('2d')
     for (var x = 0.5; x < 5001; x += 500) {
       ctx.moveTo(x, 0);
@@ -113,33 +57,30 @@ class Maps extends Component {
     ctx.strokeStyle = "rgba(255,255,255,0.8)";
     ctx.stroke();
 
-    this.LayerOne.style.opacity = 1;
+    // this.setState({rects})
 
-    this.setState({rects,middleRects,largeRects})
-
-    this.LayerOne.addEventListener('wheel', (e) => {
+    this.mapContainer.addEventListener('wheel', (e) => {
       e.preventDefault();
-      let scaleBy = 1.01
-      var rect = this.LayerThree.getBoundingClientRect();
-      
-      
+      let scaleBy = 1.3
+      var rect = this.mapContainer.getBoundingClientRect();
+
       let x = e.clientX - rect.left
       let y = e.clientY - rect.top
-      var newScale = e.deltaY > 0 ? this.state.scale * scaleBy : this.state.scale / scaleBy;
 
-      if(newScale > 3.5)
-      return
-      this.LayerOne.style.transform = "scale("+newScale+")"
-      this.LayerTwo.style.transform = "scale("+newScale+")"
-      this.LayerThree.style.transform = "scale("+newScale+")"
+      var newScale = e.deltaY < 0 ? this.state.scale * scaleBy : this.state.scale / scaleBy;
+
+      if(newScale > 4.1 || newScale < 0.13)
+        return
+      this.mapContainer.style.transform = "scale("+newScale+")"
+      // this.LayerTwo.style.transform = "scale("+newScale+")"
+      // this.LayerThree.style.transform = "scale("+newScale+")"
       this.setState({scale: newScale})
-      console.log(newScale)
       if(newScale >= 1 && newScale < 3){
-        this.LayerOne.style.opacity = 0;
+        this.LayerOne.style.opacity = 1;
         this.LayerTwo.style.opacity = 1;
         this.LayerThree.style.opacity = 0;
       }else if(newScale >= 3){
-        this.LayerTwo.style.opacity = 0;
+        this.LayerTwo.style.opacity = 0.5;
         this.LayerOne.style.opacity = 0;
         this.LayerThree.style.opacity = 1;
       }else{
@@ -152,15 +93,19 @@ class Maps extends Component {
   }
   render() {
     return (
-      <ContentWrapper fill>
+      <ContentWrapper fill exact>
         <Helmet>
           <title>Maps</title>
         </Helmet>
-      
 
-      <canvas className="map" onMouseMove={this.handleClick.bind(this)} width="5000px" height="5000px" ref={ref => { this.LayerThree = ref; }} ></canvas>
-      <canvas className="map" onMouseMove={this.handleClick.bind(this)} width="5000px" height="5000px" ref={ref => { this.LayerTwo = ref; }} ></canvas>
-      <canvas className="map" onMouseMove={this.handleClick.bind(this)} width="5000px" height="5000px" ref={ref => { this.LayerOne = ref; }} ></canvas>
+        <div className="MapContainer" ref={ref => { this.mapContainer = ref; }}>
+          <canvas style={{opacity: 0}}  width="5000px" height="5000px" ref={ref => { this.LayerThree = ref; }} ></canvas>
+          <canvas style={{opacity: 0}}  width="5000px" height="5000px" ref={ref => { this.LayerTwo = ref; }} ></canvas>
+          <canvas  data-tip data-for='global' onMouseMove={this.snapToGrid.bind(this)} width="5000px" height="5000px" ref={ref => { this.LayerOne = ref; }} ></canvas>
+        </div>
+        <ReactTooltip id='global' aria-haspopup='true' role='example'>
+        {this.state.x} : {this.state.y}
+        </ReactTooltip>
       </ContentWrapper>
     );
   }

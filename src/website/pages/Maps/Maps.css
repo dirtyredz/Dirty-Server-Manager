@@ -1,39 +1,22 @@
 .MapContainer{
-  position: absolute;
-  width: 100%;
-  height: 100%;
-
-}
-.MapContainer > div > div,
-.MapContainer > div{
-  height: 100%;
-}
-.MapContainer > div{
-  
-}
-.MapContainer .Map{
-  height: 1500px;
-  width: 1500px;
-  background-image: url("../../resources/Galaxy740Wider.png");
+  position: relative;
+  width: 5000px;
+  height: 5000px;
+  transform: scale(0.134665);
+  transform-origin: top left;
+  cursor: url("../../resources/myCursor.png"), auto;
+  background-image: url("../../resources/Galaxy740.png");
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center; 
-  
 }
-.MapContainer svg{
-  margin: 250px;
-  cursor: url("../../resources/myCursor.png"), auto;
-}
-.test{
-  pointer-events: all;
-}
-.test:hover{
-  fill:rgb(255,0,255)!important;
-}
-.map{
-  transform: scale(0.1);
-  transform-origin: top left;
+.MapContainer canvas{
   position: absolute;
-  opacity: 0;
   transition: opacity 0.5s;
+}
+.MapContainer canvas:first-of-type{
+  background-image: url("../../resources/grid3.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center; 
 }
