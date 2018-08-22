@@ -23,8 +23,12 @@ Logger.info = function(msg) {
   infoStream.write(msg);
 };
 
-Logger.clear = () => {
+Logger.clearMain = () => {
   fs.truncate(MainLog)
+}
+
+Logger.clearWeb = () => {
+  fs.truncate(WebLog)
 }
 
 export default Logger

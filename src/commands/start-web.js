@@ -1,6 +1,6 @@
 import child_process from 'child_process';
 import path from 'path'
-import {webStream} from '../lib/logger'
+import Logger, {webStream} from '../lib/logger'
 import {WebServerOnline} from '../lib/serverOnline'
 import * as globals from '../lib/globals'
 // Command Name *required
@@ -22,7 +22,7 @@ export const action = ()=>{
     return;
   }
   console.group('Starting Web Server')
-
+  Logger.clearWeb()
   var childFilePath = path.resolve(globals.InstallationDir()+'/dsm/webServer.js');
 
   var options = {

@@ -26,7 +26,7 @@ export const action = ()=>{
     return;
   }
   console.group('Starting Server')
-  Logger.clear()
+  Logger.clearMain()
   localStorage.clear()
   intergrate('on') // enable intergration on wrapper startup
 
