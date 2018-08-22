@@ -1,6 +1,5 @@
 import config from '../../lib/MainConfig'
 import prettyMs from 'pretty-ms'
-var pty = require('node-pty');
 let RespondedToStatus = true;
 let FailureTimer = false;
 let IntervalTimer = false;
