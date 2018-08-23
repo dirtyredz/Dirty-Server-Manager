@@ -1,6 +1,6 @@
 import child_process, { exec } from 'child_process';
 import path from 'path'
-import Logger, {infoStream} from '../lib/logger'
+import Logger from '../lib/logger'
 import * as globals from '../lib/globals'
 import net from 'net'
 import localStorage from '../lib/localStorage'
@@ -25,16 +25,19 @@ export const action = ()=>{
     console.log('Server is already online')
     return;
   }
+
+
   console.group('Starting Server')
-  Logger.clearMain()
-  localStorage.clear()
+  Logger.init()
+  Logger.clear()
+  localStorage.removeItem('WrapperPid')
   intergrate('on') // enable intergration on wrapper startup
 
   var childFilePath = path.resolve(globals.InstallationDir()+'/dsm/serverWrapper.js');
 
   var options = {
     detached: true,
-    stdio: ['ignore', infoStream, infoStream],
+    stdio: ['ignore', Logger.stream, Logger.stream],
     execPath: childFilePath
   };
   const steamCmd = child_process.spawn('node',[childFilePath],options)

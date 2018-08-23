@@ -2,33 +2,34 @@ import path from 'path'
 import fs from 'fs'
 import * as globals from './globals'
 
-var Logger = {};
-const MainLog = path.resolve(globals.InstallationDir()+'/dsm/logs/info.txt')
-//Create FD for out Info
-var fd = fs.openSync(MainLog, 'a');
-export var infoStream = fs.createWriteStream(null,{fd: fd});
-
-const WebLog = path.resolve(globals.InstallationDir()+'/dsm/logs/webLog.txt')
-//Create FD for out Info
-var fd2 = fs.openSync(WebLog, 'a');
-export var webStream = fs.createWriteStream(null,{fd: fd2});
-
-Logger.web = function(msg) {
-  // var message = new Date().toISOString() + " : " + msg + "\n";
-  webStream.write(msg);
+const Logger = {
+  logFile: path.resolve(globals.InstallationDir()+'/dsm/logs/avorion.txt'),
+  init() {
+    if(!this.stream){
+      //Create FD
+      this.fd = fs.openSync(this.logFile, 'a');
+      this.stream = fs.createWriteStream(null,{fd: this.fd});
+    }
+  },
+  log(msg) {
+    this.stream.write(msg+'\n');
+    // console.log(fs.fstatSync(this.fd).size)
+  },
+  clear() {
+    fs.truncate(this.logFile)
+  },
+  rotate(output) {
+    
+  }
 };
-
-Logger.info = function(msg) {
-  // var message = new Date().toISOString() + " : " + msg + "\n";
-  infoStream.write(msg);
-};
-
-Logger.clearMain = () => {
-  fs.truncate(MainLog)
-}
-
-Logger.clearWeb = () => {
-  fs.truncate(WebLog)
-}
-
 export default Logger
+
+export const Web = {
+  ...Logger,
+  logFile: path.resolve(globals.InstallationDir()+'/dsm/logs/web.txt')
+}
+
+export const Chat = {
+  ...Logger,
+  logFile: path.resolve(globals.InstallationDir()+'/dsm/logs/chat.txt')
+}
