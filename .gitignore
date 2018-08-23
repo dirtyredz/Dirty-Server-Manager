@@ -11,3 +11,5 @@ dsm/logs/*
 
 # gitkeep so we keep the folder structure
 !.gitkeep
+
+dsm.sqlite
