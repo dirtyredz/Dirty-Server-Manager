@@ -35,18 +35,30 @@ const startGameServer = (GameServerEmitter) => {
       return
     }
 
-    if(data.includes('DSM: Player Log Off')){ // DSM: Player Log Off, name:  Dirtyredz  index:  1
-      const name = cleanedData.substring(cleanedData.indexOf("  ") + 1,cleanedData.indexOf("  index:"))
-      const index = cleanedData.substring(cleanedData.lastIndexOf("  ") + 1,cleanedData.length)
-      GameServerEmitter.emit('logOff', name, index)
+    if(cleanedData.match(/^<.*>/)){
+      const name = cleanedData.match(/(?<=<).*(?=>)/)
+      const message = cleanedData.match(/(?<=> ).*/)
+      //add error handling
+      GameServerEmitter.emit('chat', name[0],message[0]);
       return
     }
 
+    if(data.includes('DSM: Player Log Off')){ // DSM: Player Log Off, name:  Dirtyredz  index:  1
+      const name = cleanedData.match(/(?<=name:  ).*(?=  index)/)
+      const index = cleanedData.match(/(?<=index:  ).*/)
+      if(name && index){
+        GameServerEmitter.emit('logoff', name[0], index[0])
+        return
+      }
+    }
+
     if(data.includes('DSM: Player Log On')){
-      const name = cleanedData.substring(cleanedData.indexOf("  ") + 1,cleanedData.indexOf("  index:"))
-      const index = cleanedData.substring(cleanedData.lastIndexOf("  ") + 1,cleanedData.length)
-      GameServerEmitter.emit('logOn', name, index)
-      return
+      const name = cleanedData.match(/(?<=name:  ).*(?=  index)/)
+      const index = cleanedData.match(/(?<=index:  ).*/)
+      if(name && index){
+        GameServerEmitter.emit('logon', name[0], index[0])
+        return
+      }
     }
 
     if(data.includes('Server shutdown')){
