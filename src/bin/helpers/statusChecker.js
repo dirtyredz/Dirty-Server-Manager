@@ -4,18 +4,22 @@ let RespondedToStatus = true;
 let FailureTimer = false;
 let IntervalTimer = false;
 
-const RegisterToWrapperEmitter = (GameServerEmitter) => {
+export const name = 'Status Checker'
+
+export const RegisterToWrapperEmitter = (GameServerEmitter) => {
   GameServerEmitter.on('startup', function(GameServer){
     GameServer.write('/echo DSM: Initilized Status Checker, checking every ' + prettyMs(config.STATUS_INTERVAL_MS)+'\n')
     IntervalTimer = setInterval(()=>{
-      console.log('INTERVAL')
+      console.log('DSM: Performing status check')
       RespondedToStatus = false;
       GameServer.write('/status\n');
       FailureTimer = setTimeout(()=>{
-        console.log('/FAILED TO GET STATUS')
+        console.log('DSM: FAILED TO GET STATUS')
         GameServerEmitter.emit('crash',GameServer)
         // Emit crash event, which will kill GameServer
       },(1000 * 30)) // 30 seconds
+      // is 30 seconds to short?
+      // attach config option
     },config.STATUS_INTERVAL_MS)
   });
 
@@ -37,5 +41,3 @@ const RegisterToWrapperEmitter = (GameServerEmitter) => {
     IntervalTimer = false
   })
 }
-
-export default { RegisterToWrapperEmitter }

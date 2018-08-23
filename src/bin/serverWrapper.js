@@ -3,17 +3,23 @@ import localStorage from '../lib/localStorage'
 import * as globals from '../lib/globals'
 var events = require('events').EventEmitter;
 var GameServerEmitter = new events.EventEmitter();
-import ipcLayer from './helpers/ipcLayer'
-ipcLayer.RegisterToWrapperEmitter(GameServerEmitter)
-import statusChecker from './helpers/statusChecker'
-statusChecker.RegisterToWrapperEmitter(GameServerEmitter)
 import startGameServer from './helpers/startGameServer'
-
-// We then pipe the main process stdin (which is a readable stream)
-// into the child process stdin (which is a writable stream).
+import * as eventHandler from './helpers/eventHandlers'
 
 console.log('-----Dirty Server Manager-----')
 console.log('DSM: Server Wrapper Initilized on pid: ' + process.pid)
+
+// Register events handlers
+const handlers = Object.keys(eventHandler)
+handlers.map((handle, index) => {
+  handle = eventHandler[handle];
+  handle.RegisterToWrapperEmitter(GameServerEmitter)
+
+  console.log('DSM: Event Handler:',handle.name, ', has been registered.')
+});
+
+// We then pipe the main process stdin (which is a readable stream)
+// into the child process stdin (which is a writable stream).
 
 localStorage.setItem('WrapperPid',process.pid)
 
@@ -25,6 +31,10 @@ localStorage.setItem('WrapperPid',process.pid)
 
 // Start the game
 startGameServer(GameServerEmitter)
+
+GameServerEmitter.on('error',(err)=>{
+  console.log(err)
+})
 
 GameServerEmitter.on('crash',(GameServer)=>{
   console.log('Detected server crash, waiting 7 seconds')
@@ -43,9 +53,26 @@ GameServerEmitter.on('shutdown',(GameServer)=>{
   GameServer.destroy();// server shutdown, send exit event to wrapper
 })
 
-process.on('beforeExit',()=>{
+const exitHandler = () => {
   console.log('DSM: Closing wrapper GoodBye!')
-  localStorage.clear()
+  localStorage.removeItem('WrapperPid')
   process.exit(0)
-})
+}
 
+process.on('beforeExit',exitHandler)
+
+//do something when app is closing
+process.on('exit', exitHandler);
+
+//catches ctrl+c event
+process.on('SIGINT', exitHandler);
+
+// catches "kill pid" (for example: nodemon restart)
+process.on('SIGUSR1', exitHandler);
+process.on('SIGUSR2', exitHandler);
+
+//catches uncaught exceptions
+process.on('uncaughtException', (err)=>{
+  console.log(err)
+  exitHandler()
+});

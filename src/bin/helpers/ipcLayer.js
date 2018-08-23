@@ -3,10 +3,13 @@ import * as globals from '../../lib/globals'
 import path from 'path'
 import os from 'os'
 
-const RegisterToWrapperEmitter = (GameServerEmitter) => {
+export const name = 'IPC Layer'
+
+export const RegisterToWrapperEmitter = (GameServerEmitter) => {
   let server;
 
-  GameServerEmitter.on('spawned', function(GameServer){
+  GameServerEmitter.once('spawned', function(GameServer){
+    console.log('SPAWNED')
     // Socket layer to listen for incoming mesages.
     server = net.createServer((ClientSock) => {
       // Callback for the attach command to recieve data
@@ -23,7 +26,7 @@ const RegisterToWrapperEmitter = (GameServerEmitter) => {
         console.log('Shutting down connected client')
         ClientSock.end() // tell client were closing
       }
-
+      console.log('Creating Exit listener')
       GameServerEmitter.on('exit',ServerExitCallback)
       // console.log('DSM Client ');
       ClientSock.on('end', () => {
@@ -32,6 +35,7 @@ const RegisterToWrapperEmitter = (GameServerEmitter) => {
         GameServerEmitter.removeListener('exit',ServerExitCallback) // Remove the listener since the client is not listening
         GameServerEmitter.removeListener('status',SendServerData)
         GameServerEmitter.removeListener('shutdown',WaitToClose)
+        console.log('Closing client')
       });
       ClientSock.on('data', function (data) {
         if(data.toString() === 'ATTACH'){ // attach command has been run, start sending data to the client
@@ -56,6 +60,10 @@ const RegisterToWrapperEmitter = (GameServerEmitter) => {
       console.log(e)
     });
 
+    // server.on('connection', (socket) => {
+    //   socket.end()
+    // });
+
     server.listen(globals.cleanPipeName(path.resolve(os.tmpdir()+'/dsm.sock')), () => {
       GameServer.write('DSM IPC Initialized.\n');
     });
@@ -66,6 +74,4 @@ const RegisterToWrapperEmitter = (GameServerEmitter) => {
     server.close() // will not close exsiting connections
   })
 }
-
-export default { RegisterToWrapperEmitter }
 
