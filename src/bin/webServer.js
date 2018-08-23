@@ -35,13 +35,32 @@ io.on('connection', function(socket){
 });
 
 httpServer.listen(3000, WebIp, () => console.log('Example app listening on port 3000!'))
+httpServer.on('close', function(socket){
+  console.log('http close')
+});
 
-process.on('beforeExit',()=>{
-  localStorage.clear()
+const exitHandler = () => {
+  console.log('Closing WebServer')
+  WebServerEmitter.emit('exit');
+  io.close()
+  localStorage.removeItem('WebServerPid')
   process.exit(0)
-})
+}
 
+process.on('beforeExit',exitHandler)
 
+//do something when app is closing
+process.on('exit', exitHandler);
+
+//catches ctrl+c event
+process.on('SIGINT', exitHandler);
+
+// catches "kill pid" (for example: nodemon restart)
+process.on('SIGUSR1', exitHandler);
+process.on('SIGUSR2', exitHandler);
+
+//catches uncaught exceptions
+process.on('uncaughtException', exitHandler);
 
 
 
