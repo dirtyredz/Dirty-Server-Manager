@@ -5,6 +5,7 @@ const WebpackShellPlugin = require('webpack-shell-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin')
+var nodeExternals = require('webpack-node-externals');
 
 const node = {
   watch: true,
@@ -35,6 +36,7 @@ const node = {
     })
   ],
   externals: [
+    nodeExternals(),
     (ctx, req, done) => (/^node-pty$/.test(req) ? done(null, `commonjs ${req}`) : done()),
     {uws: "uws"},
   ],
@@ -60,7 +62,8 @@ const node = {
                     "node": "current"
                   }
                 }
-              ]
+              ],
+              "stage-0"
             ]
           }
         }
