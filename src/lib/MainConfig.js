@@ -5,6 +5,16 @@ import * as globals from './globals'
 
 const config = ini.parse(fs.readFileSync(path.resolve(globals.InstallationDir() + '/dsm/config.ini'), 'utf-8'));
 
+// create object for each config option to support type checking, defaults, and required options.
+// then use a command to parse it all
+const main = {
+  MOTD: {
+    default: "Welcome to the server, Enjoy!!",
+    type: 'string',
+  }
+}
+
+
 if(!config.STEAM_DIR)
   config.STEAM_DIR = "steam" // default steam
 
