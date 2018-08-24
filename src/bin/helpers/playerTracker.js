@@ -8,11 +8,11 @@ export const RegisterToWrapperEmitter = (GameServerEmitter) => {
     // check if player exists
     if(players.PlayerExists(index) === undefined){
       console.log('Player does not exist')
+      // create player if doesnt exist
       players.CreatePlayer(index,name)
     }
     players.UpdatePlayerLogStatus(1,index)
     server.incrementPlayers()
-    // create player if doesnt exist
     // log player in
     db.close()
   })
@@ -22,11 +22,11 @@ export const RegisterToWrapperEmitter = (GameServerEmitter) => {
     // check if player exists
     if(players.PlayerExists(index) === undefined){
       console.log('Player does not exist')
+      // create player if doesnt exist
       players.CreatePlayer(index,name)
     }
     players.UpdatePlayerLogStatus(0,index)
     server.decrementPlayers()
-    // create player if doesnt exist
     // log player in
     db.close()
   })
