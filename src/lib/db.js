@@ -10,7 +10,7 @@ import * as globals from '../lib/globals'
 
 const common = {
   open(){
-    this.db = new Database(path.resolve(globals.InstallationDir()+'/dsm/dsm.sqlite'));
+    this.db = new Database(path.resolve(globals.InstallationDir()+'/dsm/.storage/dsm.sqlite'));
     server.init(this.db)
     players.init(this.db)
   },
