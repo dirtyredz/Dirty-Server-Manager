@@ -1,6 +1,7 @@
 import path from 'path'
 import * as globals from '../lib/globals'
 import fs from 'fs'
+import Config from '../lib/MainConfig'
 
 // Command Name
 export const command = "intergrate <onOff>"
@@ -33,7 +34,7 @@ export const action = (onOff)=>{
       if (err){
           throw err;
       }
-      const newData = data.replace("__MOTD__","WTF")
+      const newData = data.replace("__MOTD__",Config.MOTD)
       fs.writeFile(DSMFile, newData,(err)=>{
         if (err){
           throw err;

@@ -12,4 +12,7 @@ if(!config.STATUS_INTERVAL_MS)
   config.STATUS_INTERVAL_MS = (1000 * 60 * 5) // default 5 minutes
 config.STATUS_INTERVAL_MS = parseInt(config.STATUS_INTERVAL_MS,10)
 
+if(!config.MOTD)
+  config.MOTD = "Welcome to the server, Enjoy!!"
+
 export default config
