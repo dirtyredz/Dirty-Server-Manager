@@ -21,12 +21,13 @@ Commands.map((cmd, index) => {
 
 // error on unknown commands
 program.on('command:*', function () {
-  console.error('Invalid command: %s\nSee --help for a list of available commands.', program.args.join(' '));
+  console.error(colors.red('Invalid command: %s')+' \nSee '+colors.yellow('--help')+' for a list of available commands.', program.args.join(' '));
   process.exit(1);
 });
 
+// error when no command is given
 if (typeof process.argv[2] === 'undefined') {
-  console.error('no command given! \nSee --help for a list of available commands.');
+  console.error(colors.red('no command given!')+' \nSee '+colors.yellow('--help')+' for a list of available commands.');
   process.exit(1);
 }
 
