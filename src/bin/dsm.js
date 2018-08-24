@@ -18,5 +18,21 @@ Commands.map((cmd, index) => {
     console.error('%s',colors.red('Unable to process command: ' + Commands[index]))
   }
 });
-// allow commander to parse `process.argv`
-program.parse(process.argv);
+
+// error on unknown commands
+program.on('command:*', function () {
+  console.error('Invalid command: %s\nSee --help for a list of available commands.', program.args.join(' '));
+  process.exit(1);
+});
+
+if (typeof process.argv[2] === 'undefined') {
+  console.error('no command given! \nSee --help for a list of available commands.');
+  process.exit(1);
+}
+
+program
+  .version('0.1.0')
+  .usage('[options] <cmd ...>')
+  .option('-f, --foo', 'enable some foo')
+  .parse(process.argv);
+
