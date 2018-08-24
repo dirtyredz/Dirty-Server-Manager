@@ -8,5 +8,6 @@ import * as stop from './stop.js'
 import * as startWeb from './start-web.js'
 import * as stopWeb from './stop-web.js'
 import * as intergrate from './intergrate.js'
+import * as update from './update.js'
 
-export { start, install, kill, send, attach, status, stop, stopWeb, startWeb, intergrate };
+export { start, install, kill, send, attach, status, stop, stopWeb, startWeb, intergrate, update };
