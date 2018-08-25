@@ -2,6 +2,7 @@ import net from 'net'
 import * as globals from '../../lib/globals'
 import path from 'path'
 import os from 'os'
+import { Server } from 'https';
 
 export const name = 'IPC Layer'
 
@@ -28,6 +29,7 @@ export const RegisterToWrapperEmitter = (GameServerEmitter) => {
       }
       console.log('Creating Exit listener')
       GameServerEmitter.on('exit',ServerExitCallback)
+      
       // console.log('DSM Client ');
       ClientSock.on('end', () => {
         // console.log('DSM Socket Closed');
@@ -48,10 +50,11 @@ export const RegisterToWrapperEmitter = (GameServerEmitter) => {
           console.log('SHUTDOWN COMMAND')
           GameServer.write(data+'\n');
           GameServerEmitter.on('shutdown',WaitToClose)
-        }else{
-          console.log('NORMAL')
-          GameServer.write(data+'\n');
+        }else if(data.toString().match(/^SENDING/)){
+          GameServer.write(data.toString().replace(/^SENDING/,"")+'\n');
           GameServerEmitter.on('data',SendServerData)
+        }else{
+          GameServer.write(data+'\n');
         }
       });
 

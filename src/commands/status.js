@@ -1,4 +1,3 @@
-import net from 'net'
 import {send} from './send'
 import {GameServerOnline} from '../lib/serverOnline'
 
@@ -20,10 +19,6 @@ export const action = ()=>{
     console.log('Server is Offline')
     return;
   }
-  var sock = net.connect(27020)
-  sock.on('data', function (data) {
-    console.log('27003',data)
-  });
   send('/status',
     (sock)=>{
       console.log('Sent status command, Waiting....')

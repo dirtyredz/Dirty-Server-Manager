@@ -31,7 +31,7 @@ export const action = (message)=>{
   //   sock.destroy()
   // });
 
-  send(message,
+  send('SENDING'+message,
     (sock)=>{
       console.log(`Message: ${message}`);
     },
