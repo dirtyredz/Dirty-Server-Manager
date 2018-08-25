@@ -16,7 +16,7 @@ const Logger = {
     // console.log(fs.fstatSync(this.fd).size)
   },
   clear() {
-    fs.truncate(this.logFile)
+    fs.truncateSync(this.logFile)
   },
   rotate(output) {
     

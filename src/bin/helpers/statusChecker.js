@@ -8,7 +8,8 @@ export const name = 'Status Checker'
 
 export const RegisterToWrapperEmitter = (GameServerEmitter) => {
   GameServerEmitter.on('startup', function(GameServer){
-    GameServer.write('/echo DSM: Initilized Status Checker, checking every ' + prettyMs(config.STATUS_INTERVAL_MS)+'\n')
+    console.log('DSM: Initilized Status Checker, checking every ' + prettyMs(config.STATUS_INTERVAL_MS)+'\n')
+
     IntervalTimer = setInterval(()=>{
       console.log('DSM: Performing status check')
       RespondedToStatus = false;
@@ -30,6 +31,7 @@ export const RegisterToWrapperEmitter = (GameServerEmitter) => {
     FailureTimer = false
   });
 
+  // Clean up dont want to leave ant intervals or timers left around
   GameServerEmitter.on('exit', ()=>{
     RespondedToStatus = true;
     if(FailureTimer !== false)

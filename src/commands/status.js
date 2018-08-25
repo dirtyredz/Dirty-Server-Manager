@@ -1,9 +1,5 @@
 import net from 'net'
-import os from 'os'
-import * as globals from '../lib/globals'
-import path from 'path'
 import {send} from './send'
-import localStorage from '../lib/localStorage'
 import {GameServerOnline} from '../lib/serverOnline'
 
 // Command Name *required
@@ -24,6 +20,10 @@ export const action = ()=>{
     console.log('Server is Offline')
     return;
   }
+  var sock = net.connect(27020)
+  sock.on('data', function (data) {
+    console.log('27003',data)
+  });
   send('/status',
     (sock)=>{
       console.log('Sent status command, Waiting....')
@@ -33,5 +33,4 @@ export const action = ()=>{
       sock.destroy()
     }
   )
-
 }

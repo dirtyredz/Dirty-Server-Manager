@@ -22,6 +22,7 @@ export const action = ()=>{
     console.log('Server is already online')
     return;
   }
+
   console.group('Starting Web Server')
   var childFilePath = path.resolve(globals.InstallationDir()+'/dsm/webServer.js');
   Web.init()

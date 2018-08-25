@@ -2,6 +2,9 @@ import program from 'commander'
 import colors from 'colors'
 import * as commands from '../commands/'
 
+// Remove for production
+process.on('warning', e => console.warn(e.stack));
+
 /*******************************************/
 // process all commands
 const Commands = Object.keys(commands)

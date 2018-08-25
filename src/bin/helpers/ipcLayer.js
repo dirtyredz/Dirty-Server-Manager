@@ -9,7 +9,7 @@ export const RegisterToWrapperEmitter = (GameServerEmitter) => {
   let server;
 
   GameServerEmitter.once('spawned', function(GameServer){
-    console.log('SPAWNED')
+    console.log('DSM: IPC Initializing...\n');
     // Socket layer to listen for incoming mesages.
     server = net.createServer((ClientSock) => {
       // Callback for the attach command to recieve data
@@ -65,12 +65,12 @@ export const RegisterToWrapperEmitter = (GameServerEmitter) => {
     // });
 
     server.listen(globals.cleanPipeName(path.resolve(os.tmpdir()+'/dsm.sock')), () => {
-      GameServer.write('DSM IPC Initialized.\n');
+      console.log('DSM: IPC Initialized.\n');
     });
   });
 
   GameServerEmitter.on('exit',()=>{
-    console.log('CLOSING IPC SERVER')
+    console.log('DSM: CLOSING IPC SERVER')
     server.close() // will not close exsiting connections
   })
 }
