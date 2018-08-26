@@ -8,12 +8,12 @@ import colors from 'colors'
 
 import { createMultiline } from './createSingleLineLogger';
 const windows = {
-  exec: path.resolve(globals.InstallationDir()+'/'+MainConfig.STEAM_DIR+'/steamcmd.exe'),
+  exec: path.resolve(globals.InstallationDir()+'/'+MainConfig.STEAM_DIR.value+'/steamcmd.exe'),
   args: []
 }
 
 const linux = {
-  exec: path.resolve(globals.InstallationDir()+'/'+MainConfig.STEAM_DIR+'/steamcmd.sh'),
+  exec: path.resolve(globals.InstallationDir()+'/'+MainConfig.STEAM_DIR.value+'/steamcmd.sh'),
   args: []
 }
 
@@ -23,7 +23,7 @@ const steamCmd = (onFinish) => {
   var isWin = process.platform === "win32";
 
   const avorionPath = path.resolve(globals.InstallationDir()+'/avorion')
-  const Beta = MainConfig.BETA ? ' -beta beta' : ''
+  const Beta = MainConfig.BETA.value ? ' -beta beta' : ''
   let steamArgs = ['+login anonymous', `+force_install_dir ${avorionPath}`, `+app_update 565060${Beta}` , 'validate', '+quit']
   // Continue using config option for steam directory?
   const steamCmd = child_process.spawn(isWin ? windows.exec : linux.exec,steamArgs)

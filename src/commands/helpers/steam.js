@@ -7,12 +7,14 @@ import extract from 'extract-zip'
 import path from 'path'
 import * as globals from '../../lib/globals'
 
+const SteamDir = MainConfig.STEAM_DIR.value
+
 const windows = {
   source: 'https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip',
-  output: path.resolve(globals.InstallationDir()+'/'+ MainConfig.STEAM_DIR+'/steamcmd.zip'),
+  output: path.resolve(globals.InstallationDir()+'/'+ SteamDir+'/steamcmd.zip'),
   unpack: (callback) => {
-            extract(path.resolve(globals.InstallationDir()+'/'+ MainConfig.STEAM_DIR+'/steamcmd.zip'),
-                  {dir: path.resolve(globals.InstallationDir()+'/'+ MainConfig.STEAM_DIR+'/'),}, function (err) {
+            extract(path.resolve(globals.InstallationDir()+'/'+ SteamDir+'/steamcmd.zip'),
+                  {dir: path.resolve(globals.InstallationDir()+'/'+ SteamDir+'/'),}, function (err) {
               callback();
             })
           }
@@ -20,20 +22,21 @@ const windows = {
 
 const linux = {
   source: 'https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz',
-  output: path.resolve(globals.InstallationDir()+'/'+ MainConfig.STEAM_DIR+'/steamcmd_linux.tar'),
+  output: path.resolve(globals.InstallationDir()+'/'+ SteamDir+'/steamcmd_linux.tar'),
   unpack: (callback) => {
             tar.x({
-              cwd: path.resolve(globals.InstallationDir()+'/'+ MainConfig.STEAM_DIR+'/'),
-              file: MainConfig.STEAM_DIR+'/steamcmd_linux.tar'
+              cwd: path.resolve(globals.InstallationDir()+'/'+ SteamDir+'/'),
+              file: SteamDir+'/steamcmd_linux.tar'
             }).then(callback)
           }
 }
 
+
 const installSteam = () => {
   return new Promise((resolve,reject)=>{
     // Create Steam directory
-    fs.mkdir(path.resolve(globals.InstallationDir()+'/'+ MainConfig.STEAM_DIR),()=>{
-      console.log("Steam directory created at: " + path.resolve(globals.InstallationDir()+'/'+ MainConfig.STEAM_DIR))
+    fs.mkdir(path.resolve(globals.InstallationDir()+'/'+ SteamDir),()=>{
+      console.log("Steam directory created at: " + path.resolve(globals.InstallationDir()+'/'+ SteamDir))
       const options = {
         gunzip: true
       };
@@ -55,8 +58,8 @@ const installSteam = () => {
             linux.unpack(completed)
       });
       download.on('progress', function(progress) {
-          typeof progress === 'number'
-          log('Downloading Steam: [' + (progress * 100) + '%]');
+        typeof progress === 'number'
+        log('Downloading Steam: [' + (progress * 100) + '%]');
       });
     })
   })

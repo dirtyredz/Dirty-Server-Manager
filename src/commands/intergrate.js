@@ -34,7 +34,7 @@ export const action = (onOff)=>{
       if (err){
           throw err;
       }
-      const newData = data.replace("__MOTD__",Config.MOTD)
+      const newData = data.replace("__MOTD__",Config.MOTD.value)
       fs.writeFile(DSMFile, newData,(err)=>{
         if (err){
           throw err;
