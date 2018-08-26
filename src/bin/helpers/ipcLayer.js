@@ -27,7 +27,7 @@ export const RegisterToWrapperEmitter = (GameServerEmitter) => {
         console.log('Shutting down connected client')
         ClientSock.end() // tell client were closing
       }
-      console.log('Creating Exit listener')
+      console.log('Client connected to IPC Layer')
       GameServerEmitter.on('exit',ServerExitCallback)
       
       // console.log('DSM Client ');
@@ -37,12 +37,14 @@ export const RegisterToWrapperEmitter = (GameServerEmitter) => {
         GameServerEmitter.removeListener('exit',ServerExitCallback) // Remove the listener since the client is not listening
         GameServerEmitter.removeListener('status',SendServerData)
         GameServerEmitter.removeListener('shutdown',WaitToClose)
-        console.log('Closing client')
+        console.log('Closing client from IPC Layer')
       });
       ClientSock.on('data', function (data) {
         if(data.toString() === 'ATTACH'){ // attach command has been run, start sending data to the client
+          console.log('Client is listening to server output.')
           GameServerEmitter.on('data',SendServerData)
         }else if(data.toString() === '/status'){
+          // if when attached and you use /status this will fire attaching both data and status listeners to the attached client
           console.log('STATUS COMMAND')
           GameServer.write(data+'\n');
           GameServerEmitter.on('status',SendServerData)
@@ -54,6 +56,7 @@ export const RegisterToWrapperEmitter = (GameServerEmitter) => {
           GameServer.write(data.toString().replace(/^SENDING/,"")+'\n');
           GameServerEmitter.on('data',SendServerData)
         }else{
+          // dont create event as the client is likely to close immediatly after writing
           GameServer.write(data+'\n');
         }
       });

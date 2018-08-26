@@ -2,7 +2,6 @@ import child_process, { exec } from 'child_process';
 import path from 'path'
 import Logger from '../lib/logger'
 import * as globals from '../lib/globals'
-import net from 'net'
 import localStorage from '../lib/localStorage'
 import {GameServerOnline} from '../lib/serverOnline'
 import {action as intergrate} from './intergrate'
