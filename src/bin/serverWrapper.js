@@ -56,6 +56,7 @@ GameServerEmitter.on('shutdown',(GameServer)=>{
 const exitHandler = () => {
   console.log('DSM: Closing wrapper GoodBye!')
   localStorage.removeItem('WrapperPid')
+  localStorage.removeItem('GameServerPid')
   process.exit(0)
 }
 

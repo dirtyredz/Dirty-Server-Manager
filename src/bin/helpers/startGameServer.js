@@ -1,8 +1,10 @@
 import * as globals from '../../lib/globals'
 import path from 'path'
+import localStorage from '../../lib/localStorage'
+
 // npm install --global --production windows-build-tools
 var pty = require('node-pty');// dont use import, webpack is set to not touch node-pty as it will mess with it.
-import net from 'net'
+
 // https://github.com/Microsoft/node-pty/issues/78
 
 // Allowed options:
@@ -77,13 +79,15 @@ import net from 'net'
 //                                  crashes.
 const startGameServer = (GameServerEmitter) => {
   const GameServer = pty.spawn(path.resolve(globals.InstallationDir()+'/avorion/bin/AvorionServer.exe')
-  ,['-t','scripting', '--galaxy-name','avorion_galaxy','--admin','avorion_admin']
+  ,['--galaxy-name','avorion_galaxy','--admin','avorion_admin']
   ,{cwd: process.cwd()+'\\avorion'})
 
   // if stdout-to-log option is used, dsm cant detect data using GameServer
   // need fall back for tracking logfile output
   GameServerEmitter.emit('spawned', GameServer);
-  console.log('Server PID',GameServer.pid)
+
+  localStorage.setItem('GameServerPid',GameServer.pid)
+
   GameServer.on('error',(err)=>{
     console.log(err)
   })
