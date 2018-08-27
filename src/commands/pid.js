@@ -29,8 +29,7 @@ export const action = (options)=>{
   console.log('DSM Wrapper:',WrapperPid && colors.green(WrapperPid))
   console.log('Game Server:',GameServerPid && colors.green(GameServerPid))
   console.log('Web Server:',WebServerPid && colors.green(WebServerPid))
-  
-  
+
   if(options.search){
     let index = 0;
     const interval = setInterval(()=>{

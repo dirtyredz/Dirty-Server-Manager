@@ -32,6 +32,11 @@ export const pid = {
       );`
     ).run();
   },
+  get(name){
+    this.open();
+    this.db.prepare("SELECT FROM pid WHERE name=?").run(pid);
+    this.close();
+  },
   add(name,pid){
     this.open();
     this.db.prepare("INSERT INTO pid (name, pid) VALUES (?,?)").run(name,pid);
