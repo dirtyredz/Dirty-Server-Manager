@@ -6,9 +6,6 @@ const cliSpinners = require('cli-spinners');
 // Command Name *required
 export const command = "status"
 
-// Command Version
-export const version = "0.0.1"
-
 // Command Alias
 export const alias = ""
 

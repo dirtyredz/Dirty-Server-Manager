@@ -41,8 +41,8 @@ GameServerEmitter.on('crash',(GameServer)=>{
   GameServer.write('/save\n'); // send save command just incase
   setTimeout(()=>{
     GameServer.destroy() // will trigger a GameServer Exit event
+    console.log('processing events...')
     setTimeout(()=>{
-      console.log('processing events...')
       startGameServer(GameServerEmitter)
       console.log('Restarted')
     },7000) // 7 seconds

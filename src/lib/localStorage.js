@@ -1,11 +1,10 @@
 import path from 'path'
 import * as globals from './globals'
+import LocalStorage from 'node-localstorage'
 
 let localStorage;
 if (typeof localStorage === "undefined" || localStorage === null) {
-  var LocalStorage = require('node-localstorage').LocalStorage;
-
-  localStorage = new LocalStorage(path.resolve(globals.InstallationDir()+'/dsm/.storage'));
+  localStorage = new LocalStorage.LocalStorage(path.resolve(globals.InstallationDir()+'/dsm/.storage'));
 }
 
 export default localStorage

@@ -6,9 +6,6 @@ import Config from '../lib/MainConfig'
 // Command Name
 export const command = "intergrate <onOff>"
 
-// Command Version
-export const version = "0.0.1"
-
 // Command Alias
 export const alias = ""
 
@@ -48,7 +45,7 @@ export const action = (onOff)=>{
 export const RemoveDSM = (avorionFile,callback) => {
   fs.readFile(avorionFile, 'utf8', function(err, data){
     if (err){
-        throw err;
+      console.log(err)
     }
     // Remove all DSM injected lines
     let removedDSM = data.split("\n").filter(line=>!line.includes('--Added by DSM'))

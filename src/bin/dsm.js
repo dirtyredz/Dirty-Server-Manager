@@ -25,7 +25,6 @@ Commands.map((cmd, index) => {
   if(cmd.command && cmd.description && typeof cmd.action == 'function'){
     Commander
         .command(cmd.command)
-        .version(cmd.version ? cmd.version : colors.red("No version available"), '-v, --version')
         .alias(cmd.alias ? cmd.alias : "")
         .recursiveOptions(cmd.options || [])
         .description(cmd.description)

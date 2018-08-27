@@ -7,9 +7,6 @@ import {GameServerOnline} from '../lib/serverOnline'
 // Command Name *required
 export const command = "send <message>"
 
-// Command Version
-export const version = "0.0.1"
-
 // Command Alias
 export const alias = ""
 
@@ -42,12 +39,24 @@ export const action = (message)=>{
   )
 }
 
-export const send = (message,write,response) => {
-  var sock = net.connect(globals.cleanPipeName(path.resolve(os.tmpdir()+'/dsm.sock')))
-  sock.write(`${message}`,'utf8',()=>{
-    write(sock)
+export const send = (message,write,response,error) => {
+  var sock = net.connect(globals.cleanPipeName(path.resolve(os.tmpdir()+'/dsm.sock')),()=>{
+    sock.write(`${message}`,'utf8',()=>{
+      write(sock)
+    })
+    sock.on('data', function (data) {
+      response(data,sock)
+    });
   })
-  sock.on('data', function (data) {
-    response(data,sock)
-  });
+  sock.on('error', function (err){
+    if(typeof error =='function'){
+      if(err.errno === 'ENOENT'){
+          error('Could not connect to the server.')
+      }else{
+        error(err)
+      }
+    }else{
+      console.log(err)
+    }
+  })
 }

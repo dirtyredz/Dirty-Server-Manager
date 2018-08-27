@@ -19,7 +19,7 @@ export const RegisterToWrapperEmitter = (GameServerEmitter) => {
       }
 
       const WaitToClose = () => {
-        ClientSock.write("Shutdow succesfull")
+        ClientSock.write("SUCCESS")
         ClientSock.end() // tell client were closing
       }
       // listen to server exit event
@@ -37,6 +37,7 @@ export const RegisterToWrapperEmitter = (GameServerEmitter) => {
         GameServerEmitter.removeListener('exit',ServerExitCallback) // Remove the listener since the client is not listening
         GameServerEmitter.removeListener('status',SendServerData)
         GameServerEmitter.removeListener('shutdown',WaitToClose)
+        GameServerEmitter.removeListener('startup',WaitToClose)
         console.log('Closing client from IPC Layer')
       });
       ClientSock.on('data', function (data) {
@@ -52,6 +53,8 @@ export const RegisterToWrapperEmitter = (GameServerEmitter) => {
           console.log('SHUTDOWN COMMAND')
           GameServer.write(data+'\n');
           GameServerEmitter.on('shutdown',WaitToClose)
+        }else if(data.toString() === 'STARTUP'){
+          GameServerEmitter.on('startup',WaitToClose)
         }else if(data.toString().match(/^SENDING/)){
           GameServer.write(data.toString().replace(/^SENDING/,"")+'\n');
           GameServerEmitter.on('data',SendServerData)

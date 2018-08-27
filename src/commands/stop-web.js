@@ -4,9 +4,6 @@ import {WebServerOnline} from '../lib/serverOnline'
 // Command Name *required
 export const command = "stop-web"
 
-// Command Version
-export const version = "0.0.1"
-
 // Command Alias
 export const alias = ""
 

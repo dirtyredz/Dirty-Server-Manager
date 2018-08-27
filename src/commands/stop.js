@@ -8,9 +8,6 @@ import {send} from './send'
 // Command Name *required
 export const command = "stop"
 
-// Command Version
-export const version = "0.0.1"
-
 // Command Alias
 export const alias = ""
 

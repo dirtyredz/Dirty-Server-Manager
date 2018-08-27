@@ -8,9 +8,6 @@ import {GameServerOnline} from '../lib/serverOnline'
 // Command Name *required
 export const command = "attach"
 
-// Command Version
-export const version = "0.0.1"
-
 // Command Alias
 export const alias = ""
 

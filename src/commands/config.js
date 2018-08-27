@@ -1,17 +1,8 @@
-import child_process, { exec } from 'child_process';
-import path from 'path'
 import Config from '../lib/MainConfig'
-import * as globals from '../lib/globals'
-import localStorage from '../lib/localStorage'
-import {GameServerOnline, WebServerOnline} from '../lib/serverOnline'
-import {action as intergrate} from './intergrate'
 import colors from 'colors'
 
 // Command Name *required
 export const command = "config"
-
-// Command Version
-export const version = "0.0.1"
 
 // Command Alias
 export const alias = ""

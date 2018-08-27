@@ -1,4 +1,5 @@
 import * as globals from '../../lib/globals'
+import Config from '../../lib/MainConfig'
 import path from 'path'
 import localStorage from '../../lib/localStorage'
 
@@ -78,10 +79,19 @@ var pty = require('node-pty');// dont use import, webpack is set to not touch no
 //                                  system specs and a crash report when it
 //                                  crashes.
 const startGameServer = (GameServerEmitter) => {
-  const GameServer = pty.spawn(path.resolve(globals.InstallationDir()+'/avorion/bin/AvorionServer.exe')
-  ,['--galaxy-name','avorion_galaxy','--admin','avorion_admin']
-  ,{cwd: process.cwd()+'\\avorion'})
+  let startupParams = Config.STARTUP_PARAMS.value
+  // if(Config.GAME_IP_ADDRESS.value !== '')
+  //   startupParams += ' --ip '+Config.GAME_IP_ADDRESS.value
+  if(Config.GALAXY_NAME.value !== '')
+    startupParams += ' --galaxy-name '+Config.GALAXY_NAME.value
+  if(Config.GALAXY_SAVE_DIRECTORY.value !== '')
+    startupParams += ' --datapath '+Config.GALAXY_SAVE_DIRECTORY.value
 
+  const GameServer = pty.spawn(path.resolve(globals.InstallationDir()+'/avorion/bin/AvorionServer.exe')
+  ,startupParams.split(" ")
+  ,{cwd: path.resolve(globals.InstallationDir()+'/avorion')})
+
+  console.log('Started server with these params:',Config.STARTUP_PARAMS.value)
   // if stdout-to-log option is used, dsm cant detect data using GameServer
   // need fall back for tracking logfile output
   GameServerEmitter.emit('spawned', GameServer);
@@ -102,6 +112,11 @@ const startGameServer = (GameServerEmitter) => {
     console.log(cleanedData)//\u001b[0K\u001b[?25l
 
     GameServerEmitter.emit('data', data);
+
+    if(cleanedData.match(/^An exception occurred:/)){
+      GameServerEmitter.emit('exception', cleanedData);
+      return
+    }
 
     if(data.includes('Memory used by scripts')){
       const dataArr = data.split('\n')
@@ -145,6 +160,13 @@ const startGameServer = (GameServerEmitter) => {
       GameServerEmitter.emit('shutdown', GameServer);
       return
     }
+
+    if(data.includes('Creating minidump') || data.includes('Entered exception handler') || data.includes('Server startup FAILED')){
+      GameServerEmitter.emit('crash', GameServer);
+      return
+    }
+
+    // Server startup FAILED
   });
 
 
@@ -155,8 +177,7 @@ const startGameServer = (GameServerEmitter) => {
   // emitted when process exits or when /stop is used
   GameServer.on('exit',(code)=>{
     console.log('exit',code)
-    // code == 0, server was shutdown
-    // GameServerEmitter.emit('');
+    // code == 0, server was shutdown, or failed to start
     if(code === 0){
       GameServerEmitter.emit('exit');
     }else if(code === 1){// code == 1, server process crashed

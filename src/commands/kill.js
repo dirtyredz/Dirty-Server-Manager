@@ -5,10 +5,7 @@ import localStorage from '../lib/localStorage'
 import {GameServerOnline} from '../lib/serverOnline'
 
 // Command Name *required
-export const command = "kill"
-
-// Command Version
-export const version = "0.0.1"
+export const command = "kill <pid>"
 
 // Command Alias
 export const alias = ""
@@ -17,11 +14,6 @@ export const alias = ""
 export const description = "kills the server"
 
 // Command Action *required
-export const action = ()=>{
-  if(!GameServerOnline()){
-    console.log('Server is already Offline')
-    return;
-  }
-  const ServerWrapperPid = localStorage.getItem('WrapperPid');
-  process.kill(ServerWrapperPid, 'SIGINT');
+export const action = (pid)=>{
+  process.kill(pid, 'SIGINT');
 }

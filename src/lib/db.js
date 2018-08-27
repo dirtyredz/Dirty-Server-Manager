@@ -20,6 +20,33 @@ const common = {
 }
 export default common
 
+export const pid = {
+  open(){
+    this.db = new Database(path.resolve(globals.InstallationDir()+'/dsm/.storage/pid.sqlite'));
+    this.db.prepare(
+      `CREATE TABLE IF NOT EXISTS 'pid' (
+        'Name'	INTEGER NOT NULL,
+        'PID'	INTEGER NOT NULL UNIQUE,
+        'id'	INTEGER AUTOINCREMENT UNIQUE,
+        PRIMARY KEY('id')
+      );`
+    ).run();
+  },
+  add(name,pid){
+    this.open();
+    this.db.prepare("INSERT INTO pid (name, pid) VALUES (?,?)").run(name,pid);
+    this.close();
+  },
+  remove(pid){
+    this.open();
+    this.db.prepare("DELETE FROM pid WHERE pid=?").run(pid);
+    this.close();
+  },
+  close(){
+    this.db.close()
+  }
+}
+
 export const server = {
   init(db){
     this.db = db

@@ -7,9 +7,6 @@ import * as globals from '../lib/globals'
 // Command Name *required
 export const command = "start-web"
 
-// Command Version
-export const version = "0.0.1"
-
 // Command Alias
 export const alias = ""
 

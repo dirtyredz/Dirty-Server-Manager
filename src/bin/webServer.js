@@ -2,14 +2,9 @@ import express from 'express';
 import localStorage from '../lib/localStorage'
 import path from 'path'
 import * as globals from '../lib/globals'
+import Config from '../lib/MainConfig'
 import http from 'http'
 import socketIO from 'socket.io'
-import ip from 'ip'
-
-
-let WebIp = ip.address()
-if(ip.isPrivate(WebIp))
-  WebIp = 'localhost'
 
 var events = require('events').EventEmitter;
 var WebServerEmitter = new events.EventEmitter();
@@ -34,7 +29,7 @@ io.on('connection', function(socket){
   WebServerEmitter.emit('connection', socket);
 });
 
-httpServer.listen(3000, WebIp, () => console.log('Example app listening on port 3000!'))
+httpServer.listen(Config.WEB_PORT.value, Config.WEB_IP_ADDRESS.value, () => console.log('Example app listening on port 3000!'))
 httpServer.on('close', function(socket){
   console.log('http close')
 });
