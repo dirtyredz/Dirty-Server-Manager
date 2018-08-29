@@ -1,4 +1,3 @@
-// import config from '../../lib/MainConfig'
 import prettyMs from 'pretty-ms'
 let RespondedToStatus = true;
 let FailureTimer = false;

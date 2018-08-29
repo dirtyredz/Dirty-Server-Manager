@@ -1,7 +1,6 @@
 import path from 'path'
 import * as globals from '../lib/globals'
 import fs from 'fs'
-import Config from '../lib/MainConfig'
 
 // Command Name
 export const command = "intergrate <onOff>"

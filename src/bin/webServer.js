@@ -2,13 +2,15 @@ import express from 'express';
 import localStorage from '../lib/localStorage'
 import path from 'path'
 import * as globals from '../lib/globals'
-import Config from '../lib/MainConfig'
 import http from 'http'
 import socketIO from 'socket.io'
 
 var events = require('events').EventEmitter;
 var WebServerEmitter = new events.EventEmitter();
 import webUpdater from './helpers/webUpdater'
+import { DSMConfig } from '../lib/MainConfig';
+
+const config = new DSMConfig()
 webUpdater.RegisterToWebEmitter(WebServerEmitter)
 
 const app = express();
@@ -29,7 +31,7 @@ io.on('connection', function(socket){
   WebServerEmitter.emit('connection', socket);
 });
 
-httpServer.listen(Config.WEB_PORT.value, Config.WEB_IP_ADDRESS.value, () => console.log('Example app listening on port 3000!'))
+httpServer.listen(config.WEB_PORT.value, config.WEB_IP_ADDRESS.value, () => console.log('Example app listening on port 3000!'))
 httpServer.on('close', function(socket){
   console.log('http close')
 });

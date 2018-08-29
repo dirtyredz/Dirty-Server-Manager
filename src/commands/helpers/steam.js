@@ -1,13 +1,13 @@
 import fs from 'fs'
 import wget from 'wget-improved'
 import tar from 'tar'
-import MainConfig from '../../lib/MainConfig'
+import { DSMConfig } from '../../lib/MainConfig'
 import { stdout as log } from 'single-line-log'
 import extract from 'extract-zip'
 import path from 'path'
 import * as globals from '../../lib/globals'
 
-const SteamDir = MainConfig.STEAM_DIR.value
+const SteamDir = new DSMConfig().STEAM_DIR.value
 
 const windows = {
   source: 'https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip',

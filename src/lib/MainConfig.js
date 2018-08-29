@@ -4,10 +4,6 @@ import path from 'path'
 import * as globals from './globals'
 import ip from 'ip'
 
-const rawConfig = fs.readFileSync(path.resolve(globals.InstallationDir() + '/dsm/config.ini'), 'utf-8')
-
-const parsedConfig = ini.parse(rawConfig);
-
 class Option {
   constructor(name,def,description,type,init){
     this.default = def
@@ -46,25 +42,35 @@ class Option {
 
 // create object for each config option to support type checking, defaults, and required options.
 // then use a command to parse it all
-const MainConfig = {
-  STEAM_DIR: new Option(
+class DSMConfig {
+  constructor(){
+    this.raw = fs.readFileSync(path.resolve(globals.InstallationDir() + '/dsm/config.ini'), 'utf-8')
+    this.parsed = ini.parse(this.raw);
+  }
+  get STEAM_DIR(){
+    return new Option(
     "STEAM_DIR",
     "steam",
     'directory relative to dsm installation for steam to be installed',
     'string',
-    parsedConfig['STEAM_DIR']),
-  WEB_PORT: new Option(
+    this.parsed['STEAM_DIR'])
+  }
+  get WEB_PORT(){
+    return new Option(
     "WEB_PORT",
     8080,
     'Port assigned to the Wen Interface',
     'number',
-    parsedConfig['WEB_PORT']),
-  WEB_IP_ADDRESS: new Option(
+    this.parsed['WEB_PORT'])
+  }
+  get WEB_IP_ADDRESS(){
+    return new Option(
     "WEB_IP_ADDRESS",
     ip.isPrivate(ip.address()) ? 'localhost' : ip.address(),
     'IP address to assign to the web server. defaults to localhost(home pcs) or default outward facing ip (servers)',
     'string',
-    parsedConfig['WEB_IP_ADDRESS']),
+    this.parsed['WEB_IP_ADDRESS'])
+  }
 }
 
 class ServerConfig {
@@ -136,5 +142,4 @@ class ServerConfig {
   }
 }
 // const Write
-export default MainConfig
-export { rawConfig, parsedConfig, ServerConfig }
+export { DSMConfig, ServerConfig }

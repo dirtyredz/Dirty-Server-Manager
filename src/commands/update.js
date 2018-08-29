@@ -1,4 +1,3 @@
-import MainConfig from '../lib/MainConfig'
 import child_process, { exec } from 'child_process';
 import path from 'path'
 import * as globals from '../lib/globals'

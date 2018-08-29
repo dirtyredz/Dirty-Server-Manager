@@ -1,4 +1,3 @@
-import config from '../../lib/MainConfig'
 import net from 'net'
 import os from 'os'
 import path from 'path'

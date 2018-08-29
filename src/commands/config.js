@@ -1,4 +1,4 @@
-import Config from '../lib/MainConfig'
+import { ServerConfig, DSMConfig } from '../lib/MainConfig'
 import colors from 'colors'
 
 // Command Name *required
@@ -10,18 +10,25 @@ export const alias = ""
 // Command Options
 export const options = [
   {flag:'-s, --set <value>', description:'Sets the config option'},
-  {flag:'-c, --config <name>', description:'gets the specified configs value'},
+  {flag:'-c, --config <name>', description:'gets the specified configs value'}
 ]
 
 // Command Description *required
 export const description = "displays or sets config values"
 
 // Command Action *required
-export const action = (options)=>{
+export const action = (options, galaxy)=>{
   if(options.set && !options.config){
     console.log('usage: dsm config -c MOTD -s "My new motd text"')
     return
   }
+  let ConfigToShow
+  if(galaxy){
+    ConfigToShow = new ServerConfig(galaxy.name)
+  }else{
+    ConfigToShow = new DSMConfig() 
+  }
+  
   console.log(colors.blue('------ Config ------'))
   const ConfigNames = Object.keys(Config)
   if(options.config){

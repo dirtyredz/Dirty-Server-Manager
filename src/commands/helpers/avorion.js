@@ -1,4 +1,4 @@
-import MainConfig from '../../lib/MainConfig'
+import { DSMConfig } from '../../lib/MainConfig'
 import path from 'path'
 import * as globals from '../../lib/globals'
 import readline from 'readline'
@@ -7,13 +7,15 @@ const cliSpinners = require('cli-spinners');
 import colors from 'colors'
 
 import { createMultiline } from './createSingleLineLogger';
+
+const config = new DSMConfig()
 const windows = {
-  exec: path.resolve(globals.InstallationDir()+'/'+MainConfig.STEAM_DIR.value+'/steamcmd.exe'),
+  exec: path.resolve(globals.InstallationDir()+'/'+config.STEAM_DIR.value+'/steamcmd.exe'),
   args: []
 }
 
 const linux = {
-  exec: path.resolve(globals.InstallationDir()+'/'+MainConfig.STEAM_DIR.value+'/steamcmd.sh'),
+  exec: path.resolve(globals.InstallationDir()+'/'+config.STEAM_DIR.value+'/steamcmd.sh'),
   args: []
 }
 
@@ -23,7 +25,7 @@ const steamCmd = (onFinish) => {
   var isWin = process.platform === "win32";
 
   const avorionPath = path.resolve(globals.InstallationDir()+'/dsm/avorion')
-  const Beta = MainConfig.BETA.value ? ' -beta beta' : ''
+  const Beta = config.BETA.value ? ' -beta beta' : ''
   let steamArgs = ['+login anonymous', `+force_install_dir ${avorionPath}`, `+app_update 565060${Beta}` , 'validate', '+quit']
   // Continue using config option for steam directory?
   const steamCmd = child_process.spawn(isWin ? windows.exec : linux.exec,steamArgs)
