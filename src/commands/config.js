@@ -22,38 +22,38 @@ export const action = (options, galaxy)=>{
     console.log('usage: dsm config -c MOTD -s "My new motd text"')
     return
   }
-  let ConfigToShow
+  let ConfigToShow;
   if(galaxy){
     ConfigToShow = new ServerConfig(galaxy.name)
+    console.log(colors.blue('------ '+galaxy.name+' Config ------'))
   }else{
-    ConfigToShow = new DSMConfig() 
+    ConfigToShow = new DSMConfig()
+    console.log(colors.blue('------ DSM Config ------'))
   }
-  
-  console.log(colors.blue('------ Config ------'))
-  const ConfigNames = Object.keys(Config)
   if(options.config){
-    if(ConfigNames.indexOf(options.config) > -1){
+    if(ConfigToShow.options.indexOf(options.config) > -1){
       if(options.set){
-        Config[options.config].value = options.set
+        ConfigToShow[options.config].value = options.set
         console.log('Set config option '+colors.green(options.config)+' to:')
-        console.log('   '+ options.set)
+        console.log('   '+ ConfigToShow[options.config].value)
+        ConfigToShow.save()
       }else{
-        DisplayConfig(options.config)
+        DisplayConfig(ConfigToShow[options.config])
       }
     }else{
       console.log(colors.red('No Config option: ')+options.config)
     }
     return
   }
-  ConfigNames.map(opt=>{
-    DisplayConfig(opt)
+  ConfigToShow.options.map(opt=>{
+    DisplayConfig(ConfigToShow[opt])
   })
 }
 
-const DisplayConfig = (opt) => {
-  console.log(colors.green(opt+' - '))
-  console.log('    '+Config[opt].description)
-  console.log('    Type: '+Config[opt].type)
-  console.log('    Default: '+Config[opt].default)
-  console.log('    Current: '+Config[opt].value)
+const DisplayConfig = (Config) => {
+  console.log(colors.green(Config.name+' - '))
+  console.log('    '+Config.description)
+  console.log('    Type: '+Config.type)
+  console.log('    Default: '+Config.default)
+  console.log('    Current: '+Config.value)
 }

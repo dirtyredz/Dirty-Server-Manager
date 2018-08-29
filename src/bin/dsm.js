@@ -39,31 +39,33 @@ Commands.map((cmd, index) => {
             parent = options.parent
             newOptions = {...options,env}
           }
-
-          if(cmd.galaxyRequired){
-            getGalaxy(parent.galaxy,(err,galaxy)=>{
-              if(err){
-                if(err.code == 1){
-                  if(typeof parent.galaxy == 'undefined'){
+          getGalaxy(parent.galaxy,(err,galaxy)=>{
+            if(err){
+              if(err.code == 1){
+                if(typeof parent.galaxy == 'undefined'){
+                  if(cmd.galaxyRequired)
                     console.log('Unable to identify the galaxy for this command. please use "-g name"')
-                  }else{
-                    console.log(colors.red('Galaxy:'),parent.galaxy,colors.red('does not exsist!'))
-                  }
-                }else if(err.code == 2){
-                  console.log('Select one of these galaxies:')
-                  getGalaxies().map(galaxy=>console.log('   ',galaxy.name))
-                }else if(err.code == 3){
-                  console.log('No galaxies are available,\nPlease use "'+colors.blue('dsm create <name>')+'" to create your first galaxy.')
                 }else{
-                  console.log(err.message)
+                  console.log(colors.red('Galaxy:'),parent.galaxy,colors.red('does not exsist!'))
                 }
+              }else if(err.code == 2){
+                console.log('Select one of these galaxies:')
+                getGalaxies().map(galaxy=>console.log('   ',galaxy.name))
+              }else if(err.code == 3){
+                console.log('No galaxies are available,\nPlease use "'+colors.blue('dsm create <name>')+'" to create your first galaxy.')
+              }else{
+                console.log(err.message)
+              }
+              if(cmd.galaxyRequired){
                 process.exit(1)
               }
+            }
+            if(typeof parent.galaxy !== 'undefined'){
               cmd.action(newOptions,galaxy,parent)
-            })
-          }else{
-            cmd.action(newOptions,null,parent)
-          }
+            }else{
+              cmd.action(newOptions,null,parent)
+            }
+          })
         })
   }else{
     console.error('%s',colors.red('Unable to process command: ' + Commands[index]))
