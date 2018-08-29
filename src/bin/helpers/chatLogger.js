@@ -1,16 +1,16 @@
-import {Chat} from '../../lib/logger'
+import Logger, { Chat } from '../../lib/logger'
 
 export const name = 'Chat Logger'
 
-export const RegisterToWrapperEmitter = (GameServerEmitter) => {
+export const RegisterToWrapperEmitter = (GameServerEmitter,Config,DB,GalaxyName) => {
 
+  let ChatLog;
   GameServerEmitter.on('chat',(name,message)=>{
     const date = new Date()
-    Chat.log(`${date.toUTCString()} | <${name}> ${message}`)
+    ChatLog.log(`${date.toUTCString()} | <${name}> ${message}`)
   })
 
   GameServerEmitter.on('spawned',()=>{
-    Chat.init()
-    Chat.clear()
+    ChatLog = new Logger(GalaxyName,'chat')
   })
 }

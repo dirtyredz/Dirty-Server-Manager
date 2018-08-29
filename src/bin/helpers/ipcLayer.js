@@ -6,10 +6,10 @@ import { Server } from 'https';
 
 export const name = 'IPC Layer'
 
-export const RegisterToWrapperEmitter = (GameServerEmitter) => {
+export const RegisterToWrapperEmitter = (GameServerEmitter,Config,DB,GalaxyName) => {
   let server;
 
-  GameServerEmitter.once('spawned', function(GameServer){
+  GameServerEmitter.on('spawned', function(GameServer){
     console.log('DSM: IPC Initializing...\n');
     // Socket layer to listen for incoming mesages.
     server = net.createServer((ClientSock) => {
@@ -73,7 +73,7 @@ export const RegisterToWrapperEmitter = (GameServerEmitter) => {
     //   socket.end()
     // });
 
-    server.listen(globals.cleanPipeName(path.resolve(os.tmpdir()+'/dsm.sock')), () => {
+    server.listen(globals.cleanPipeName(path.resolve(os.tmpdir()+'/dsm_'+GalaxyName+'.sock')), () => {
       console.log('DSM: IPC Initialized.\n');
     });
   });

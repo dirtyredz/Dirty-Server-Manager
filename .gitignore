@@ -3,7 +3,7 @@
 
 # Installation directories
 /steam
-/avorion
+avorion/
 
 # Files created by the server
 dsm/.storage/*
@@ -13,3 +13,5 @@ dsm/logs/*
 !.gitkeep
 
 dsm.sqlite
+/dsm/galaxies/*
+!/dsm/galaxies/.gitkeep

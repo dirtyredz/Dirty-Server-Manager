@@ -22,7 +22,7 @@ let multiLog;
 const steamCmd = (onFinish) => {
   var isWin = process.platform === "win32";
 
-  const avorionPath = path.resolve(globals.InstallationDir()+'/avorion')
+  const avorionPath = path.resolve(globals.InstallationDir()+'/dsm/avorion')
   const Beta = MainConfig.BETA.value ? ' -beta beta' : ''
   let steamArgs = ['+login anonymous', `+force_install_dir ${avorionPath}`, `+app_update 565060${Beta}` , 'validate', '+quit']
   // Continue using config option for steam directory?

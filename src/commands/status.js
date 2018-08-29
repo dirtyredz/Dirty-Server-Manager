@@ -1,41 +1,33 @@
 import {send} from './send'
-import {GameServerOnline} from '../lib/serverOnline'
-import { stdout as log } from 'single-line-log'
-import colors from 'colors'
-const cliSpinners = require('cli-spinners');
+import {isWrapperOnline} from '../lib/galaxies'
+import Spinner from './helpers/spinner'
 // Command Name *required
 export const command = "status"
 
 // Command Alias
 export const alias = ""
 
+// Command Galaxy Required
+export const galaxyRequired = true
+
 // Command Description *required
 export const description = "gets status from server"
 
 // Command Action *required
-export const action = ()=>{
-  if(!GameServerOnline()){
+export const action = (options,galaxy)=>{
+  if(!isWrapperOnline(galaxy.name)){
     console.log('Server is Offline')
     return;
   }
-  let interval, index = 0;
-  send('/status',
+  const spinner = new Spinner('Checking Status')
+  send(galaxy.name,'/status',
     (sock)=>{
-      // log(colors.green('---Checking Status---'))
-      interval = setInterval(()=>{
-        log(colors.blue('---------- '+cliSpinners.dots.frames[index]+' Checking Status ----------'))
-        if(cliSpinners.dots.frames.length-1 > index)
-        index += 1
-        else
-          index = 0
-      },80)
+      spinner.log('Status Command Sent')
     },
     (data,sock)=>{
       setTimeout(()=>{ //we want the user to enjoy our pretty spinner
-        clearInterval(interval)
-        log(colors.blue('---------- ✔️ Received Status ----------'))
-        log.clear()
-        console.log('\n'+data.toString())
+        spinner.stop('✔️ Received Status')
+        console.log(data.toString())
         sock.destroy()
       },1000)
     }

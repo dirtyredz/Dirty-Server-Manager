@@ -1,7 +1,7 @@
 import {Command} from 'Commander'
 import colors from 'colors'
 import * as commands from '../commands/'
-
+import { getGalaxies, getGalaxy } from '../lib/galaxies'
 // Remove for production
 process.on('warning', e => console.warn(e.stack));
 
@@ -28,7 +28,43 @@ Commands.map((cmd, index) => {
         .alias(cmd.alias ? cmd.alias : "")
         .recursiveOptions(cmd.options || [])
         .description(cmd.description)
-        .action(cmd.action)
+        .action((env,options)=>{
+          // env and options switches depending on whats in the command, which is kinda silly
+          let parent = {}
+          let newOptions = null
+          if(typeof env == "object" && env.parent){
+            parent = env.parent
+            newOptions = env
+          }else if(typeof options == 'object' && options.parent){
+            parent = options.parent
+            newOptions = {...options,env}
+          }
+
+          if(cmd.galaxyRequired){
+            getGalaxy(parent.galaxy,(err,galaxy)=>{
+              if(err){
+                if(err.code == 1){
+                  if(typeof parent.galaxy == 'undefined'){
+                    console.log('Unable to identify the galaxy for this command. please use "-g name"')
+                  }else{
+                    console.log(colors.red('Galaxy:'),parent.galaxy,colors.red('does not exsist!'))
+                  }
+                }else if(err.code == 2){
+                  console.log('Select one of these galaxies:')
+                  getGalaxies().map(galaxy=>console.log('   ',galaxy.name))
+                }else if(err.code == 3){
+                  console.log('No galaxies are available,\nPlease use "'+colors.blue('dsm create <name>')+'" to create your first galaxy.')
+                }else{
+                  console.log(err.message)
+                }
+                process.exit(1)
+              }
+              cmd.action(newOptions,galaxy,parent)
+            })
+          }else{
+            cmd.action(newOptions,null,parent)
+          }
+        })
   }else{
     console.error('%s',colors.red('Unable to process command: ' + Commands[index]))
   }
@@ -49,5 +85,5 @@ if (typeof process.argv[2] === 'undefined') {
 Commander
   .version('0.1.0')
   .usage('[options] <cmd ...>')
-  .option('-f, --foo', 'enable some foo')
+  .option('-g, --galaxy <galaxy name>', 'Run commands against a specific galaxy')
   .parse(process.argv);

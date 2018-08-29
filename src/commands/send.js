@@ -39,8 +39,8 @@ export const action = (message)=>{
   )
 }
 
-export const send = (message,write,response,error) => {
-  var sock = net.connect(globals.cleanPipeName(path.resolve(os.tmpdir()+'/dsm.sock')),()=>{
+export const send = (GalaxyName,message,write,response,error) => {
+  var sock = net.connect(globals.cleanPipeName(path.resolve(os.tmpdir()+'/dsm_'+GalaxyName+'.sock')),()=>{
     sock.write(`${message}`,'utf8',()=>{
       write(sock)
     })

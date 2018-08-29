@@ -1,6 +1,6 @@
 import child_process from 'child_process';
 import path from 'path'
-import {Web} from '../lib/logger'
+import Logger from '../lib/logger'
 import localStorage from '../lib/localStorage'
 import {WebServerOnline} from '../lib/serverOnline'
 import * as globals from '../lib/globals'
@@ -22,8 +22,7 @@ export const action = ()=>{
 
   console.group('Starting Web Server')
   var childFilePath = path.resolve(globals.InstallationDir()+'/dsm/webServer.js');
-  Web.init()
-  Web.clear()
+  const Web = new Logger('../logs','web')
   localStorage.removeItem('WebServerPid')
 
   var options = {

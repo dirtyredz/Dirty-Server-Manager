@@ -4,6 +4,7 @@ import * as globals from '../lib/globals'
 import os from 'os'
 import path from 'path'
 import {GameServerOnline} from '../lib/serverOnline'
+import { isWrapperOnline } from '../lib/galaxies';
 
 // Command Name *required
 export const command = "attach"
@@ -11,16 +12,19 @@ export const command = "attach"
 // Command Alias
 export const alias = ""
 
+// Command Galaxy Required
+export const galaxyRequired = true
+
 // Command Description *required
 export const description = "attaches to server terminal (kinda)"
 
 // Command Action *required
-export const action = (message)=>{
-  if(!GameServerOnline()){
+export const action = (options,galaxy)=>{
+  if(!isWrapperOnline(galaxy.name)){
     console.log('Server is Offline')
     return;
   }
-  var sock = net.connect(globals.cleanPipeName(path.resolve(os.tmpdir()+'/dsm.sock')))
+  var sock = net.connect(globals.cleanPipeName(path.resolve(os.tmpdir()+'/dsm_'+galaxy.name+'.sock')))
   sock.write("ATTACH",'utf8',()=>{
     console.log('ATTACHING...')
   })

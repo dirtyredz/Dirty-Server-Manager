@@ -1,7 +1,5 @@
 import * as globals from '../../lib/globals'
-import Config from '../../lib/MainConfig'
 import path from 'path'
-import localStorage from '../../lib/localStorage'
 
 // npm install --global --production windows-build-tools
 var pty = require('node-pty');// dont use import, webpack is set to not touch node-pty as it will mess with it.
@@ -78,29 +76,17 @@ var pty = require('node-pty');// dont use import, webpack is set to not touch no
 //   --send-crash-reports arg       when enabled, the server will send anonymous
 //                                  system specs and a crash report when it
 //                                  crashes.
-const startGameServer = (GameServerEmitter) => {
-  let startupParams = Config.STARTUP_PARAMS.value
-  // if(Config.GAME_IP_ADDRESS.value !== '')
-  //   startupParams += ' --ip '+Config.GAME_IP_ADDRESS.value
-  if(Config.GALAXY_NAME.value !== '')
-    startupParams += ' --galaxy-name '+Config.GALAXY_NAME.value
-  if(Config.GALAXY_SAVE_DIRECTORY.value !== '')
-    startupParams += ' --datapath '+Config.GALAXY_SAVE_DIRECTORY.value
+const startGameServer = (GameServerEmitter, startupParams, supressLogs = false) => {
+  // Console(stdout[, stderr][, ignoreErrors])
 
-  const GameServer = pty.spawn(path.resolve(globals.InstallationDir()+'/avorion/bin/AvorionServer.exe')
-  ,startupParams.split(" ")
-  ,{cwd: path.resolve(globals.InstallationDir()+'/avorion')})
-
-  console.log('Started server with these params:',Config.STARTUP_PARAMS.value)
+  const GameServer = pty.spawn(path.resolve(globals.InstallationDir()+'/dsm/avorion/bin/AvorionServer.exe')
+    ,startupParams.split(" ")
+    ,{cwd: path.resolve(globals.InstallationDir()+'/dsm/avorion')})
+  if(!supressLogs)
+    console.log('Started server with these params:',startupParams)
   // if stdout-to-log option is used, dsm cant detect data using GameServer
   // need fall back for tracking logfile output
   GameServerEmitter.emit('spawned', GameServer);
-
-  localStorage.setItem('GameServerPid',GameServer.pid)
-
-  GameServer.on('error',(err)=>{
-    console.log(err)
-  })
 
   // Main STDOUT
   GameServer.on('data', function(data) {
@@ -109,7 +95,8 @@ const startGameServer = (GameServerEmitter) => {
 
     // Remove unwanted char and log
     const cleanedData = data.replace(/(\u001b|\[0K|\[\?25l|\[\?25h|\[\?)/gm,"")
-    console.log(cleanedData)//\u001b[0K\u001b[?25l
+    if(!supressLogs)
+      console.log(cleanedData)//\u001b[0K\u001b[?25l
 
     GameServerEmitter.emit('data', data);
 
@@ -171,12 +158,14 @@ const startGameServer = (GameServerEmitter) => {
 
 
   GameServer.on('error',(error)=>{
-    console.log('Server Error:',error)
+    if(!supressLogs)
+      console.log('Server Error:',error)
   })
 
   // emitted when process exits or when /stop is used
   GameServer.on('exit',(code)=>{
-    console.log('exit',code)
+    if(!supressLogs)
+      console.log('exit',code)
     // code == 0, server was shutdown, or failed to start
     if(code === 0){
       GameServerEmitter.emit('exit');

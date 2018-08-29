@@ -11,6 +11,7 @@ import * as intergrate from './intergrate.js'
 import * as update from './update.js'
 import * as pid from './pid.js'
 import * as config from './config.js'
+import * as create from './create.js'
 
 export {
   start,
@@ -26,4 +27,5 @@ export {
   update,
   pid,
   config,
+  create,
 };

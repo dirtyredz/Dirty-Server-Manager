@@ -9,13 +9,13 @@ const rawConfig = fs.readFileSync(path.resolve(globals.InstallationDir() + '/dsm
 const parsedConfig = ini.parse(rawConfig);
 
 class Option {
-  constructor(name,def,description,type){
+  constructor(name,def,description,type,init){
     this.default = def
     this.description = description
     this.type = type
     this.name = name
     this.parse(def)
-    this.parse(parsedConfig[name])
+    this.parse(init)
   }
   get value(){
     return this._value
@@ -46,73 +46,95 @@ class Option {
 
 // create object for each config option to support type checking, defaults, and required options.
 // then use a command to parse it all
-const Config = {
-  MOTD: new Option(
-    "MOTD",
-    "Welcome to the server, Enjoy!!",
-    'Message to be displayed on user login',
-    'string'),
+const MainConfig = {
   STEAM_DIR: new Option(
     "STEAM_DIR",
     "steam",
     'directory relative to dsm installation for steam to be installed',
-    'string'),
-  STATUS_INTERVAL_MS: new Option(
+    'string',
+    parsedConfig['STEAM_DIR']),
+  WEB_PORT: new Option(
+    "WEB_PORT",
+    8080,
+    'Port assigned to the Wen Interface',
+    'number',
+    parsedConfig['WEB_PORT']),
+  WEB_IP_ADDRESS: new Option(
+    "WEB_IP_ADDRESS",
+    ip.isPrivate(ip.address()) ? 'localhost' : ip.address(),
+    'IP address to assign to the web server. defaults to localhost(home pcs) or default outward facing ip (servers)',
+    'string',
+    parsedConfig['WEB_IP_ADDRESS']),
+}
+
+class ServerConfig {
+  parsed = []
+  constructor(galaxyName){
+    this.galaxyName = galaxyName
+    this.raw = fs.readFileSync(path.resolve(globals.InstallationDir() + '/dsm/galaxies/'+galaxyName+'/config.ini'), 'utf-8')
+    this.parsed = ini.parse(this.raw);
+  }
+  get MOTD(){
+    return new Option(
+    "MOTD",
+    "Welcome to the server, Enjoy!!",
+    'Message to be displayed on user login',
+    'string',
+    this.parsed['MOTD'])
+  }
+  get STATUS_INTERVAL_MS(){
+    return new Option(
     "STATUS_INTERVAL_MS",
     (1000 * 60 * 5),
     'interval in MS to run the status check',
-    'number'),
-  BETA: new Option(
+    'number',
+    this.parsed['STATUS_INTERVAL_MS'])
+  }
+  get BETA(){
+    return new Option(
     "BETA",
     'false',
     'enable or disable BETA features',
-    'boolean'),
-  GALAXY_NAME: new Option(
-    "GALAXY_NAME",
-    'MyGalaxy',
-    'Name of the galaxy',
-    'string'),
-  GALAXY_SAVE_DIRECTORY: new Option(
-    "GALAXY_SAVE_DIRECTORY",
-    '',
-    'folder the galaxies will be stored in, will be prepended to galaxy name. defaults to user directory ~/.avorion/galaxies for linux and %appdata%/Avorion/galaxies for windows',
-    'string'),
-  STARTUP_PARAMS: new Option(
+    'boolean',
+    this.parsed['BETA'])
+  }
+  get STARTUP_PARAMS(){
+    return new Option(
     "STARTUP_PARAMS",
     '--public true --listed true --same-start-sector false',
     'Parameters to be applied to server when starting. see "dsm info" for more info',
-    'string'),
+    'string',
+    this.parsed['STARTUP_PARAMS'])
+  }
   // SERVER_PORT: new Option(
   //   "SERVER_PORT",
   //   27000,
   //   'Port assigned to the game server',
   //   'number'),
-  AUTO_RESTART: new Option(
+  get AUTO_RESTART(){
+    return new Option(
     "AUTO_RESTART",
     'true',
     'if true will automatically restart the server when a crash is detected',
-    'boolean'),
-  WEB_PORT: new Option(
-    "WEB_PORT",
-    8080,
-    'Port assigned to the Wen Interface',
-    'number'),
-  // GAME_IP_ADDRESS: new Option(
-  //   "GAME_IP_ADDRESS",
-  //   '',
-  //   'IP address to assign to the game server. defaults to localhost(home pcs) or default outward facing ip (servers)',
-  //   'string'),
-  WEB_IP_ADDRESS: new Option(
-    "WEB_IP_ADDRESS",
+    'boolean',
+    this.parsed['AUTO_RESTART'])
+  }
+  get IP_ADDRESS(){
+    return new Option(
+    "IP_ADDRESS",
     ip.isPrivate(ip.address()) ? 'localhost' : ip.address(),
-    'IP address to assign to the web server. defaults to localhost(home pcs) or default outward facing ip (servers)',
-    'string'),
-  TIME_TO_STATUS_FAILURE: new Option(
+    'IP address to assign to the game server. defaults to localhost(home pcs) or default outward facing ip (servers)',
+    'string')
+  }
+  get TIME_TO_STATUS_FAILURE(){
+    return new Option(
     "TIME_TO_STATUS_FAILURE",
     30000,
     'Time in MS to allow the server to go without responding to a status command. After this time period DSM will assume the server is unresponsive and force a restart.',
-    'number'),
+    'number',
+    this.parsed['TIME_TO_STATUS_FAILURE'])
+  }
 }
 // const Write
-export default Config
-export { rawConfig, parsedConfig }
+export default MainConfig
+export { rawConfig, parsedConfig, ServerConfig }
