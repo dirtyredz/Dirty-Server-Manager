@@ -25,7 +25,7 @@ export const action = (options, galaxy)=>{
   let ConfigToShow;
   if(galaxy){
     ConfigToShow = new ServerConfig(galaxy.name)
-    console.log(colors.blue('------ '+galaxy.name+' Config ------'))
+    console.log(colors.blue('------ ' + galaxy.name + ' Config ------'))
   }else{
     ConfigToShow = new DSMConfig()
     console.log(colors.blue('------ DSM Config ------'))
