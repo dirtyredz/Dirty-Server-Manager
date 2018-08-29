@@ -128,6 +128,8 @@ export const getOpenPort = () => {
 export const isAddressInUse = (ip) => {
   return typeof getGalaxies().find(galaxy=>{
     const DB = new db(galaxy.name)
-    return DB.ip == ip
+    const IP = DB.ip
+    DB.close()
+    return IP == ip
   }) != 'undefined'
 }
