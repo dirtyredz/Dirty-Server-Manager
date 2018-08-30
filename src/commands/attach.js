@@ -3,7 +3,6 @@ import readline from 'readline'
 import * as globals from '../lib/globals'
 import os from 'os'
 import path from 'path'
-import {GameServerOnline} from '../lib/serverOnline'
 import { isWrapperOnline } from '../lib/galaxies';
 
 // Command Name *required

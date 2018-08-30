@@ -31,21 +31,6 @@ export const action = (options,Galaxy)=>{
   // console.log('DSM Wrapper:',WrapperPid && colors.green(WrapperPid))
   // console.log('Game Server:',GameServerPid && colors.green(GameServerPid))
   // console.log('Web Server:',WebServerPid && colors.green(WebServerPid))
-  var netstat = require('node-netstat');
- console.log('test')
-
-  netstat({
-    filter: {
-      local: {
-        address: null,
-      },
-    },
-    sync: true
-  }, function (data) {
-    if(data.local.port.toString().match(/^27/))
-    console.log(data)
-  });
-  console.log('test2')
 
   if(options && options.search){
     let index = 0;

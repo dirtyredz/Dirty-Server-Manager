@@ -8,7 +8,6 @@ import path from 'path'
 import * as globals from '../../lib/globals'
 
 const SteamDir = new DSMConfig().STEAM_DIR.value
-
 const windows = {
   source: 'https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip',
   output: path.resolve(globals.InstallationDir()+'/'+ SteamDir+'/steamcmd.zip'),

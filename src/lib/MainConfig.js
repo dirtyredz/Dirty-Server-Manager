@@ -65,6 +65,12 @@ class DSMConfig {
       'IP address to assign to the web server. defaults to localhost(home pcs) or default outward facing ip (servers)',
       'string',
       this._parsed['WEB_IP_ADDRESS'])
+    this.BETA = new Option(
+      "BETA",
+      'false',
+      'enable or disable BETA features',
+      'boolean',
+      this._parsed['BETA'])
   }
   get options(){
     const PublicProperties = Object.getOwnPropertyNames(this).filter(property=>property.match(/^(?!_.*).*/))
@@ -94,16 +100,16 @@ class ServerConfig {
       'Message to be displayed on user login',
       'string',
       this._parsed['MOTD'])
-      this.STATUS_INTERVAL_MS = new Option(
-        "STATUS_INTERVAL_MS",
-        (1000 * 60 * 5),
-        'interval in MS to run the status check',
-        'number',
-        this._parsed['STATUS_INTERVAL_MS'])
-        this.BETA = new Option(
-          "BETA",
-          'false',
-          'enable or disable BETA features',
+    this.STATUS_INTERVAL_MS = new Option(
+      "STATUS_INTERVAL_MS",
+      (1000 * 60 * 5),
+      'interval in MS to run the status check',
+      'number',
+      this._parsed['STATUS_INTERVAL_MS'])
+    this.BETA = new Option(
+      "BETA",
+      'false',
+      'enable or disable BETA features',
       'boolean',
       this._parsed['BETA'])
     this.STARTUP_PARAMS = new Option(
@@ -118,16 +124,16 @@ class ServerConfig {
       'if true will automatically restart the server when a crash is detected',
       'boolean',
       this._parsed['AUTO_RESTART'])
-      this.IP_ADDRESS = new Option(
-        "IP_ADDRESS",
+    this.IP_ADDRESS = new Option(
+      "IP_ADDRESS",
       ip.isPrivate(ip.address()) ? 'localhost' : ip.address(),
       'IP address to assign to the game server. defaults to localhost(home pcs) or default outward facing ip (servers)',
       'string')
-      this.TIME_TO_STATUS_FAILURE = new Option(
-        "TIME_TO_STATUS_FAILURE",
-        30000,
-        'Time in MS to allow the server to go without responding to a status command. After this time period DSM will assume the server is unresponsive and force a restart.',
-        'number',
+    this.TIME_TO_STATUS_FAILURE = new Option(
+      "TIME_TO_STATUS_FAILURE",
+      30000,
+      'Time in MS to allow the server to go without responding to a status command. After this time period DSM will assume the server is unresponsive and force a restart.',
+      'number',
       this._parsed['TIME_TO_STATUS_FAILURE'])
   }
   get options(){

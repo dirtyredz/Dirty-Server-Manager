@@ -14,8 +14,6 @@ const exitHandler = (message) => {
   if(message)
     console.log(message)
   console.log('DSM: Closing wrapper GoodBye!')
-  // localStorage.removeItem('WrapperPid')
-  // localStorage.removeItem('GameServerPid')
   DB.close()
   process.exit(0)
 }

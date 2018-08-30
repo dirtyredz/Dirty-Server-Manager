@@ -29,7 +29,6 @@ export const action = (options,galaxy)=>{
   const spinner = new Spinner('Starting Server')
 
   const Log = new Logger(galaxy.name,'avorion')
-  // localStorage.removeItem('WrapperPid')
   // intergrate('on') // enable intergration on wrapper startup
 
   var childFilePath = path.resolve(globals.InstallationDir()+'/dsm/serverWrapper.js');
