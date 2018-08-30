@@ -1,4 +1,4 @@
-import {Command} from 'Commander'
+import {Command} from 'commander'
 import colors from 'colors'
 import * as commands from '../commands/'
 import { getGalaxies, getGalaxy } from '../lib/galaxies'

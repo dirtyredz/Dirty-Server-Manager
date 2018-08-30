@@ -71,10 +71,11 @@
     "wrapper-webpack-plugin": "^2.0.0"
   },
   "scripts": {
-    "start": "webpack --config webpack.dev.js --progress --env.development",
+    "start": "npm install -g ./ && webpack --config webpack.dev.js --progress --env.development",
     "react": "webpack-dev-server --config webpack.react.js --hot",
     "move:config": "npx copyfiles --flat src/config.ini dsm",
-    "move:dsm": "npx copyfiles --flat src/dsm.lua dsm"
+    "move:dsm": "npx copyfiles --flat src/dsm.lua dsm",
+    "install": "npm install node-pty && npm install better-sqlite3"
   },
   "postcss": {
     "map": false,
