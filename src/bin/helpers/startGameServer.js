@@ -76,6 +76,15 @@ var pty = require('node-pty');// dont use import, webpack is set to not touch no
 //   --send-crash-reports arg       when enabled, the server will send anonymous
 //                                  system specs and a crash report when it
 //                                  crashes.
+
+const windows = {
+  exec: path.resolve(globals.InstallationDir()+'/dsm/avorion/bin/AvorionServer.exe')
+}
+
+const linux = {
+  exec: path.resolve(globals.InstallationDir()+'/dsm/avorion/bin/AvorionServer')
+}
+
 const startGameServer = (GameServerEmitter, startupParams, supressLogs = false) => {
   // Console(stdout[, stderr][, ignoreErrors])
 
@@ -84,7 +93,7 @@ const startGameServer = (GameServerEmitter, startupParams, supressLogs = false) 
   // execvp(3) failed.: No such file or directory
 
   // NEED TO SWITCH .EXE for windows and nothing for linux
-  const GameServer = pty.spawn(path.resolve(globals.InstallationDir()+'/dsm/avorion/bin/AvorionServer')
+  const GameServer = pty.spawn(process.platform === "win32" ? windows.exec : linux.exec
     ,startupParams.split(" ")
     ,{cwd: path.resolve(globals.InstallationDir()+'/dsm/avorion')})
   if(!supressLogs)
