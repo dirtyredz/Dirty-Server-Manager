@@ -51,7 +51,6 @@ export const action = (options,galaxy)=>{
     errorIndex += 1
     if(errorIndex >= 25){
       spinner.stop('ERROR')
-      console.log(unrecognisedOption[0])
       clearInterval(int)
     }
     const LogOutput = fs.readFileSync(Log.logFile).toString()

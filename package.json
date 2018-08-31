@@ -74,8 +74,7 @@
     "start": "npm install -g ./ && webpack --config webpack.dev.js --progress --env.development",
     "react": "webpack-dev-server --config webpack.react.js --hot",
     "move:config": "npx copyfiles --flat src/config.ini dsm",
-    "move:dsm": "npx copyfiles --flat src/dsm.lua dsm",
-    "install": "npm install node-pty && npm install better-sqlite3"
+    "move:dsm": "npx copyfiles --flat src/dsm.lua dsm"
   },
   "postcss": {
     "map": false,

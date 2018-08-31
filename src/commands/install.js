@@ -28,3 +28,20 @@ export const action = ()=>{
     console.log(err)
   })
 }
+// [S_API FAIL] SteamAPI_Init() failed; SteamAPI_IsSteamRunning() failed.
+
+// dlopen failed trying to load:
+// steamclient.so
+// with error:
+// steamclient.so: wrong ELF class: ELFCLASS32
+// [S_API FAIL] SteamAPI_Init() failed; unable to locate a running instance of Steam, or a local steamclient.so.
+// SteamGameServer_Init call failed
+
+// Error starting steam-based networking. Falling back to standard TCP/UDP protocols.
+
+// The server will not be authenticated via Steam and won't show up in public server lists.
+
+// WARNING: The fallback TCP/UDP protocols are deprecated and potentially UNSAFE!
+//          If you're running a dedicated server, this is HIGHLY discouraged!
+//          Use steam networking instead; Enable with --use-steam-networking 1
+// Warning: No RCON password set. RCON disabled.

@@ -67,7 +67,27 @@ export const RegisterToWrapperEmitter = (GameServerEmitter,Config,DB,GalaxyName)
     });
     server.on('error', (e) => {
       console.log(e)
+      // NEED TO CHECK IF THE SOCK FILE IS IN USE.
+      // IF IT IS WE HAVE A RUNNAWAY SERVER THAT NEEDS TO BE KILLED
+      // PERHAPS WE SHOULDENT ERASE/RESET PID UNTIL WE KNOW FOR SURE
+      // { Error: listen EADDRINUSE /tmp/dsm_testing.sock
+      //   at Object._errnoException (util.js:992:11)
+      //   at _exceptionWithHostPort (util.js:1014:20)
+      //   at Server.setupListenHandle [as _listen2] (net.js:1338:19)
+      //   at listenInCluster (net.js:1396:12)
+      //   at Server.listen (net.js:1491:5)
+      //   at EventEmitter.eval (webpack:///./src/bin/helpers/ipcLayer.js?:99:12)
+      //   at emitOne (events.js:121:20)
+      //   at EventEmitter.emit (events.js:211:7)
+      //   at startGameServer (webpack:///./src/bin/helpers/startGameServer.js?:101:21)
+      //   at Timeout.setTimeout [as _onTimeout] (webpack:///./src/bin/serverWrapper.js?:97:37)
+      // code: 'EADDRINUSE',
+      // errno: 'EADDRINUSE',
+      // syscall: 'listen',
+      // address: '/tmp/dsm_testing.sock',
+      // port: -1 }
     });
+    
 
     // server.on('connection', (socket) => {
     //   socket.end()

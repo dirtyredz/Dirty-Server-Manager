@@ -79,7 +79,12 @@ var pty = require('node-pty');// dont use import, webpack is set to not touch no
 const startGameServer = (GameServerEmitter, startupParams, supressLogs = false) => {
   // Console(stdout[, stderr][, ignoreErrors])
 
-  const GameServer = pty.spawn(path.resolve(globals.InstallationDir()+'/dsm/avorion/bin/AvorionServer.exe')
+  // ????
+  // execvp(3) failed.: Permission denied
+  // execvp(3) failed.: No such file or directory
+
+  // NEED TO SWITCH .EXE for windows and nothing for linux
+  const GameServer = pty.spawn(path.resolve(globals.InstallationDir()+'/dsm/avorion/bin/AvorionServer')
     ,startupParams.split(" ")
     ,{cwd: path.resolve(globals.InstallationDir()+'/dsm/avorion')})
   if(!supressLogs)
