@@ -1,7 +1,7 @@
 import { InstallationDir } from './globals'
 import { lstatSync, readdirSync, existsSync } from 'fs'
 import { resolve, join } from 'path'
-//import db from './db'
+import db from './db'
 import isRunning from 'is-running'
 import netstat from 'node-netstat'
 
@@ -87,22 +87,22 @@ export const getGalaxy = (name,callback) => {
 export const isWrapperOnline = (GalaxyName) => {
   if(typeof GalaxyName !== 'string')
     throw new Error('Required string Galaxy Name')
-  // const DB = new db(GalaxyName)
-  // const PID = DB.WrapperPid
-  // const Running = PID !== 0 && isRunning(PID)
-  // DB.close()
-  return false//Running
+  const DB = new db(GalaxyName)
+  const PID = DB.WrapperPid
+  const Running = PID !== 0 && isRunning(PID)
+  DB.close()
+  return Running
 }
 
 export const isGameServerOnline = (GalaxyName) => {
   if(typeof GalaxyName !== 'string')
     throw new Error('Required string Galaxy Name')
 
-  // const DB = new db(GalaxyName)
-  // const PID = DB.GameServerPid
-  // const Running = PID !== 0 && isRunning(PID)
-  // DB.close()
-  return false//Running
+  const DB = new db(GalaxyName)
+  const PID = DB.GameServerPid
+  const Running = PID !== 0 && isRunning(PID)
+  DB.close()
+  return Running
 }
 
 export const getOpenPort = () => {
@@ -127,10 +127,10 @@ export const getOpenPort = () => {
 
 export const isAddressInUse = (ip) => {
   return typeof getGalaxies().find(galaxy=>{
-    // const DB = new db(galaxy.name)
-    // const IP = DB.ip
-    // DB.close()
-    // return IP == ip
+    const DB = new db(galaxy.name)
+    const IP = DB.ip
+    DB.close()
+    return IP == ip
     return false
   }) != 'undefined'
 }
