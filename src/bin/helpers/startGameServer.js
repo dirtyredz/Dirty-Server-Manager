@@ -8,14 +8,14 @@ var pty = require('node-pty');// dont use import, webpack is set to not touch no
 
 
 
-const startGameServer = (GameServerEmitter, startupParams, dataPath, supressLogs = false) => {
+const startGameServer = (GameServerEmitter, startupParams, dataPath, AvorionFileToUse, supressLogs = false) => {
 
   const windows = {
-    exec: path.resolve(globals.InstallationDir()+dataPath+'/bin/AvorionServer.exe')
+    exec: path.resolve(globals.InstallationDir()+dataPath+'/bin/'+AvorionFileToUse+'.exe')
   }
   
   const linux = {
-    exec: path.resolve(globals.InstallationDir()+dataPath+'/bin/AvorionServer')
+    exec: path.resolve(globals.InstallationDir()+dataPath+'/bin/'+AvorionFileToUse)
   }
   // ????
   // execvp(3) failed.: Permission denied

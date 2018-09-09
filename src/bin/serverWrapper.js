@@ -1,6 +1,6 @@
 // We then pipe the main process stdin (which is a readable stream)
 // into the child process stdin (which is a writable stream).
-import {resolve} from 'path'
+import {resolve, unlinkSync, copyFileSync} from 'path'
 import * as globals from '../lib/globals'
 var events = require('events').EventEmitter;
 var GameServerEmitter = new events.EventEmitter();
@@ -9,6 +9,7 @@ import * as eventHandler from './helpers/eventHandlers'
 import { ServerConfig } from '../lib/MainConfig';
 import { getOpenPort, isAddressInUse } from '../lib/galaxies';
 import db from '../lib/db'
+import fs from 'fs'
 
 const exitHandler = (message) => {
   if(message)
@@ -45,6 +46,23 @@ GameServerEmitter.on('spawned',(GameServer)=>{
   DB.GameServerPid = GameServer.pid
 })
 
+const windows = {
+  src: resolve(globals.InstallationDir()+Config.AVORION_DATAPATH.value+'/bin/AvorionServer.exe'),
+  exec: resolve(globals.InstallationDir()+Config.AVORION_DATAPATH.value+'/bin/'+process.argv[2]+'.exe')
+}
+const linux = {
+  src: resolve(globals.InstallationDir()+Config.AVORION_DATAPATH.value+'/bin/AvorionServer'),
+  exec: resolve(globals.InstallationDir()+Config.AVORION_DATAPATH.value+'/bin/'+process.argv[2])
+}
+
+const serverFile = process.platform === "win32" ? windows.exec : linux.exec
+fs.exists(serverFile,(exists)=>{
+  if(exists)
+    fs.unlinkSync(serverFile)
+})
+fs.copyFileSync(windows.src,serverFile)
+
+
 DB.WrapperPid = process.pid
 DB.ip = IP
 
@@ -60,7 +78,7 @@ handlers.map((handle, index) => {
 
 console.log('Starting Galaxy:',process.argv[2])
 
-startGameServer(GameServerEmitter,startupParams, Config.AVORION_DATAPATH.value)
+startGameServer(GameServerEmitter,startupParams, Config.AVORION_DATAPATH.value, process.argv[2])
 
 // *************** WRAPPER EMITTER **************** \\
 
