@@ -135,6 +135,12 @@ class ServerConfig {
       'Time in MS to allow the server to go without responding to a status command. After this time period DSM will assume the server is unresponsive and force a restart.',
       'number',
       this._parsed['TIME_TO_STATUS_FAILURE'])
+    this.AVORION_DATAPATH = new Option(
+      "AVORION_DATAPATH",
+      '/dsm/avorion',
+      'Path to avorion directory. Relative to dsm.js installed by default in your home directory',
+      'string',
+      this._parsed['AVORION_DATAPATH'])
   }
   get options(){
     const PublicProperties = Object.getOwnPropertyNames(this).filter(property=>property.match(/^(?!_.*).*/))

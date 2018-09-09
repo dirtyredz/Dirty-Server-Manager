@@ -29,6 +29,7 @@ export const action = (options)=>{
   startGameServer(
     GameServerEmitter,
     `--datapath ${path.resolve(globals.InstallationDir()+'/dsm/galaxies')} --galaxy-name ${options.env}`,
+    '/dsm/avorion',
     true
   )
   GameServerEmitter.on('startup',(GameServer)=>{

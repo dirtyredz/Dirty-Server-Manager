@@ -6,16 +6,17 @@ var pty = require('node-pty');// dont use import, webpack is set to not touch no
 // https://github.com/Microsoft/node-pty/issues/78
 
 
-const windows = {
-  exec: path.resolve(globals.InstallationDir()+'/dsm/avorion/bin/AvorionServer.exe')
-}
 
-const linux = {
-  exec: path.resolve(globals.InstallationDir()+'/dsm/avorion/bin/AvorionServer')
-}
 
-const startGameServer = (GameServerEmitter, startupParams, supressLogs = false) => {
+const startGameServer = (GameServerEmitter, startupParams, dataPath, supressLogs = false) => {
 
+  const windows = {
+    exec: path.resolve(globals.InstallationDir()+dataPath+'/bin/AvorionServer.exe')
+  }
+  
+  const linux = {
+    exec: path.resolve(globals.InstallationDir()+dataPath+'/bin/AvorionServer')
+  }
   // ????
   // execvp(3) failed.: Permission denied
   // execvp(3) failed.: No such file or directory
@@ -23,7 +24,7 @@ const startGameServer = (GameServerEmitter, startupParams, supressLogs = false) 
   // NEED TO SWITCH .EXE for windows and nothing for linux
   const GameServer = pty.spawn(process.platform === "win32" ? windows.exec : linux.exec
     ,startupParams.split(" ")
-    ,{cwd: path.resolve(globals.InstallationDir()+'/dsm/avorion')})
+    ,{cwd: path.resolve(globals.InstallationDir()+dataPath)})
   if(!supressLogs)
     console.log('Started server with these params:',startupParams)
   // if stdout-to-log option is used, dsm cant detect data using GameServer

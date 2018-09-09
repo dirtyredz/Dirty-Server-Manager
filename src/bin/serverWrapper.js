@@ -60,7 +60,7 @@ handlers.map((handle, index) => {
 
 console.log('Starting Galaxy:',process.argv[2])
 
-startGameServer(GameServerEmitter,startupParams)
+startGameServer(GameServerEmitter,startupParams, Config.AVORION_DATAPATH.value)
 
 // *************** WRAPPER EMITTER **************** \\
 
@@ -75,7 +75,7 @@ GameServerEmitter.on('crash',(GameServer)=>{
     GameServer.destroy() // will trigger a GameServer Exit event
     console.log('processing events...')
     setTimeout(()=>{
-      startGameServer(GameServerEmitter, startupParams)
+      startGameServer(GameServerEmitter, startupParams, Config.AVORION_DATAPATH.value)
       console.log('Restarted')
     },7000) // 7 seconds
   },7000)
