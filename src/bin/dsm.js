@@ -61,9 +61,9 @@ Commands.map((cmd, index) => {
               }
             }
             if(typeof parent.galaxy !== 'undefined'){
-              cmd.action(newOptions,galaxy,parent)
-            }else{
               cmd.action(newOptions,null,parent)
+            }else{
+              cmd.action(newOptions,galaxy,parent)
             }
           })
         })
