@@ -13,15 +13,15 @@ export const getGalaxies = (dontParseDB = false) => {
   })
   .filter(fileDir=>lstatSync(fileDir.path).isDirectory())
   .map(galaxy=>{
-    // if(!dontParseDB){
-    //   const DB = new db(galaxy.name)
-    //   if(!isRunning(DB.WrapperPid)){
-    //     DB.WrapperPid = 0
-    //     DB.GameServerPid = 0
-    //     DB.ip = 0
-    //   }
-    //   DB.close()
-    // }
+    if(!dontParseDB){
+      const DB = new db(galaxy.name)
+      if(!isRunning(DB.WrapperPid)){
+        DB.WrapperPid = 0
+        DB.GameServerPid = 0
+        DB.ip = 0
+      }
+      DB.close()
+    }
     return galaxy
   })
 }
@@ -131,6 +131,5 @@ export const isAddressInUse = (ip) => {
     const IP = DB.ip
     DB.close()
     return IP == ip
-    return false
   }) != 'undefined'
 }
