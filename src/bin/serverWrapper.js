@@ -56,12 +56,11 @@ const linux = {
 }
 
 const serverFile = process.platform === "win32" ? windows.exec : linux.exec
-fs.exists(serverFile,(exists)=>{
-  if(exists)
-    fs.unlinkSync(serverFile)
-})
+const exists = fs.existsSync(serverFile)
+if(exists)
+  fs.unlinkSync(serverFile)
+console.log('Copying Server executable...')
 fs.copyFileSync(windows.src,serverFile)
-
 
 DB.WrapperPid = process.pid
 DB.ip = IP
@@ -93,7 +92,7 @@ GameServerEmitter.on('crash',(GameServer)=>{
     GameServer.destroy() // will trigger a GameServer Exit event
     console.log('processing events...')
     setTimeout(()=>{
-      startGameServer(GameServerEmitter, startupParams, Config.AVORION_DATAPATH.value)
+      startGameServer(GameServerEmitter, startupParams, Config.AVORION_DATAPATH.value,process.argv[2])
       console.log('Restarted')
     },7000) // 7 seconds
   },7000)
@@ -107,21 +106,51 @@ GameServerEmitter.on('shutdown',(GameServer)=>{
 // *************** WRAPPER PROCESS **************** \\
 
 
-process.on('erro',exitHandler)
-process.on('beforeExit',exitHandler)
+process.on('erro',()=>{
+  console.log('erro')
+  exitHandler()
+})
+process.on('beforeExit',()=>{
+  console.log('beforeExit')
+  exitHandler()
+})
 
 //do something when app is closing
-process.on('exit', exitHandler);
+process.on('exit', ()=>{
+  console.log('exit')
+  exitHandler()
+});
 
 //catches ctrl+c event
-process.on('SIGINT', exitHandler);
+process.on('SIGINT', ()=>{
+  console.log('SIGINT')
+  exitHandler()
+});
+process.on('SIGTERM', ()=>{
+  console.log('SIGTERM')
+  exitHandler()
+});
+process.on('SIGHUP', ()=>{
+  console.log('SIGHUP')
+  exitHandler()
+});
+process.on('SIGBREAK', ()=>{
+  console.log('SIGBREAK')
+  exitHandler()
+});
 
 // catches "kill pid" (for example: nodemon restart)
-process.on('SIGUSR1', exitHandler);
-process.on('SIGUSR2', exitHandler);
+process.on('SIGUSR1', ()=>{
+  console.log('SIGUSR1')
+  exitHandler()
+});
+process.on('SIGUSR2', ()=>{
+  console.log('SIGUSR2')
+  exitHandler()
+});
 
 //catches uncaught exceptions
 process.on('uncaughtException', (err)=>{
-  console.log(err)
+  console.log('uncaughtException',err)
   exitHandler()
 });
