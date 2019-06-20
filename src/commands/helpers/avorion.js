@@ -26,7 +26,7 @@ const steamCmd = (onFinish) => {
   var isWin = process.platform === "win32";
 
   const avorionPath = path.resolve(globals.InstallationDir()+'/dsm/avorion')
-  const Beta = config.BETA.value ? ' -beta beta' : ''
+  const Beta = config.BETA.value ? ' -beta beta' : ' -beta beta'
   let steamArgs = ['+login anonymous', `+force_install_dir ${avorionPath}`, `+app_update 565060${Beta}` , 'validate', '+quit']
   // Continue using config option for steam directory?
   const steamCmd = child_process.spawn(isWin ? windows.exec : linux.exec,steamArgs)

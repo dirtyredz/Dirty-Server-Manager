@@ -39,7 +39,7 @@ export const action = (options)=>{
   })
   GameServerEmitter.on('exit',()=>{
     console.log('Shutdown succesfull, Modifing server.ini')
-    
+
     const rawConfig = readFileSync(path.resolve(globals.InstallationDir() + '/dsm/galaxies/'+options.env+'/server.ini'), 'utf-8')
 
     const parsedConfig = ini.parse(rawConfig);
@@ -47,7 +47,7 @@ export const action = (options)=>{
     parsedConfig.Administration.description = options.env
     writeFileSync(path.resolve(globals.InstallationDir() + '/dsm/galaxies/'+options.env+'/server.ini'), ini.stringify(parsedConfig))
     console.log('Modifications Complete, setting up DSM intergration...')
-    
+
     writeFileSync(path.resolve(globals.InstallationDir() + '/dsm/galaxies/'+options.env+'/config.ini'),'; Visit DirtyServerManager for configuration options.' )
     console.log('DSM Intergration complete.')
 
